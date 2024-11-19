@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,198 +10,66 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background-color: #f8f9fa; }
-        .navbar { background-color: #ff8a3d; }
-        .navbar-brand, .nav-link { color: white !important; }
         .card { border: none; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: 0.3s; }
         .card:hover { box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); }
         .btn-orange { background-color: #ff8a3d; color: white; border: none; }
         .btn-orange:hover { background-color: #e6762d; color: white; }
     </style>
-<!--    <script src="/static/js/header.js"></script>-->
+
 </head>
 <body>
-<!--<div th:replace="fragments/header :: header"></div>-->
-<!-- 네비게이션 바 -->
-<nav class="navbar navbar-expand-lg navbar-light">
-    <a class="navbar-brand" href="#">당근마켓</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item" th:if="${session.loggedInUser == null}">
-                <button type="button" class="btn btn-orange" data-toggle="modal" data-target="#loginModal">
-                    로그인
-                </button>
-            </li>
-            <li class="nav-item d-flex align-items-center" th:if="${session.loggedInUser != null}">
-                <!-- 프로필 이미지와 이름을 클릭하면 회원 정보 수정 페이지로 이동 -->
-                <a th:href="@{/edit-profile}" class="d-flex align-items-center text-decoration-none mr-2">
-<!--                    <img th:if="${session.loggedInUser.profileImage != null}"-->
-<!--                         th:src="${session.loggedInUser.profileImage}"-->
-<!--                         alt="Profile Image" class="rounded-circle mr-2"-->
-<!--                         style="width: 30px; height: 30px;">-->
-                    <span class="navbar-text" th:text="${session.loggedInUser.username + ' 님 안녕하세요'}"></span>
-                </a>
-                <a th:href="@{/logout}" class="btn btn-orange">로그아웃</a>
-            </li>
-        </ul>
-    </div>
-</nav>
-
-<!-- 로그인 모달 -->
-<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="loginModalLabel">로그인</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+<th:block layout:fragment="content">
+    <!-- 메인 컨테이너 -->
+    <div class="container mt-5">
+        <div class="row">
+            <!-- 왼쪽 사이드바 -->
+            <div class="col-md-3">
+                <h5>카테고리</h5>
+                <ul class="list-group">
+                    <li class="list-group-item">전자기기</li>
+                    <li class="list-group-item">의류</li>
+                    <li class="list-group-item">가구/인테리어</li>
+                    <li class="list-group-item">스포츠/레저</li>
+                    <li class="list-group-item">도서</li>
+                </ul>
             </div>
-            <div class="modal-body">
-                <form id="loginForm" action="/login" method="post">
-                    <div class="form-group">
-                        <label for="email">이메일 주소</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="이메일을 입력하세요" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">비밀번호</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
-                    </div>
-                    <!--로그인 시 사용자 위치 정보 수집-->
-                    <input type="hidden" id="latitude" name="latitude">
-                    <input type="hidden" id="longitude" name="longitude">
-                    <input type="hidden" id="location" name="location">
-<!--                    <button type="submit" class="btn btn-orange btn-block" onclick="getLocationAndSubmit()">로그인</button>-->
-                    <button type="submit" class="btn btn-orange btn-block" onclick="event.preventDefault(); getLocationAndSubmit();">로그인</button>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <span>아직 회원이 아니신가요?</span>
-                <a href="/register" class="ml-2">회원가입</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- 메인 컨테이너 -->
-<div class="container mt-5">
-    <div class="row">
-        <!-- 왼쪽 사이드바 -->
-        <div class="col-md-3">
-            <h5>카테고리</h5>
-            <ul class="list-group">
-                <li class="list-group-item">전자기기</li>
-                <li class="list-group-item">의류</li>
-                <li class="list-group-item">가구/인테리어</li>
-                <li class="list-group-item">스포츠/레저</li>
-                <li class="list-group-item">도서</li>
-            </ul>
-        </div>
-
-        <!-- 상품 목록 (한 줄에 4개씩) -->
-        <div class="col-md-9">
-            <h5>근처의 인기 상품</h5>
-            <div class="row row-cols-1 row-cols-md-4">
-                <div class="col mb-4" th:each="item : ${products}">
-                    <div class="card">
-<!--                        <img th:src="${item.images[0]}" class="card-img-top" alt="상품 이미지">-->
-                        <div class="carousel slide" data-ride="carousel">
-                            <div class="carousel-inner">
-                                <div th:each="image, stat : ${item.images}" class="carousel-item" th:classappend="${stat.first} ? 'active'">
-                                    <img th:src="${image}" class="d-block w-100" alt="상품 이미지">
+            <!-- 상품 목록 (한 줄에 4개씩) -->
+            <div class="col-md-9">
+                <h5>근처의 인기 상품</h5>
+                <div class="row row-cols-1 row-cols-md-4">
+                    <div class="col mb-4" th:each="item, itemStat : ${products}">
+                        <div class="card">
+<!--                            <img th:src="${item.images[0]}" class="card-img-top" alt="상품 이미지">-->
+                            <div class="carousel slide" data-ride="carousel" th:id="'carouselExampleControls' + ${itemStat.index}">
+                                <div class="carousel-inner">
+                                    <div th:each="image, stat : ${item.images}" th:classappend="${stat.first} ? 'active'">
+                                        <img th:src="${image}" class="d-block w-100" alt="상품 이미지">
+                                    </div>
                                 </div>
+                                <a class="carousel-control-prev" th:href="'#carouselExampleControls' + ${itemStat.index}" role="button" data-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">이전</span>
+                                </a>
+                                <a class="carousel-control-next" th:href="'#carouselExampleControls' + ${itemStat.index}" role="button" data-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">다음</span>
+                                </a>
                             </div>
-                            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="sr-only">이전</span>
-                            </a>
-                            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="sr-only">다음</span>
-                            </a>
-                        </div>
-                        <div class="card-body">
-                            <h6 class="card-title" th:text="${item.title}">상품명</h6>
-                            <p class="card-text text-muted" th:text="'₩ ' + ${item.price}">가격</p>
-                            <a th:href="@{'/products/detail/' + ${item.id}}" class="btn btn-orange btn-block">자세히 보기</a>
+                            <div class="card-body">
+                                <h6 class="card-title" th:text="${item.title}">상품명</h6>
+                                <p class="card-text text-muted" th:text="'₩ ' + ${item.price}">가격</p>
+                                <a th:href="@{'/products/detail/' + ${item.id}}" class="btn btn-orange btn-block">자세히 보기</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
+</th:block>
 <!-- Bootstrap JS 및 종속성 -->
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> <!-- jQuery Full 버전 -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script>
-
-    //로그인 체크(이메일 비번이 다른 경우 다시 로그인창으로 리다이렉트
-    function checkLoginError() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('loginError')) {
-            alert('이메일 또는 비밀번호가 잘못되었습니다.');
-            $('#loginModal').modal('show'); // 로그인 모달 다시 표시
-            document.getElementById('password').value = ''; // 비밀번호 필드 지우기
-        }
-    }
-    //로그인 시 위치정보 가져오기.
-    function getLocationAndSubmit() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
-
-                // 위도와 경도를 hidden input 필드에 설정
-                document.getElementById('latitude').value = latitude;
-                document.getElementById('longitude').value = longitude;
-
-                // 위치 정보를 주소로 변환 후 폼 제출
-                convertLatLngToAddress(latitude, longitude, (address) => {
-                    document.getElementById('location').value = address;
-                    document.getElementById('loginForm').submit();
-                });
-            }, () => {
-                alert("위치 정보를 가져오는 데 실패했습니다.");
-            });
-        } else {
-            alert("브라우저가 위치 정보를 지원하지 않습니다.");
-        }
-    }
-
-    // 위도와 경도를 주소로 변환하는 함수
-    function convertLatLngToAddress(latitude, longitude, callback) {
-        const url = `/get-address?latitude=${latitude}&longitude=${longitude}`;
-
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok: " + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.status === "OK" && data.results[0]) {
-                    const address = data.results[0].formatted_address;
-                    console.log("Converted Address: ", address);  // 주소 출력
-                    callback(address);  // 콜백으로 주소 전달
-                } else {
-                    console.error("Geocoding API Error: ", data);
-                    alert("주소 변환에 실패했습니다.");
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching address: ", error);
-                alert("주소를 가져오는 중 오류가 발생했습니다.");
-            });
-    }
-
-
-</script>
-
 </body>
 </html>
