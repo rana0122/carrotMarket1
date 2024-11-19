@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/defaultLayout}">
+      layout:decorate="~{fragments/layout}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,10 +14,29 @@
         .card:hover { box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); }
         .btn-orange { background-color: #ff8a3d; color: white; border: none; }
         .btn-orange:hover { background-color: #e6762d; color: white; }
+        /* 카드 크기 고정 */
+        .card {
+            width: 12rem; /* 카드의 너비 고정 */
+            height: 400px; /* 카드의 높이 조정 (전체 높이를 400px으로 줄임) */
+        }
+
+        .card-img-top {
+            height: 250px; /* 이미지 높이 (비율 유지하여 300px에서 줄임) */
+            object-fit: cover; /* 이미지가 고정된 크기에 맞게 조정되도록 설정 */
+        }
+
+        .carousel-inner {
+            height: 250px; /* 슬라이드 높이 (이미지 높이에 맞춤) */
+        }
+
+        .card-body {
+            height: 60px; /* 카드 본문의 높이 유지 (기존과 동일) */
+        }
     </style>
 
 </head>
 <body>
+<!-- Body Fragment -->
 <th:block layout:fragment="content">
     <!-- 메인 컨테이너 -->
     <div class="container mt-5">
@@ -42,8 +61,11 @@
 <!--                            <img th:src="${item.images[0]}" class="card-img-top" alt="상품 이미지">-->
                             <div class="carousel slide" data-ride="carousel" th:id="'carouselExampleControls' + ${itemStat.index}">
                                 <div class="carousel-inner">
-                                    <div th:each="image, stat : ${item.images}" th:classappend="${stat.first} ? 'active'">
-                                        <img th:src="${image}" class="d-block w-100" alt="상품 이미지">
+<!--                                    <div th:each="image, stat : ${item.images}" th:classappend="${stat.first} ? 'active'">-->
+                                    <div th:each="image, stat : ${item.images}" th:classappend="${stat.first} ? 'active' : ''" class="carousel-item">
+
+                                    <!--                                        <img th:src="${image}" class="d-block w-100" alt="상품 이미지">-->
+                                        <img th:src="${image.imageUrl}" class="d-block w-100 card-img-top" alt="상품 이미지">
                                     </div>
                                 </div>
                                 <a class="carousel-control-prev" th:href="'#carouselExampleControls' + ${itemStat.index}" role="button" data-slide="prev">

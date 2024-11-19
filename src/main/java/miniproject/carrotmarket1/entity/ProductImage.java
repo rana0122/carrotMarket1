@@ -12,9 +12,9 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class ProductImage {
     private Long id;
-    private Long product_id;
-    private String image_url;
-    private Timestamp uploaded_at;
+    private Long productId;
+    private String imageUrl;
+    private Timestamp uploadedAt;
 
     // Product 객체 관계 매핑
     private Product product;

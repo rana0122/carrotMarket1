@@ -1,105 +1,78 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <style>
-    body { background-color: #f8f9fa; }
-    .navbar { background-color: #ff8a3d; }
-    .navbar-brand, .nav-link { color: white !important; }
-    .btn-orange { background-color: #ff8a3d; color: white; border: none; }
-    .btn-orange:hover { background-color: #e6762d; color: white; }
-  </style>
-</head>
-<body>
-<!--headerFragment 선언-->
-<th:block th:fragment="headerFragment">
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light">
-    <a class="navbar-brand" href="#">당근마켓</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item" th:if="${session.loggedInUser == null}">
-          <button type="button" class="btn btn-orange" data-toggle="modal" data-target="#loginModal">
-            로그인
-          </button>
-        </li>
-        <li class="nav-item d-flex align-items-center" th:if="${session.loggedInUser != null}">
-          <a th:href="@{/edit-profile}" class="d-flex align-items-center text-decoration-none mr-2">
-            <img th:if="${session.loggedInUser.profileImage != null}"
-                 th:src="${session.loggedInUser.profileImage}"
-                 alt="Profile Image" class="rounded-circle mr-2"
-                 style="width: 30px; height: 30px;">
-            <span class="navbar-text" th:text="${session.loggedInUser.username + ' 님 안녕하세요'}"></span>
-          </a>
-          <a th:href="@{/logout}" class="btn btn-orange">로그아웃</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="header">
 
-  <!-- 로그인 모달 -->
-  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="loginModalLabel">로그인</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form id="loginForm" action="/login" method="post">
-            <div class="form-group">
-              <label for="email">이메일 주소</label>
-              <input type="email" class="form-control" id="email" name="email" placeholder="이메일을 입력하세요" required>
-            </div>
-            <div class="form-group">
-              <label for="password">비밀번호</label>
-              <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
-            </div>
-            <!--로그인 시 사용자 위치 정보 수집-->
-            <input type="hidden" id="latitude" name="latitude">
-            <input type="hidden" id="longitude" name="longitude">
-            <input type="hidden" id="location" name="location">
-            <button type="submit" class="btn btn-orange btn-block" onclick="event.preventDefault(); getLocationAndSubmit();">로그인</button>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <span>아직 회원이 아니신가요?</span>
-          <a href="/register" class="ml-2">회원가입</a>
+  <div th:fragment="header">
+    <!-- 네비게이션 바 -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <a class="navbar-brand" href="#">당근마켓</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <!-- 로그인 버튼 -->
+          <li class="nav-item" th:if="${session.loggedInUser == null}">
+            <button type="button" class="btn btn-orange" data-toggle="modal" data-target="#loginModal">로그인</button>
+          </li>
+          <!-- 로그인된 사용자 정보 -->
+          <li class="nav-item d-flex align-items-center" th:if="${session.loggedInUser != null}">
+            <a th:href="@{/edit-profile}" class="d-flex align-items-center text-decoration-none mr-2">
+              <span class="navbar-text" th:text="${session.loggedInUser.username + ' 님 안녕하세요'}"></span>
+            </a>
+            <a th:href="@{/logout}" class="btn btn-orange">로그아웃</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- 로그인 모달 -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="loginModalLabel">로그인</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="loginForm" action="/login" method="post">
+              <div class="form-group">
+                <label for="email">이메일</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="이메일 입력" required>
+              </div>
+              <div class="form-group">
+                <label for="password">비밀번호</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호 입력" required>
+              </div>
+              <!-- 위치 정보를 위한 숨겨진 필드 -->
+              <input type="hidden" id="latitude" name="latitude">
+              <input type="hidden" id="longitude" name="longitude">
+              <input type="hidden" id="location" name="location">
+              <button type="submit" class="btn btn-orange btn-block" onclick="event.preventDefault(); getLocationAndSubmit();">로그인</button>
+
+            </form>
+          </div>
+          <div class="modal-footer">
+            <span>아직 회원이 아니신가요?</span>
+            <a href="/register" class="ml-2">회원가입</a>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</th:block>
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <!-- Bootstrap JS 및 종속성 -->
-  <script>
-    document.body.onload = checkLoginError;
-    //로그인 체크(이메일 비번이 다른 경우 다시 로그인창으로 리다이렉트
-    function checkLoginError() {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.has('loginError')) {
-        alert('이메일 또는 비밀번호가 잘못되었습니다.');
-        $('#loginModal').modal('show'); // 로그인 모달 다시 표시
-        document.getElementById('password').value = ''; // 비밀번호 필드 지우기
-      }
-    }
 
-    //로그인 시 위치정보 가져오기.
+
+  <script>
+    // 로그인 시 위치 정보 수집
     function getLocationAndSubmit() {
+      console.log("getLocationAndSubmit 호출됨");
+
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
 
-          // 위도와 경도를 hidden input 필드에 설정
+          // 위도와 경도를 숨겨진 필드에 설정
           document.getElementById('latitude').value = latitude;
           document.getElementById('longitude').value = longitude;
 
@@ -142,6 +115,18 @@
                 alert("주소를 가져오는 중 오류가 발생했습니다.");
               });
     }
+    //로그인 체크(이메일 비번이 다른 경우 다시 로그인창으로 리다이렉트
+    document.body.onload = checkLoginError;
+    function checkLoginError() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('loginError')) {
+        alert('이메일 또는 비밀번호가 잘못되었습니다.');
+        $('#loginModal').modal('show'); // 로그인 모달 다시 표시
+        document.getElementById('password').value = ''; // 비밀번호 필드 지우기
+      }
+    }
+    window.getLocationAndSubmit = getLocationAndSubmit;
+    window.convertLatLngToAddress = convertLatLngToAddress;
   </script>
-</body>
-</html>
+
+</div>

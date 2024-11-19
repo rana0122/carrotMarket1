@@ -21,9 +21,9 @@ public class Product {
     private String location;
     private Double latitude;
     private Double longitude;
-    private Long category_id;
-    private Timestamp created_at;
-    private Long user_id;
+    private Long categoryId;
+    private Timestamp createdAt;
+    private Long userId;
     private String status;
 
     // 관계 매핑

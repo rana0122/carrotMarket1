@@ -64,7 +64,7 @@ public interface ProductDAO {
 
 
     // Product ID에 의해 ProductImage들을 조회하는 메소드
-    @Select("SELECT * FROM product_image WHERE product_id = #{product_id}")
-    List<ProductImage> selectProductImagesByProductId(Long product_id);
+    @Select("SELECT * FROM product_image WHERE product_id = #{id}")
+    List<ProductImage> selectProductImagesByProductId(Long id);
 
 }
