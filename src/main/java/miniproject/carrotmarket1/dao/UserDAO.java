@@ -32,6 +32,10 @@ public interface UserDAO {
     void deleteUser(Long id);
 
     @Update("UPDATE user SET location = #{location}, latitude = #{latitude}, longitude = #{longitude} WHERE id = #{userId}")
-    void updateLocation(Long userId, Double latitude, Double longitude, String location);
+    void updateLocation(@Param("userId") Long userId,
+                        @Param("latitude") Double latitude,
+                        @Param("longitude") Double longitude,
+                        @Param("location") String location);
+
 
 }
