@@ -1,7 +1,5 @@
 package miniproject.carrotmarket1.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpSession;
 import miniproject.carrotmarket1.entity.User;
@@ -73,22 +71,7 @@ public class UserController {
     public String getAddress(@RequestParam double latitude, @RequestParam double longitude) {
         String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude + "&key=" + apiKey+ "&language=ko";
         RestTemplate restTemplate = new RestTemplate();
-        String response = restTemplate.getForObject(url, String.class);
-
-        try {
-            // JSON 파싱을 통해 필요한 주소 정보만 추출
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode root = objectMapper.readTree(response);
-            JsonNode results = root.path("results");
-            if (results.isArray() && results.size() > 0) {
-                JsonNode formattedAddress = results.get(0).path("formatted_address");
-                return formattedAddress.asText(); // 주소 문자열 반환
-            } else {
-                return "주소 정보를 찾을 수 없습니다.";
-            }
-        } catch (Exception e) {
-            return "오류 발생: " + e.getMessage();
-        }
+        return restTemplate.getForObject(url, String.class);
 
     }
     //입력받은 주소로 위도,경도 갱신하기.
