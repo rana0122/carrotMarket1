@@ -14,6 +14,17 @@
         .btn-orange:hover { background-color: #e6762d; }
         .form-control { border: 1px solid #e0e0e0; border-radius: 4px; padding: 0.5rem 1rem; }
         .form-error { color: #e74c3c; font-size: 0.875rem; margin-top: 5px; }
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #ff8a3d;
+            outline: none;
+            opacity: 0.9;
+            transition: opacity .15s ease-in-out;
+            border-radius: 4px;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -77,6 +88,16 @@
                 <!-- Hidden Latitude and Longitude Fields -->
                 <input type="hidden" id="latitude" th:field="*{latitude}">
                 <input type="hidden" id="longitude" th:field="*{longitude}">
+
+                <!-- 반경 설정 -->
+                <div class="form-group">
+                    <label for="radiusRange">거래 반경 설정 (0km - 100km)</label>
+                    <input type="range" class="slider"  id="radiusRange" th:field="*{radiusKm}" min="0" max="100" step="1" oninput="updateRadiusValue(this.value)" >
+                    <small id="radiusValue" class="form-text text-muted"
+                           th:text="${user.radiusKm != null} ? ${user.radiusKm + ' km'} : '현재 설정: 50 km'">
+                        현재 설정: 50km
+                    </small>
+                </div>
 
                 <!-- Profile Image Upload -->
                 <div class="form-group">
@@ -235,6 +256,10 @@
         document.getElementById('latitude').value = place.y;
         document.getElementById('longitude').value = place.x;
         document.getElementById('addressList').innerHTML = ''; // 주소 리스트 초기화
+    }
+    // 반경 설정 값 업데이트 기능
+    function updateRadiusValue(value) {
+        document.getElementById('radiusValue').textContent = '현재 설정: ' + value + 'km';
     }
 </script>
 </th:block>

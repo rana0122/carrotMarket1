@@ -95,20 +95,6 @@ public class UserController {
     public String registerUser(@ModelAttribute("user") User user,
                                @RequestParam("profileImageFile") MultipartFile profileImageFile,
                                HttpSession session) throws IOException {
-        //중복되는 코드....service 단 saveOrUpdateUser 에서 동일하게 수행.
-//        if (!profileImageFile.isEmpty()) {
-//            String filePath = saveProfileImage(profileImageFile, user);
-//            if (filePath == null) {
-//                return "register";
-//            }
-//            user.setProfileImage(filePath);
-//        }
-
-//        userService.save(user);
-//        userService.saveOrUpdateUser(user, profileImageFile);
-//        session.setAttribute("loggedInUser", user);
-//
-//        return "redirect:/board/list";
 
         try {
             userService.saveOrUpdateUser(user, profileImageFile);
