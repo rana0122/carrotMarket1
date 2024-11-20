@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("miniproject.carrotmarket1.dao")
+@MapperScan("miniproject.carrotmarket1.dao.MySQL")
 public class CarrotMarket1Application {
 
     public static void main(String[] args) {

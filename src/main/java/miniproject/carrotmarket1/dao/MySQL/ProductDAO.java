@@ -1,4 +1,4 @@
-package miniproject.carrotmarket1.dao;
+package miniproject.carrotmarket1.dao.MySQL;
 
 import miniproject.carrotmarket1.entity.Category;
 import miniproject.carrotmarket1.entity.Product;
@@ -30,9 +30,9 @@ public interface ProductDAO {
     @Select("SELECT * FROM product WHERE status = 'AVAILABLE'")
     @Results({
             @Result(property = "user", column = "user_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.UserDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
             @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.CategoryDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
             @Result(property = "images", column = "id", javaType = List.class,
                     many = @Many(select = "selectProductImagesByProductId"))
     })
@@ -42,9 +42,9 @@ public interface ProductDAO {
     @Select("SELECT * FROM product")
     @Results({
             @Result(property = "user", column = "user_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.UserDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
             @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.CategoryDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
             @Result(property = "images", column = "id", javaType = List.class,
                     many = @Many(select = "selectProductImagesByProductId"))
     })
@@ -54,9 +54,9 @@ public interface ProductDAO {
     @Select("SELECT * FROM product WHERE id = #{id}")
     @Results({
             @Result(property = "user", column = "user_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.UserDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
             @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.CategoryDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
             @Result(property = "images", column = "id", javaType = List.class,
                     many = @Many(select = "selectProductImagesByProductId"))
     })
