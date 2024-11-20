@@ -1,4 +1,4 @@
-package miniproject.carrotmarket1.dao;
+package miniproject.carrotmarket1.dao.MySQL;
 
 import miniproject.carrotmarket1.entity.User;
 import org.apache.ibatis.annotations.*;

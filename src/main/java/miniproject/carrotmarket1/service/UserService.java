@@ -1,8 +1,8 @@
 package miniproject.carrotmarket1.service;
 
 import jakarta.servlet.http.HttpSession;
-import miniproject.carrotmarket1.dao.UserDAO;
 import miniproject.carrotmarket1.entity.User;
+import miniproject.carrotmarket1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,19 +16,19 @@ import java.nio.file.Paths;
 @Service
 public class UserService {
 
-    private final UserDAO userDAO;
+    private final UserRepository userRepository;
 
     @Value("${file.upload-dir}") // application.properties의 값을 주입
     private String uploadDir;
 
     @Autowired
-    public UserService(UserDAO userDAO) {
-        this.userDAO = userDAO;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     //로그인 시 패스워드 확인
     public User authenticate(String email, String password) {
-        User user = userDAO.findByEmail(email);
+        User user = userRepository.findByEmail(email);
         if (user != null && user.getPassword().equals(password)) {
             return user;
         }
@@ -36,7 +36,7 @@ public class UserService {
     }
     //로그인 시 사용자 위치 정보  update
     public void updateUserLocation(Long userId, Double latitude, Double longitude, String location) {
-        userDAO.updateLocation(userId, latitude, longitude, location);
+        userRepository.updateLocation(userId, latitude, longitude, location);
     }
     //프로필 수정시 사용
     public User getLoggedInUser(HttpSession session) {
@@ -52,7 +52,7 @@ public class UserService {
         }
 
         // 사용자 조회
-        User existingUser = userDAO.findByEmail(user.getEmail());
+        User existingUser = userRepository.findByEmail(user.getEmail());
 
         if (existingUser == null) {
             // 신규 회원인 경우
@@ -61,7 +61,7 @@ public class UserService {
                 user.setProfileImage(fileName);
             }
             user.setUserGroup("GENERAL"); // 기본 사용자 그룹 설정
-            userDAO.insertUser(user); // 새 사용자 추가
+            userRepository.insertUser(user); // 새 사용자 추가
         } else {
             // 기존 사용자 업데이트
             user.setId(existingUser.getId()); // 기존 ID 유지
@@ -75,7 +75,7 @@ public class UserService {
                 user.setProfileImage(existingUser.getProfileImage());
             }
 
-            userDAO.updateUser(user); // 기존 사용자 업데이트
+            userRepository.updateUser(user); // 기존 사용자 업데이트
         }
     }
     // 프로필 이미지 저장 메소드
@@ -106,6 +106,6 @@ public class UserService {
     }
     public boolean emailExists(String email) {
 
-        return userDAO.findByEmail(email) != null;
+        return userRepository.findByEmail(email) != null;
     }
 }
