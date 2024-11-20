@@ -9,8 +9,8 @@ import java.util.List;
 public interface UserDAO {
 
 
-    @Insert("INSERT INTO user (username, password, email, location, latitude, longitude, profile_image, created_at, user_group) " +
-            "VALUES (#{username}, #{password}, #{email}, #{location}, #{latitude}, #{longitude}, #{profileImage}, #{createdAt}, #{userGroup})")
+    @Insert("INSERT INTO user (username, password, email, location, latitude, longitude, profile_image, created_at, user_group, radius_km) " +
+            "VALUES (#{username}, #{password}, #{email}, #{location}, #{latitude}, #{longitude}, #{profileImage}, #{createdAt}, #{userGroup}, #{radiusKm})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insertUser(User user);
 
@@ -25,7 +25,7 @@ public interface UserDAO {
 
     @Update("UPDATE user SET username = #{username}, password = #{password}, email = #{email}, " +
             "location = #{location}, latitude = #{latitude}, longitude = #{longitude}, " +
-            "profile_image = #{profileImage}, user_group = #{userGroup} WHERE id = #{id}")
+            "profile_image = #{profileImage}, user_group = #{userGroup}, radius_km=#{radiusKm} WHERE id = #{id}")
     void updateUser(User user);
 
     @Delete("DELETE FROM user WHERE id = #{id}")
