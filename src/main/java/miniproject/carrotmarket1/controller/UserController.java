@@ -128,6 +128,47 @@ public class UserController {
         response.put("exists", exists);
         return response;
     }
+    //=============== 프로필=================//
+    //프로필 수정하기.
+    @GetMapping("/edit-profile")
+    public String editProfile(Model model, HttpSession session) {
+        User user = userService.getLoggedInUser(session);
+        model.addAttribute("user", user);
+        // Kakao JavaScript API 키를 모델에 추가
+        model.addAttribute("kakaoJavascriptKey", kakaoJavascriptKey);
+        return "user/edit-profile";
+    }
+    // 프로필 업데이트
+    @PostMapping("/edit-profile")
+    public String updateProfile(@ModelAttribute User user,
+                                @RequestParam("currentPassword") String currentPassword,
+                                @RequestParam("profileImageFile") MultipartFile profileImageFile,
+                                HttpSession session) {
+        try {
+            // 기존 사용자의 ID, group 설정
+            user.setId(userService.getLoggedInUser(session).getId());
+            user.setUserGroup(userService.getLoggedInUser(session).getUserGroup());
+
+            User loggedInUser = userService.getLoggedInUser(session);
+
+
+            // 새 비밀번호가 입력되지 않은 경우 현재 비밀번호로 유지
+            if (user.getPassword() == null || user.getPassword().isEmpty()) {
+                user.setPassword(loggedInUser.getPassword());
+            }
+
+            // 프로필 이미지와 기타 정보 업데이트
+            userService.saveOrUpdateUser(user, profileImageFile);
+
+            // 세션에 업데이트된 사용자 정보 저장
+            session.setAttribute("loggedInUser", user);
+            return "redirect:/"; // 프로필 페이지로 리디렉션
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "redirect:/edit-profile?error=true";
+        }
+    }
 
     @PostMapping("/check-password")
     @ResponseBody
