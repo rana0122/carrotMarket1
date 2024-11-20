@@ -92,7 +92,8 @@
                 <!-- 반경 설정 -->
                 <div class="form-group">
                     <label for="radiusRange">거래 반경 설정 (0km - 100km)</label>
-                    <input type="range" class="slider"  id="radiusRange" th:field="*{radiusKm}" min="0" max="100" step="1" oninput="updateRadiusValue(this.value)" >
+                    <input type="range" class="slider" id="radiusRange" th:field="*{radiusKm}" min="0" max="100" step="1" oninput="updateRadiusValue(this.value)"
+                           style="accent-color: #fd3b00;">
                     <small id="radiusValue" class="form-text text-muted"
                            th:text="${user.radiusKm != null} ? ${user.radiusKm + ' km'} : '현재 설정: 50 km'">
                         현재 설정: 50km
