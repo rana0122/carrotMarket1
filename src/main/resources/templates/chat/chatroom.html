@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+  <title>채팅방 목록</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+    #chatrooms {
+      width: 80%;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .chatroom {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .chatroom:last-child {
+      border-bottom: none;
+    }
+    .chatroom img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 15px;
+    }
+    .chatroom-info {
+      flex: 1;
+    }
+    .chatroom-title {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #333;
+    }
+    .chatroom-users {
+      font-size: 0.9em;
+      color: #777;
+    }
+    .chatroom-created-at {
+      font-size: 0.8em;
+      color: #999;
+      margin-top: 5px;
+    }
+    .chatroom-actions {
+      text-align: right;
+    }
+    .chatroom-actions a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: bold;
+    }
+    .chatroom-actions a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<!-- Body Fragment -->
+<th:block layout:fragment="content">
+<div id="chatrooms">
+  <h2 style="text-align: center; font-weight: bold; color: #333;">내 채팅방 목록</h2>
+  <div th:each="chatRoom : ${chatRooms}" class="chatroom">
+    <img th:src="${chatRoom.product.images[0]?.imageUrl}" alt="상품 이미지">
+    <div class="chatroom-info">
+      <div class="chatroom-title">
+        <span th:text="${chatRoom.product.title}"></span>
+      </div>
+      <div class="chatroom-users">
+        판매자: <span th:text="${chatRoom.seller.username}"></span> |
+        구매자: <span th:text="${chatRoom.buyer.username}"></span>
+      </div>
+      <div class="chatroom-created-at">
+        생성일: <span th:text="${#dates.format(chatRoom.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span>
+      </div>
+    </div>
+    <div class="chatroom-actions">
+      <a th:href="@{'/chatroom/' + ${chatRoom.id}}">
+        <i class="fas fa-comments" ></i> 채팅방 입장
+      </a>
+    </div>
+  </div>
+</div>
+</th:block>
+</body>
+</html>
