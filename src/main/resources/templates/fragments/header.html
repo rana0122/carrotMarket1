@@ -25,9 +25,7 @@
               <span class="navbar-text" th:text="${session.loggedInUser.username + ' 님 안녕하세요'}"></span>
             </a>
             <a th:href="@{/logout}" class="btn btn-orange">로그아웃</a>
-          </li>
           <!-- 채팅방 목록 아이콘 -->
-          <li class="nav-item">
             <a th:href="@{/chatroom}" class="nav-link d-flex align-items-center">
               <i class="fas fa-comments"></i> <!-- Font Awesome 아이콘 -->
               <span class="ml-1">채팅방</span>
