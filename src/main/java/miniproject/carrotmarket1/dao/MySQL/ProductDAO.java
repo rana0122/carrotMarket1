@@ -67,4 +67,6 @@ public interface ProductDAO {
     @Select("SELECT * FROM product_image WHERE product_id = #{id}")
     List<ProductImage> selectProductImagesByProductId(Long id);
 
+    //xml 연동 테스트
+    List<Product> findProductsByConditions( @Param("category") Long category);
 }

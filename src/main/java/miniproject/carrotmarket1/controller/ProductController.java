@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -28,6 +29,9 @@ public class ProductController {
     @GetMapping
     public String listAllProducts(Model model) {
         List<Product> products = productService.findAll();
+        Long categoryId= 1L;
+        //xml 연동 테스트
+        List<Product> productsFiltered = productService.findAvailableItemsByCategory(categoryId);
         model.addAttribute("products", products);
         return "products/list";
     }
