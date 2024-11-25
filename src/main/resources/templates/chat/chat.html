@@ -89,37 +89,55 @@
     }
 
     /* 메시지 스타일 */
+    .message-container {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    /* 보낸 메시지 정렬 */
+    .message-container.sent {
+      justify-content: flex-end;
+    }
+
+    /* 받은 메시지 정렬 */
+    .message-container.received {
+      justify-content: flex-start;
+    }
+
+    /* 메시지 블록 스타일 */
     .message {
-      margin-bottom: 1rem;
       max-width: 70%;
-      clear: both;
+      background-color: #f1f1f1;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 1rem;
     }
 
-    .message.sent {
-      margin-left: auto;
-      text-align: right;
+    /* 보낸 메시지의 배경 색상 */
+    .message-container.sent .message {
+      background-color: #ffa07a;
     }
 
-    .message.received {
-      margin-right: auto;
-      text-align: left;
+    /* 타임스탬프 스타일 */
+    .message-timestamp {
+      font-size: 0.85rem;
+      color: #888888;
+      white-space: nowrap; /* 시간이 줄바꿈되지 않도록 */
+      margin: 0 10px; /* 메시지와 시간 사이 간격 */
     }
 
-    .message-content {
-      display: inline-block;
-      padding: 0.75rem 1rem;
-      border-radius: 12px;
-      font-size: 0.875rem;
+    /* 보낸 메시지의 타임스탬프 왼쪽 */
+    .message-container.sent .message-timestamp {
+      order: -1; /* 타임스탬프를 메시지 왼쪽으로 */
+      margin-right: 10px;
+      margin-left: 0;
     }
 
-    .message.sent .message-content {
-      background-color: #FF7E36;
-      color: white;
-    }
-
-    .message.received .message-content {
-      background-color: #e9ecef;
-      color: #343a40;
+    /* 받은 메시지의 타임스탬프 오른쪽 */
+    .message-container.received .message-timestamp {
+      margin-left: 10px;
+      margin-right: 0;
     }
   </style>
 </head>
@@ -180,7 +198,8 @@
       if (usernameElement) {
         const currentUsername = usernameElement.textContent;
         const isCurrentUser = messageData.sender === currentUsername;
-        displayMessage(messageData.sender, messageData.content, isCurrentUser);
+        // 메시지와 타임스탬프를 전달
+        displayMessage(messageData.sender, messageData.content, isCurrentUser,messageData.timestamp);
       }
     });
 
@@ -211,7 +230,8 @@
         const newMessageRef = push(chatRef);
         set(newMessageRef, {
           sender: username,
-          content: message
+          content: message,
+          timestamp: Date.now() // 현재 시간을 밀리초 단위로 저장
         });
 
         document.getElementById('message').value = ''; // 메시지 입력창 초기화
@@ -221,18 +241,45 @@
     }
 
     // 화면에 메시지 표시 함수
-    function displayMessage(sender, content, isCurrentUser) {
+    function displayMessage(sender, content, isCurrentUser, timestamp) {
       const chat = document.getElementById('chat');
+
+      // 메시지 전체 컨테이너
+      const messageContainer = document.createElement('div');
+      messageContainer.classList.add('message-container', isCurrentUser ? 'sent' : 'received');
+
+      // 타임스탬프
+      let formattedTime = '';
+      if (timestamp) {
+        const date = new Date(timestamp);
+        formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // HH:MM 형식
+      } else {
+        formattedTime = '알 수 없음';
+      }
+
+      const timestampElement = document.createElement('div');
+      timestampElement.classList.add('message-timestamp');
+      timestampElement.textContent = formattedTime;
+
+      // 메시지 블록
       const messageElement = document.createElement('div');
-      messageElement.classList.add('message', isCurrentUser ? 'sent' : 'received');
+      messageElement.classList.add('message');
+      messageElement.textContent = content;
 
-      const messageContent = document.createElement('div');
-      messageContent.classList.add('message-content');
-      messageContent.textContent = content;
+      // 메시지와 타임스탬프를 메시지 컨테이너에 추가
+      if (isCurrentUser) {
+        // 보낸 메시지는 시간 왼쪽
+        messageContainer.appendChild(timestampElement);
+        messageContainer.appendChild(messageElement);
+      } else {
+        // 받은 메시지는 시간 오른쪽
+        messageContainer.appendChild(messageElement);
+        messageContainer.appendChild(timestampElement);
+      }
 
-      messageElement.appendChild(messageContent);
-      chat.appendChild(messageElement);
+      chat.appendChild(messageContainer);
 
+      // 스크롤을 맨 아래로
       chat.scrollTop = chat.scrollHeight;
     }
     // // 화면에 메시지 표시 함수
