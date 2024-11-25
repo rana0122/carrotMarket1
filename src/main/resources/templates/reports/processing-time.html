@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+  <title>카테고리별 평균 처리 시간</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<!-- Body Fragment -->
+<th:block layout:fragment="content">
+<h1>카테고리별 평균 처리 시간</h1>
+<canvas id="processingTimeChart" width="800" height="400"></canvas>
+
+  <script th:inline="javascript">
+  // Thymeleaf에서 데이터를 가져옴
+  const chartData = /*[[${chartData}]]*/ [];
+  const labels = chartData.map(data => data.categoryName);
+  const dataValues = chartData.map(data => data.avgProcessingTime);
+
+  const ctx = document.getElementById('processingTimeChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: '평균 처리 시간 (시간)',
+        data: dataValues,
+        backgroundColor: 'rgba(253,164,0,0.3)',
+        borderColor: 'rgb(253,59,0)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+</th:block>
+</body>
+</html>

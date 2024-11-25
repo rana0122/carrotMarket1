@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>신고 통계</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<!-- Body Fragment -->
+<th:block layout:fragment="content">
+<h1>신고 통계</h1>
+<form method="get" action="/reports/stats">
+    <select name="period">
+        <option value="daily" th:selected="${period == 'daily'}">일간</option>
+        <option value="weekly" th:selected="${period == 'weekly'}">주간</option>
+        <option value="monthly" th:selected="${period == 'monthly'}">월간</option>
+    </select>
+    <button type="submit">조회</button>
+</form>
+
+<canvas id="reportChart" width="800" height="400"></canvas>
+
+<script th:inline="javascript">
+    const chartData = /*[[${chartData}]]*/ [];
+    const period = /*[[${period}]]*/ 'daily'; // 기본 값 제공
+
+    const labels = chartData.map(data => {
+        if (period === 'daily') {
+            return data.reportDate;
+        } else if (period === 'weekly') {
+            return `${data.year}년 ${data.week}주`;
+        } else if (period === 'monthly') {
+            return `${data.year}년 ${data.month}월`;
+        }
+    });
+
+
+    const dataValues = chartData.map(data => data.total);
+
+    const ctx = document.getElementById('reportChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '신고 건수',
+                data: dataValues,
+                backgroundColor: 'rgba(253,164,0,0.3)',
+                borderColor: 'rgb(253,59,0)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+</th:block>
+</body>
+</html>
