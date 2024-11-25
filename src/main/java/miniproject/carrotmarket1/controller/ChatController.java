@@ -40,6 +40,7 @@ public class ChatController {
 //        return "redirect:/chatroom/" + chatRoom.getId();
 //    }
 //sample code
+//    http://localhost:8080/chatroom/create?productId=2&buyerId=1009&sellerId=1002
     @GetMapping("/chatroom/create")
     public String createChatRoom(
             @RequestParam Long productId,

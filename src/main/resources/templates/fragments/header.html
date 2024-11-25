@@ -15,7 +15,9 @@
           </li>
           <!-- 로그인된 사용자 정보 -->
           <li class="nav-item d-flex align-items-center" th:if="${session.loggedInUser != null}">
-            <a th:href="@{/edit-profile}" class="d-flex align-items-center text-decoration-none mr-2">
+<!--            <a th:href="@{/edit-profile}" class="d-flex align-items-center text-decoration-none mr-2">-->
+              <a th:href="@{/edit-profile}" class="d-flex align-items-center text-decoration-none mr-2" data-bs-toggle="tooltip" title="마이페이지">
+
               <img th:if="${session.loggedInUser.profileImage != null}"
                    th:src="${session.loggedInUser.profileImage}"
                    alt="Profile Image" class="rounded-circle mr-2"
@@ -23,6 +25,13 @@
               <span class="navbar-text" th:text="${session.loggedInUser.username + ' 님 안녕하세요'}"></span>
             </a>
             <a th:href="@{/logout}" class="btn btn-orange">로그아웃</a>
+          </li>
+          <!-- 채팅방 목록 아이콘 -->
+          <li class="nav-item">
+            <a th:href="@{/chatroom}" class="nav-link d-flex align-items-center">
+              <i class="fas fa-comments"></i> <!-- Font Awesome 아이콘 -->
+              <span class="ml-1">채팅방</span>
+            </a>
           </li>
         </ul>
       </div>
