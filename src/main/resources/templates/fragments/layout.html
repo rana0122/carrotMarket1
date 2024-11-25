@@ -8,6 +8,22 @@
   <title>당근마켓 클론</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <style>
+    html, body {
+      height: 100%;
+    }
+    main {
+      min-height: calc(100vh - 60px); /* Header와 Footer를 제외한 높이 */
+    }
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #ff8a3d;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+    }
     body { background-color: #f8f9fa; }
     .navbar { background-color: #ff8a3d; }
     .navbar-brand, .nav-link { color: white !important; }
