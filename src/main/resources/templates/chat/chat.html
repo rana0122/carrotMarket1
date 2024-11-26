@@ -208,7 +208,7 @@
 
     // Enter 키가 눌렸을 때 sendMessage 함수 호출
     messageInput.addEventListener('keydown', function(event) {
-      if (event.key === 'Enter') {
+      if (event.key === 'Enter' && !event.isComposing) {
         event.preventDefault(); // 기본 Enter 키 동작 방지 (ex: 줄바꿈)
         sendMessage();
       }
