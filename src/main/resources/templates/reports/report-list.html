@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>신고 관리</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff7e36;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 16px;
+            text-align: left;
+        }
+
+        table th, table td {
+            padding: 12px 15px;
+        }
+
+        table thead tr {
+            background-color: #ff7e36;
+            color: #ffffff;
+        }
+
+        table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        table tbody tr:last-of-type {
+            border-bottom: 2px solid #ff7e36;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #ff7e36;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #e6712b;
+        }
+
+        .status-pending {
+            color: #ff7e36;
+            font-weight: bold;
+        }
+
+        .status-resolved {
+            color: #4caf50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<!-- Body Fragment -->
+<th:block layout:fragment="content">
+<div class="container">
+    <h1 class="page-title">신고 관리</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>신고자</th>
+            <th>상품 ID</th>
+            <th>카테고리</th>
+            <th>상태</th>
+            <th>신고일</th>
+            <th>수정</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="report : ${reports}">
+            <td th:text="${report.id}"></td>
+            <td th:text="${report.reporterId}"></td>
+            <td th:text="${report.productId}"></td>
+            <td th:text="${report.categoryId}"></td>
+            <td>
+                        <span th:text="${report.status}"
+                              th:classappend="${report.status == 'PENDING' ? 'status-pending' : 'status-resolved'}">
+                        </span>
+            </td>
+            <td th:text="${#dates.format(report.createdAt, 'yyyy-MM-dd')}"></td>
+            <td>
+                <a th:href="@{'/admin/reports/' + ${report.id}}" class="btn">수정</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</th:block>
+</body>
+</html>

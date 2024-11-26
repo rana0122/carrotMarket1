@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>신고 수정</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<!-- Body Fragment -->
+<th:block layout:fragment="content">
+<div class="container">
+    <h1>신고 수정</h1>
+    <form th:action="@{'/admin/reports/update/' + ${report.id}}" th:method="post">
+        <label for="id">신고 ID</label>
+        <input type="text" id="id" name="id" th:value="${report.id}" readonly>
+
+        <label for="product">상품 ID</label>
+        <input type="text" id="product" name="productId" th:value="${report.productId}" readonly>
+
+        <label for="reporter">신고자 ID</label>
+        <input type="text" id="reporter" name="reporterId" th:value="${report.reporterId}" readonly>
+
+        <label for="category">카테고리</label>
+        <input type="text" id="category" name="categoryName" th:value="${report.categoryId}" readonly>
+
+        <label for="details">신고 내용</label>
+        <textarea id="details" name="details" rows="4" th:text="${report.details}" readonly></textarea>
+
+        <label for="status">상태</label>
+        <select id="status" name="status" required>
+            <option th:each="stat : ${statusList}"
+                    th:value="${stat.name()}"
+                    th:text="${stat.displayName}"
+                    th:selected="${stat.name() == report.status}"></option>
+        </select>
+
+        <button type="submit">수정 완료</button>
+    </form>
+</div>
+</th:block>
+</body>
+</html>
