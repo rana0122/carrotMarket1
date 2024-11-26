@@ -110,7 +110,7 @@
             <td th:text="${report.categoryId}"></td>
             <td>
                         <span th:text="${report.status}"
-                              th:classappend="${report.status == 'PENDING' ? 'status-pending' : 'status-resolved'}">
+                              th:classappend="${report.status.name() == 'PENDING' ? 'status-pending' : 'status-resolved'}">
                         </span>
             </td>
             <td th:text="${#dates.format(report.createdAt, 'yyyy-MM-dd')}"></td>

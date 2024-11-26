@@ -17,7 +17,7 @@ public class Report {
     private Long categoryId;
     private Long adminId;
     private String details;
-    private String status;
+    private ReportStatus  status;
     private Timestamp createdAt;
     private Timestamp resolvedAt;
 

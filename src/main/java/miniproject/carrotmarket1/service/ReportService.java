@@ -40,15 +40,22 @@ public class ReportService {
     // 신고 상태 업데이트
     @Transactional
     public void updateReportStatus(Long reportId, ReportStatus status) {
-        Report report = reportDAO.findReportById(reportId); // 신고 정보 조회
+        // 신고 정보 조회
+        Report report = reportDAO.findReportById(reportId);
+
         if (report != null) {
-            report.setStatus(status.name()); // Enum의 name()을 사용하여 상태 저장
+            // 상태 업데이트 (Enum 타입 그대로 사용)
+            report.setStatus(status);
+
+            // 상태가 RESOLVED인 경우 resolvedAt에 현재 시간 설정
             if (status == ReportStatus.RESOLVED) {
-                report.setResolvedAt(new java.sql.Timestamp(System.currentTimeMillis())); // 현재 시간 설정
+                report.setResolvedAt(new java.sql.Timestamp(System.currentTimeMillis())); // 해결 시간 설정
             } else {
-                report.setResolvedAt(null); // 해결 상태가 아니면 null
+                report.setResolvedAt(null); // 해결되지 않은 상태로 설정
             }
-            reportDAO.updateReport(report); // 업데이트
+
+            // 업데이트
+            reportDAO.updateReport(report);
         } else {
             throw new IllegalArgumentException("신고 ID가 존재하지 않습니다: " + reportId);
         }
