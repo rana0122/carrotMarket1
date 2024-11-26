@@ -49,12 +49,14 @@ public class ReportController {
         return "reports/processing-time";
     }
 
-    @GetMapping("/stats")
+    @GetMapping("/reports/stats")
     public String showReportStats(
             @RequestParam(defaultValue = "daily") String period,
             Model model) {
         List<Map<String, Object>> stats = reportService.getReportStats(period);
+        System.out.println(stats); // 디버깅 출력
         model.addAttribute("chartData", stats);
+        System.out.println(stats); // 템플릿으로 전달된 데이터 확인
         model.addAttribute("period", period);
         return "reports/stats";
     }

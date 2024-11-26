@@ -11,7 +11,7 @@
 <!-- Body Fragment -->
 <th:block layout:fragment="content">
 <h1>신고 통계</h1>
-<form method="get" action="/reports/stats">
+<form method="get" action="/admin/reports/stats">
     <select name="period">
         <option value="daily" th:selected="${period == 'daily'}">일간</option>
         <option value="weekly" th:selected="${period == 'weekly'}">주간</option>
