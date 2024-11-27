@@ -35,6 +35,7 @@ public class ReportController {
                                 Model model) {
         List<Report> reports = reportService.getFilteredReports(startDate, endDate, status);
         model.addAttribute("reports", reports);
+        model.addAttribute("statusList", ReportStatus.values()); // Enum 값 전달
         return "reports/report-list";
     }
 

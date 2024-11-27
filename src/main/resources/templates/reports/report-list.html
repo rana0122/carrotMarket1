@@ -124,8 +124,7 @@
                 <label for="status">상태:</label>
                 <select id="status" name="status" class="input-select">
                     <option value="">전체</option>
-                    <option value="PENDING">처리중</option>
-                    <option value="RESOLVED">완료</option>
+                    <option th:each="stat : ${statusList}" th:value="${stat.name()}" th:text="${stat.displayName}"></option>
                 </select>
 
                 <button type="submit" class="btn">조회</button>
@@ -137,7 +136,6 @@
     <table>
         <thead>
         <tr>
-<!--            <th>ID</th>-->
             <th>신고자</th>
             <th>상품 ID</th>
             <th>카테고리</th>
@@ -149,7 +147,6 @@
         <tbody>
         <tr th:each="report : ${reports}">
             <input type="hidden" id="id" name="id">
-<!--            <td th:text="${report.id}"></td>-->
             <td th:text="${report.reporter.email}"></td>
             <td th:text="${report.product.title}"></td>
             <td th:text="${report.category.name}"></td>
