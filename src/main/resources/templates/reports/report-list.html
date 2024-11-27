@@ -83,17 +83,61 @@
             color: #4caf50;
             font-weight: bold;
         }
+        .filter-form {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .filter-form div {
+            display: inline-block;
+            text-align: left;
+        }
+
+        .filter-form input, .filter-form select {
+            margin-left: 10px;
+            margin-right: 10px;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .btn {
+            margin-left: 10px;
+        }
+
     </style>
 </head>
 <body>
 <!-- Body Fragment -->
 <th:block layout:fragment="content">
-<div class="container">
-    <h1 class="page-title">신고 관리</h1>
+    <div class="container">
+        <h1 class="page-title">신고 관리</h1>
+
+        <!-- 조회 조건 폼 -->
+        <form th:action="@{/admin/reports}" th:method="get" class="filter-form">
+            <div>
+                <label for="startDate">시작 날짜:</label>
+                <input type="date" id="startDate" name="startDate" class="input-date">
+
+                <label for="endDate">종료 날짜:</label>
+                <input type="date" id="endDate" name="endDate" class="input-date">
+
+                <label for="status">상태:</label>
+                <select id="status" name="status" class="input-select">
+                    <option value="">전체</option>
+                    <option value="PENDING">처리중</option>
+                    <option value="RESOLVED">완료</option>
+                </select>
+
+                <button type="submit" class="btn">조회</button>
+            </div>
+        </form>
+
+
+        <!-- 신고 목록 테이블 -->
     <table>
         <thead>
         <tr>
-            <th>ID</th>
+<!--            <th>ID</th>-->
             <th>신고자</th>
             <th>상품 ID</th>
             <th>카테고리</th>
@@ -104,10 +148,11 @@
         </thead>
         <tbody>
         <tr th:each="report : ${reports}">
-            <td th:text="${report.id}"></td>
-            <td th:text="${report.reporterId}"></td>
-            <td th:text="${report.productId}"></td>
-            <td th:text="${report.categoryId}"></td>
+            <input type="hidden" id="id" name="id">
+<!--            <td th:text="${report.id}"></td>-->
+            <td th:text="${report.reporter.email}"></td>
+            <td th:text="${report.product.title}"></td>
+            <td th:text="${report.category.name}"></td>
             <td>
                         <span th:text="${report.status}"
                               th:classappend="${report.status.name() == 'PENDING' ? 'status-pending' : 'status-resolved'}">

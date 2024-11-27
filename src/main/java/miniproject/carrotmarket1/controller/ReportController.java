@@ -21,12 +21,23 @@ public class ReportController {
         this.reportService = reportService;
     }
 
+//    @GetMapping("/reports")
+//    public String getReportList(Model model) {
+//        List<Report> reports = reportService.getAllReports();
+//        model.addAttribute("reports", reports);
+//        return "reports/report-list";
+//    }
+
     @GetMapping("/reports")
-    public String getReportList(Model model) {
-        List<Report> reports = reportService.getAllReports();
+    public String getReportList(@RequestParam(required = false) String startDate,
+                                @RequestParam(required = false) String endDate,
+                                @RequestParam(required = false) String status,
+                                Model model) {
+        List<Report> reports = reportService.getFilteredReports(startDate, endDate, status);
         model.addAttribute("reports", reports);
         return "reports/report-list";
     }
+
 
     @GetMapping("/reports/{id}")
     public String getReportDetails(@PathVariable Long id, Model model) {

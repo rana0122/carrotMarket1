@@ -61,4 +61,7 @@ public class ReportService {
         }
     }
 
+    public List<Report> getFilteredReports(String startDate, String endDate, String status) {
+        return reportDAO.findFilteredReports(startDate, endDate, status);
+    }
 }
