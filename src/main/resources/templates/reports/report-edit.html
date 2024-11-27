@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>신고 수정</title>
+    <style>
+        .container {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;               /* 중앙 정렬을 위해 수평 중앙 여백 */
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;       /* 패딩을 포함한 크기 설정 */
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 15px;         /* 제목 하단 여백 */
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;            /* 레이블은 왼쪽 정렬 */
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;         /* 입력 필드 하단 여백 */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .button-container {
+            text-align: center;          /* 버튼을 중앙 정렬 */
+            margin-top: 10px;            /* 버튼 상단 여백 줄임 */
+        }
+        button {
+            background-color: #ff8a3d;   /* 주황색 배경 */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #e6762d;   /* 호버 시 더 진한 주황색 */
+        }
+        #details {
+            height: 300px; /* 원하는 높이 값으로 설정 */
+        }
+    </style>
+</head>
+<body>
+<!-- Body Fragment -->
+<th:block layout:fragment="content">
+<div class="container">
+    <h1>신고 수정</h1>
+    <form th:action="@{'/admin/reports/update/' + ${report.id}}" th:method="post">
+<!--        <label for="id">신고 ID</label>-->
+<!--        <input type="text" id="id" name="id" th:value="${report.id}" readonly>-->
+        <input type="hidden" id="id" name="id">
+
+        <label for="product">상품 </label>
+        <input type="text" id="product" name="productId" th:value="${report.product.title}" readonly>
+
+        <label for="reporter">신고자 </label>
+        <input type="text" id="reporter" name="reporterId" th:value="${report.reporter.email}" readonly>
+
+        <label for="category">카테고리</label>
+        <input type="text" id="category" name="categoryName" th:value="${report.category.name}" readonly>
+
+        <label for="details">신고 내용</label>
+        <textarea id="details" name="details" rows="10" th:text="${report.details}" readonly></textarea>
+
+        <label for="status">상태</label>
+        <select id="status" name="status" required>
+            <option th:each="stat : ${statusList}"
+                    th:value="${stat.name()}"
+                    th:text="${stat.displayName}"
+                    th:selected="${stat.name()} == ${report.status.name()}"></option>
+
+        </select>
+
+        <div class="button-container">
+            <button type="submit">수정 완료</button>
+        </div>
+    </form>
+</div>
+</th:block>
+</body>
+</html>
