@@ -54,7 +54,7 @@
                         <input type="hidden" id="loginLatitude" name="latitude">
                         <input type="hidden" id="loginLongitude" name="longitude">
                         <input type="hidden" id="loginLocation" name="location">
-                        <button type="button" class="btn btn-orange btn-block" onclick="getLocationAndSubmit()">로그인</button>
+                        <button type="submit" class="btn btn-orange btn-block" onclick="event.preventDefault(); getLocationAndSubmit();">로그인</button>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -68,14 +68,18 @@
     <script>
         // 로그인 시 위치 정보 수집
         function getLocationAndSubmit() {
+            console.log("getLocationAndSubmit 호출됨");
+
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition((position) => {
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
 
+                    // 위도와 경도를 숨겨진 필드에 설정
                     document.getElementById('loginLatitude').value = latitude;
                     document.getElementById('loginLongitude').value = longitude;
 
+                    // 위치 정보를 주소로 변환 후 폼 제출
                     convertLatLngToAddress(latitude, longitude, (address) => {
                         document.getElementById('loginLocation').value = address;
                         document.getElementById('loginForm').submit();
@@ -88,31 +92,45 @@
             }
         }
 
-        // 위도와 경도를 주소로 변환
+        // 위도와 경도를 주소로 변환하는 함수
         function convertLatLngToAddress(latitude, longitude, callback) {
             const url = `/get-address?latitude=${latitude}&longitude=${longitude}`;
 
             fetch(url)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok: " + response.statusText);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.status === "OK" && data.results[0]) {
-                        let address = data.results[0].formatted_address.replace("대한민국 ", "");
-                        callback(address);
+                        let address = data.results[0].formatted_address;
+                        // "대한민국" 문자열 제거
+                        address = address.replace("대한민국 ", ""); // "대한민국"과 그 뒤 공백을 제거
+                        console.log("Converted Address: ", address);  // 주소 출력
+                        callback(address);  // 콜백으로 주소 전달
                     } else {
+                        console.error("Geocoding API Error: ", data);
                         alert("주소 변환에 실패했습니다.");
                     }
                 })
-                .catch(() => alert("주소를 가져오는 중 오류가 발생했습니다."));
+                .catch(error => {
+                    console.error("Error fetching address: ", error);
+                    alert("주소를 가져오는 중 오류가 발생했습니다.");
+                });
         }
-
-        // 로그인 실패 처리
-        document.body.onload = () => {
+        //로그인 체크(이메일 비번이 다른 경우 다시 로그인창으로 리다이렉트
+        document.body.onload = checkLoginError;
+        function checkLoginError() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('loginError')) {
                 alert('이메일 또는 비밀번호가 잘못되었습니다.');
-                $('#loginModal').modal('show');
-                document.getElementById('loginPassword').value = '';
+                $('#loginModal').modal('show'); // 로그인 모달 다시 표시
+                document.getElementById('password').value = ''; // 비밀번호 필드 지우기
             }
-        };
+        }
+        window.getLocationAndSubmit = getLocationAndSubmit;
+        window.convertLatLngToAddress = convertLatLngToAddress;
     </script>
 </div>
