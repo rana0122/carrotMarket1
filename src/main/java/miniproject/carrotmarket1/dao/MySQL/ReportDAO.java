@@ -8,12 +8,17 @@ import java.util.List;
 @Mapper
 public interface ReportDAO {
 
+    //신고 목록 조회(페이징 기능)-- xml의 동적 쿼리로 구현
+    List<Report> getReportListPagination(@Param("startDate") String startDate,
+                                         @Param("endDate") String endDate,
+                                         @Param("status") String status,
+                                         @Param("size") int size,
+                                         @Param("offset") int offset);
+
     //신고 목록 조회(필터 기능)-- xml의 동적 쿼리로 구현
-    List<Report> getReportList(
-            @Param("startDate") String startDate,
-            @Param("endDate") String endDate,
-            @Param("status") String status
-    );;
+    long countFilterReports(@Param("startDate") String startDate,
+                            @Param("endDate") String endDate,
+                            @Param("status") String status);
 
     //property = "reporter" -> Report엔티티에 있는 User reporter 가져온것
     //column = "reporter_id" -> MySQL root계정 report테이블에 있는 컬럼을 가져온것
