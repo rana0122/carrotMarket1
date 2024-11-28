@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface ChatRoomRepository {
 
     void insertChatRoom(ChatRoom chatRoom);
-    Optional<ChatRoom> findByProductIdAndBuyerId(Long productId, Long buyerId);
     Optional<ChatRoom> findById(Long id);
     List<ChatRoom> findAllByUser(Long id);
+    Optional<ChatRoom> findByProductAndUsers(Long productId,Long buyerId);
 }

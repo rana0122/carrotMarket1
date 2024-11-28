@@ -16,17 +16,14 @@ public class MySQLChatRoomRepository implements ChatRoomRepository {
 
     @Autowired
     public MySQLChatRoomRepository(ChatRoomDAO chatRoomDAO) {
+
         this.chatRoomDAO = chatRoomDAO;
     }
 
+    //새로운 채팅방 생성
     @Override
     public void insertChatRoom(ChatRoom chatRoom) {
         chatRoomDAO.insertChatRoom(chatRoom);
-    }
-
-    @Override
-    public Optional<ChatRoom> findByProductIdAndBuyerId(Long productId, Long buyerId) {
-        return chatRoomDAO.findByProductIdAndBuyerId(productId, buyerId);
     }
 
     @Override
@@ -38,4 +35,12 @@ public class MySQLChatRoomRepository implements ChatRoomRepository {
     public List<ChatRoom> findAllByUser(Long id) {
         return chatRoomDAO.findAllByUser(id);
     }
+
+    //채팅룸 찾기
+    @Override
+    public Optional<ChatRoom> findByProductAndUsers(Long productId, Long buyerId) {
+        return chatRoomDAO.findByProductAndUsers(productId, buyerId);
+    }
+
+
 }

@@ -11,7 +11,9 @@ import java.util.Optional;
 
 @Mapper
 public interface ChatRoomDAO {
-    @Insert("INSERT INTO chat_room (product_id, buyer_id, seller_id, created_at) VALUES (#{productId}, #{buyerId}, #{sellerId}, NOW())")
+    @Insert("INSERT INTO chat_room (product_id, buyer_id, seller_id, created_at) " +
+            "VALUES (#{productId}, #{buyerId}, #{sellerId}, NOW())")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     void insertChatRoom(ChatRoom chatRoom);
 
     @Select("SELECT * FROM chat_room WHERE product_id = #{productId} AND buyer_id = #{buyerId}")
@@ -27,7 +29,8 @@ public interface ChatRoomDAO {
             @Result(property = "product", column = "product_id", javaType = Product.class,
                     one = @One(select = "miniproject.carrotmarket1.dao.MySQL.ProductDAO.findById"))
     })
-    Optional<ChatRoom> findByProductIdAndBuyerId(@Param("productId") Long productId, @Param("buyerId") Long buyerId);
+    Optional<ChatRoom> findByProductAndUsers(@Param("productId") Long productId,
+                                             @Param("buyerId") Long buyerId);
 
     @Select("SELECT * FROM chat_room WHERE id = #{id}")
     @Results({
@@ -58,4 +61,7 @@ public interface ChatRoomDAO {
                     one = @One(select = "miniproject.carrotmarket1.dao.MySQL.ProductDAO.findById"))
     })
     List<ChatRoom> findAllByUser(@Param("userId")Long id);
+
+
+
 }

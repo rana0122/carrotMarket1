@@ -20,6 +20,6 @@ public class User {
     private String profileImage;
     private Timestamp createdAt;
     private String userGroup;
-    private String firebaseUid;
+    private String locked_yn;
     private Double radiusKm;
 }

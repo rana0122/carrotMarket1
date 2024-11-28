@@ -34,4 +34,10 @@ public class MySQLProductRepository implements ProductRepository {
     public List<Product> findProductsByConditions(Long category) {
         return productDAO.findProductsByConditions(category);
     }
+
+    //ID로 상품 상세 조회
+    @Override
+    public Product findById(Long productId) {
+        return productDAO.findById(productId);
+    }
 }

@@ -5,11 +5,11 @@ import miniproject.carrotmarket1.entity.ChatRoom;
 import miniproject.carrotmarket1.entity.User;
 import miniproject.carrotmarket1.service.ChatRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +21,7 @@ public class ChatController {
 
     @Autowired
     public ChatController(ChatRoomService chatRoomService) {
+
         this.chatRoomService = chatRoomService;
     }
 
@@ -34,20 +35,22 @@ public class ChatController {
     }
 
     // 특정 상품에 대한 채팅룸 생성
-//    @PostMapping("/chatroom/create/{productId}")
-//    public String createChatRoom(@PathVariable Long productId, @RequestParam Long buyerId, @RequestParam Long sellerId) {
-//        ChatRoom chatRoom = chatRoomService.createChatRoom(productId, buyerId, sellerId);
-//        return "redirect:/chatroom/" + chatRoom.getId();
-//    }
-//sample code
-//    http://localhost:8080/chatroom/create?productId=2&buyerId=1009&sellerId=1002
-    @GetMapping("/chatroom/create")
-    public String createChatRoom(
-            @RequestParam Long productId,
-            @RequestParam Long buyerId,
-            @RequestParam Long sellerId) {
-        ChatRoom chatRoom = chatRoomService.createChatRoom(productId, buyerId, sellerId);
-        return "redirect:/chatroom/" + chatRoom.getId();
+    @PostMapping("/chatroom/create")
+    public String createChatRoom(@RequestParam Long productId,
+                                 @RequestParam Long sellerId,
+                                 HttpSession session,
+                                 Model model) {
+        // 로그인한 사용자 확인
+        User buyer = (User) session.getAttribute("loggedInUser");
+        if (buyer == null) {
+            model.addAttribute("errorMessage", "로그인이 필요합니다.");
+            return "redirect:/login"; // 로그인 페이지로 리다이렉트
+        }
+
+        // 채팅방 생성
+        ChatRoom chatRoom = chatRoomService.createChatRoom(productId, sellerId, buyer.getId());
+        // 생성된 채팅방으로 리다이렉트
+        return "redirect:/chatroom/" + chatRoom.getId().toString();
     }
 
     //채팅룸 입장
