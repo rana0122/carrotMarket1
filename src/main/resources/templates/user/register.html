@@ -194,13 +194,21 @@
 
     // 이메일 중복 가입 체크
     function checkEmail() {
-        const email = document.getElementById('registerEmail').value;
+        const email = document.getElementById('registerEmail').value.trim();
         const emailError = document.getElementById('emailError');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        if (email.trim() === "") {
+        if (email === "") {
             emailError.textContent = "이메일을 입력하세요.";
             return;
         }
+
+        if (!emailRegex.test(email)) {
+            emailError.textContent = "올바른 이메일 형식이 아닙니다.";
+            return;
+        }
+
+        emailError.textContent = "확인 중...";
 
         $.ajax({
             url: '/check-email',
