@@ -53,8 +53,14 @@ public interface ReportDAO {
     @Update("UPDATE report SET status = #{status}, resolved_at = #{resolvedAt} WHERE id = #{id}")
     void updateReport(Report report);
 
-    List<Report> findFilteredReports(@Param("startDate") String startDate,
-                                     @Param("endDate") String endDate,
-                                     @Param("status") String status);
 
+    List<Report> findFilteredReportsWithPagination(@Param("startDate") String startDate,
+                                                   @Param("endDate") String endDate,
+                                                   @Param("status") String status,
+                                                   @Param("size") int size,
+                                                   @Param("offset") int offset);
+
+    long countFilteredReports(@Param("startDate") String startDate,
+                              @Param("endDate") String endDate,
+                              @Param("status") String status);
 }

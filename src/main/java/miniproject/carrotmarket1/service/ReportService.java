@@ -3,7 +3,10 @@ package miniproject.carrotmarket1.service;
 import miniproject.carrotmarket1.dao.MySQL.ReportDAO;
 import miniproject.carrotmarket1.entity.Report;
 import miniproject.carrotmarket1.entity.ReportStatus;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,7 +64,13 @@ public class ReportService {
         }
     }
 
-    public List<Report> getFilteredReports(String startDate, String endDate, String status) {
-        return reportDAO.findFilteredReports(startDate, endDate, status);
+    //신고 목록 조회
+    public Page<Report> getFilteredReports(String startDate, String endDate, String status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        int offset = page * size;
+        List<Report> reports = reportDAO.findFilteredReportsWithPagination(startDate, endDate, status, size, offset);
+        long totalElements = reportDAO.countFilteredReports(startDate, endDate, status);
+
+        return new PageImpl<>(reports, pageable, totalElements);
     }
 }
