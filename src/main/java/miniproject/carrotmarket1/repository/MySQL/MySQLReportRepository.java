@@ -23,12 +23,14 @@ public class MySQLReportRepository implements ReportRepository {
     //신고 상세 조회
     @Override
     public Report getReportById(Long id) {
+
         return reportDAO.getReportById(id);
     }
 
     //신고 처리 상태 변경
     @Override
     public void updateReportStatus(Report report) {
+
         reportDAO.updateReportStatus(report);
     }
 

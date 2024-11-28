@@ -9,7 +9,11 @@ import java.util.List;
 public interface ReportDAO {
 
     //신고 목록 조회(필터 기능)-- xml의 동적 쿼리로 구현
-    List<Report> getReportList(String startDate, String endDate, String status);
+    List<Report> getReportList(
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate,
+            @Param("status") String status
+    );;
 
     //property = "reporter" -> Report엔티티에 있는 User reporter 가져온것
     //column = "reporter_id" -> MySQL root계정 report테이블에 있는 컬럼을 가져온것
