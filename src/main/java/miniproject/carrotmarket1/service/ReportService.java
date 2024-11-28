@@ -4,6 +4,10 @@ import lombok.RequiredArgsConstructor;
 import miniproject.carrotmarket1.entity.Report;
 import miniproject.carrotmarket1.entity.ReportStatus;
 import miniproject.carrotmarket1.repository.ReportRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -15,9 +19,17 @@ public class ReportService {
 
     private final ReportRepository reportRepository;
 
-    //신고 목록 조회(필터 기능)
-    public List<Report> getReportList(String startDate, String endDate, String status) {
-        return reportRepository.getReportList(startDate,endDate,status);
+    //신고 목록 조회(필터 기능, 페이징 기능)
+    public Page<Report> getReportListPagination(String startDate, String endDate, String status,int page, int size) {
+        //페이지 번호(page)와 페이지 크기(size) 설정
+        Pageable pageable = PageRequest.of(page, size);
+        //데이터의 시작 위치를 지정
+        int offset = page * size;
+        List<Report> report = reportRepository.getReportListPagination(startDate,endDate,status,size,offset);
+        long total = reportRepository.countFilterReports(startDate,endDate,status);
+        // new PageImpl<>(...)의 매개변수 순서는 중요
+        // 순서 : 리스트 데이터, 페이지 정보, 전체 데이터 수
+        return new PageImpl<>(report, pageable,total);
     }
 
     //신고 상세 조회
