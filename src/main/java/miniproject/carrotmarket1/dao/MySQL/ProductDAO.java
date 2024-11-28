@@ -29,10 +29,11 @@ public interface ProductDAO {
     // 판매중인 상품에 대한 게시글 목록 조회
     @Select("SELECT * FROM product WHERE status = 'AVAILABLE'")
     @Results({
+            @Result(property = "id", column = "id"),
             @Result(property = "user", column = "user_id", javaType = User.class,
                     one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
             @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")), // 경로 수정
             @Result(property = "images", column = "id", javaType = List.class,
                     many = @Many(select = "selectProductImagesByProductId"))
     })
@@ -41,10 +42,11 @@ public interface ProductDAO {
     //모든 상품에 대한 게시글 목록 조회
     @Select("SELECT * FROM product")
     @Results({
+            @Result(property = "id", column = "id"),
             @Result(property = "user", column = "user_id", javaType = User.class,
                     one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
             @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")), // 경로 수정
             @Result(property = "images", column = "id", javaType = List.class,
                     many = @Many(select = "selectProductImagesByProductId"))
     })
@@ -53,10 +55,12 @@ public interface ProductDAO {
     //게시글 상세조회
     @Select("SELECT * FROM product WHERE id = #{id}")
     @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "userId", column = "user_id"),
             @Result(property = "user", column = "user_id", javaType = User.class,
                     one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
             @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")), // 경로 수정
             @Result(property = "images", column = "id", javaType = List.class,
                     many = @Many(select = "selectProductImagesByProductId"))
     })
@@ -67,4 +71,6 @@ public interface ProductDAO {
     @Select("SELECT * FROM product_image WHERE product_id = #{id}")
     List<ProductImage> selectProductImagesByProductId(Long id);
 
+    //xml 연동 테스트
+    List<Product> findProductsByConditions( @Param("category") Long category);
 }

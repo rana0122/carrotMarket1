@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.ibatis.type.Alias;
 
 import java.sql.Timestamp;
 @Data
@@ -17,7 +18,7 @@ public class Report {
     private Long categoryId;
     private Long adminId;
     private String details;
-    private String status;
+    private ReportStatus status;
     private Timestamp createdAt;
     private Timestamp resolvedAt;
 

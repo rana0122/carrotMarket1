@@ -34,10 +34,12 @@ public class UserService {
         }
         return null;
     }
+
     //로그인 시 사용자 위치 정보  update
     public void updateUserLocation(Long userId, Double latitude, Double longitude, String location) {
         userRepository.updateLocation(userId, latitude, longitude, location);
     }
+
     //프로필 수정시 사용
     public User getLoggedInUser(HttpSession session) {
         // 세션에서 로그인된 사용자 정보 가져오기
@@ -78,6 +80,7 @@ public class UserService {
             userRepository.updateUser(user); // 기존 사용자 업데이트
         }
     }
+
     // 프로필 이미지 저장 메소드
     private String saveProfileImage(MultipartFile profileImageFile, User user) throws IOException {
 
@@ -90,7 +93,7 @@ public class UserService {
 
         String fileExtension = profileImageFile.getOriginalFilename()
                 .substring(profileImageFile.getOriginalFilename().lastIndexOf("."));
-        String fileName = user.getEmail() +fileExtension;
+        String fileName = user.getEmail() + fileExtension;
 
         Path filePath = uploadPath.resolve(fileName);
 
@@ -104,8 +107,14 @@ public class UserService {
 
         return "/profileImages/" + fileName;  // 저장된 파일 경로 반환
     }
+
     public boolean emailExists(String email) {
 
         return userRepository.findByEmail(email) != null;
+    }
+
+    // USER 조회 By Id
+    public User findById(Long id) {
+        return userRepository.selectById(id);
     }
 }

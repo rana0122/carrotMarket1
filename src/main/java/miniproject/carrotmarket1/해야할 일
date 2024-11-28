@@ -1,0 +1,49 @@
+report- edit 페이지
+
+신고 ID 필요 x
+-> (이메일)님의 신고로 출력(reporter_id 컬럼 활용)
+user테이블의 이메일 출력
+지금 report.id로 되어 있는데 이메일로 출력되게 바꿔주기
+
+
+상품 ID
+-> 상품 이름 출력 product테이블의 title 활용
+
+신고자 ID
+
+
+카테고리
+-> category테이블의 name 출력
+
+
+
+
+
+
+
+list 페이지
+
+ID 빼기
+
+신고자 ->
+user테이블의 이메일 출력
+
+상품 Id->
+상품 이름 출력 product테이블의 title 활용
+
+카테고리
+-> category테이블의 name 출력
+
+오른쪽 위의 버튼
+all -> 전체
+pending -> 처리중
+resolved -> 완료
+
+
+기간별 조회 기능 추가
+-> 내가 하고 싶은 위치에 만들기
+
+
+
+11/28
+--- 목록 페이징 처리 ---
