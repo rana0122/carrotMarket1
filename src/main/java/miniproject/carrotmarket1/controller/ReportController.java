@@ -4,15 +4,17 @@ import lombok.RequiredArgsConstructor;
 import miniproject.carrotmarket1.entity.Report;
 import miniproject.carrotmarket1.entity.ReportStatus;
 import miniproject.carrotmarket1.service.ReportService;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-//./gradlew clean build -> 원래 있던 내용 청소하고 다시 빌드하는 거
-//                          (파일을 아예 통으로 다시 끼웟을 때 보통사용)
+
 
 @Controller
 @RequestMapping("/admin")
@@ -21,15 +23,26 @@ public class ReportController {
     private final ReportService reportService;
     //신고 목록 조회 (필터 기능)
     @GetMapping("/reports")
-    public String getReportList(Model model,
+    public String getReportListPagination(Model model,
                                 @RequestParam(required = false) String startDate,
                                 @RequestParam(required = false) String endDate,
-                                @RequestParam(required = false) String status)
+                                @RequestParam(required = false) String status,
+                                @RequestParam(defaultValue = "0") int page,
+                                @RequestParam(defaultValue = "10") int size)
     {
-        List<Report> reports = reportService.getReportList(startDate, endDate, status);
-        model.addAttribute("reports", reports);
+        Page<Report> reports = reportService.getReportListPagination(startDate, endDate, status,page,size);
+        model.addAttribute("reports", reports); // 보고서 데이터
+        model.addAttribute("page", reports); // 페이지 정보
         //<select>에 매핑할 ReportStatus(Enum) 상수 값 전달
         model.addAttribute("statusList", ReportStatus.values());
+
+        //NULL값이 포함될 수 있으므로 필터를 조건부로 추가
+        Map<String, String> currentFilters = new HashMap<>();
+        currentFilters.put("startDate", startDate != null ? startDate : "");
+        currentFilters.put("endDate", endDate != null ? endDate : "");
+        currentFilters.put("status", status != null ? status : "");
+        model.addAttribute("currentFilters", currentFilters);
+
         return "reports/report-list";
     }
 
@@ -49,7 +62,6 @@ public class ReportController {
         reportService.updateReportStatus(id, status);
         return "redirect:/admin/reports";
     }
-
 
 
 }
