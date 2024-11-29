@@ -163,9 +163,9 @@
                 </div>
 
                 <!-- 글쓰기 버튼 -->
-                <a href="/products/write" class="write-btn">
-                    게시글 작성하기
-                </a>
+                <th:block th:if="${session.loggedInUser!=null}">
+                    <a th:href="@{/products/write}" class="btn btn-orange w-100">게시글 작성하기</a>
+                </th:block>
             </div>
 
             <!-- 상품 목록 (한 줄에 4개씩) -->
@@ -174,13 +174,13 @@
                 <div class="row row-cols-1 row-cols-md-4">
                     <div class="col mb-4" th:each="item, itemStat : ${products}">
                         <div class="card">
-<!--                            <img th:src="${item.images[0]}" class="card-img-top" alt="상품 이미지">-->
+                            <!--                            <img th:src="${item.images[0]}" class="card-img-top" alt="상품 이미지">-->
                             <div class="carousel slide" data-ride="carousel" th:id="'carouselExampleControls' + ${itemStat.index}">
                                 <div class="carousel-inner">
-<!--                                    <div th:each="image, stat : ${item.images}" th:classappend="${stat.first} ? 'active'">-->
+                                    <!--                                    <div th:each="image, stat : ${item.images}" th:classappend="${stat.first} ? 'active'">-->
                                     <div th:each="image, stat : ${item.images}" th:classappend="${stat.first} ? 'active' : ''" class="carousel-item">
 
-                                    <!--                                        <img th:src="${image}" class="d-block w-100" alt="상품 이미지">-->
+                                        <!--                                        <img th:src="${image}" class="d-block w-100" alt="상품 이미지">-->
                                         <img th:src="${image.imageUrl}" class="d-block w-100 card-img-top" alt="상품 이미지">
                                     </div>
                                 </div>
