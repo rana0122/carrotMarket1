@@ -191,11 +191,28 @@ public class ProductService {
             }
         }
     }
+    //기존 카테고리 검색시 사용
     public List<Product> findByCategoryId(Long categoryId) {
         return productRepository.findByCategoryId(categoryId);
     }
 
+    //기존 카테고리 검색시 사용
     public List<Product> findAvailableByCategoryId(Long categoryId) {
-        return productRepository.findAvailableByCategoryId(categoryId);
+        return null;
+    }
+
+    // 카테고리 및 검색어로 상품 조회
+    public List<Product> findByCategoryAndKeyword(Long categoryId, String keyword) {
+        return productRepository.findByCategoryAndTitleContainingIgnoreCase(categoryId, keyword);
+    }
+
+    // 검색어로 판매 중인 상품 조회
+    public List<Product> findAvailableByKeyword(String keyword) {
+        return productRepository.findAvailableByTitleContainingIgnoreCase(keyword);
+    }
+
+    // 검색어로 모든 상품 조회
+    public List<Product> findAllByKeyword(String keyword) {
+        return productRepository.findAllByTitleContainingIgnoreCase(keyword);
     }
 }

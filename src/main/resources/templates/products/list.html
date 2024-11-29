@@ -12,9 +12,17 @@
         body { background-color: #f8f9fa; }
         .card { border: none; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: 0.3s; }
         .card:hover { box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); }
-        .btn-orange { background-color: #ff8a3d; color: white; border: none;margin-top: 10px; /* 버튼과 카테고리 간격 조정 */
+        .btn-orange {
+            background-color: #ff8a3d;
+            color: white;
+            border: none;
+            /* margin-top 제거 */
         }
-        .btn-orange:hover { background-color: #e6762d; color: white; }
+        .btn-orange:hover {
+            background-color: #e6762d;
+            color: white;
+        }
+
         /* 카드 크기 고정 */
         .card {
             width: 12rem; /* 카드의 너비 고정 */
@@ -117,6 +125,19 @@
             background-color: #ff8534;
             color: white;
         }
+        .input-group .form-control,
+        .input-group .btn-orange {
+            border-radius: 0 !important;
+        }
+        .input-group .form-control {
+            border-right: 0;
+        }
+        .input-group .btn-orange {
+            border-left: 0;
+        }
+        .input-group .input-group-append .btn {
+            margin: 0; /* 버튼에 여분의 마진 제거 */
+        }
     </style>
 
 </head>
@@ -161,6 +182,14 @@
                        th:classappend="${selectedCategoryId != null && selectedCategoryId == category.id} ? 'active' : ''">
                     </a>
                 </div>
+                <form action="/products" method="get" class="mb-4">
+                    <div class="input-group">
+                        <input type="text" name="keyword" class="form-control" placeholder="검색어를 입력하세요" th:value="${keyword != null} ? ${keyword} : ''">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-orange">검색</button>
+                        </div>
+                    </div>
+                </form>
 
                 <!-- 글쓰기 버튼 -->
                 <th:block th:if="${session.loggedInUser!=null}">

@@ -22,7 +22,14 @@ public interface ProductRepository {
     
     //게시글 수정
     void updateProduct(Product existingProduct);
+
     List<Product> findByCategoryId(Long categoryId);
 
     List<Product> findAvailableByCategoryId(Long categoryId);
+
+    List<Product> findAllByTitleContainingIgnoreCase(String keyword);
+
+    List<Product> findAvailableByTitleContainingIgnoreCase(String keyword);
+
+    List<Product> findByCategoryAndTitleContainingIgnoreCase(Long categoryId, String keyword);
 }

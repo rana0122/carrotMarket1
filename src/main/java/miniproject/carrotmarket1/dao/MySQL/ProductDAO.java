@@ -101,4 +101,40 @@ public interface ProductDAO {
                     many = @Many(select = "selectProductImagesByProductId"))
     })
     List<Product> findAvailableByCategoryId(Long categoryId);
+
+    @Select("SELECT * FROM product WHERE title LIKE CONCAT('%', #{keyword}, '%')")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId"))
+    })
+    List<Product> findAllByTitleContainingIgnoreCase(String keyword);
+
+    @Select("SELECT * FROM product WHERE title LIKE CONCAT('%', #{keyword}, '%') AND status = 'SALE'")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId"))
+    })
+    List<Product> findAvailableByTitleContainingIgnoreCase(String keyword);
+
+    @Select("SELECT * FROM product WHERE category_id = #{categoryId} AND title LIKE CONCAT('%', #{keyword}, '%')")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId"))
+    })
+    List<Product> findByCategoryAndTitleContainingIgnoreCase(@Param("categoryId") Long categoryId, @Param("keyword") String keyword);
 }

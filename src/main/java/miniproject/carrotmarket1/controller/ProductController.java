@@ -33,6 +33,51 @@ public class ProductController {
     }
 
     //상품 목록 페이지
+    @GetMapping
+    public String listAllProducts(
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false, defaultValue = "ALL") String status,
+            @RequestParam(required = false) String keyword,
+            Model model) {
+
+        // 모든 카테고리 로드
+        List<Category> categories = categoryService.findAll();
+        model.addAttribute("categories", categories);
+        model.addAttribute("status", status);
+        model.addAttribute("keyword", keyword);
+
+        List<Product> products;
+
+        // 카테고리와 상태에 따른 상품 필터링
+        if (categoryId != null) {
+            Category selectedCategory = categoryService.findById(categoryId);
+            model.addAttribute("selectedCategory", selectedCategory);
+            model.addAttribute("selectedCategoryId", categoryId);
+
+            if ("SALE".equals(status)) {
+                products = (keyword != null && !keyword.isEmpty())
+                        ? productService.findByCategoryAndKeyword(categoryId, keyword)
+                        : productService.findAvailableByCategoryId(categoryId);
+            } else {
+                products = (keyword != null && !keyword.isEmpty())
+                        ? productService.findByCategoryAndKeyword(categoryId, keyword)
+                        : productService.findByCategoryId(categoryId);
+            }
+        } else {
+            if ("SALE".equals(status)) {
+                products = (keyword != null && !keyword.isEmpty())
+                        ? productService.findAvailableByKeyword(keyword)
+                        : productService.findAvailableItems();
+            } else {
+                products = (keyword != null && !keyword.isEmpty())
+                        ? productService.findAllByKeyword(keyword)
+                        : productService.findAll();
+            }
+        }
+
+        model.addAttribute("products", products);
+        return "products/list";
+    }
 
     //상품 목록 상세조회
     @GetMapping("/detail/{id}")
@@ -120,40 +165,6 @@ public class ProductController {
     }
 
 
-    @GetMapping
-    public String listAllProducts(
-            @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false, defaultValue = "ALL") String status,
-            Model model) {
 
-        // 모든 카테고리 로드
-        List<Category> categories = categoryService.findAll();
-        model.addAttribute("categories", categories);
-        model.addAttribute("status", status);
-
-        List<Product> products;
-
-        // 카테고리와 상태에 따른 상품 필터링
-        if (categoryId != null) {
-            Category selectedCategory = categoryService.findById(categoryId);
-            model.addAttribute("selectedCategory", selectedCategory);
-            model.addAttribute("selectedCategoryId", categoryId);
-
-            if ("SALE".equals(status)) {
-                products = productService.findAvailableByCategoryId(categoryId);
-            } else {
-                products = productService.findByCategoryId(categoryId);
-            }
-        } else {
-            if ("SALE".equals(status)) {
-                products = productService.findAvailableItems();
-            } else {
-                products = productService.findAll();
-            }
-        }
-
-        model.addAttribute("products", products);
-        return "products/list";
-    }
 
 }
