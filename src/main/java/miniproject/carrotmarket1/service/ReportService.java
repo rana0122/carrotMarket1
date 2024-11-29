@@ -20,13 +20,20 @@ public class ReportService {
     private final ReportRepository reportRepository;
 
     //신고 목록 조회(필터 기능, 페이징 기능)
-    public Page<Report> getReportListPagination(String startDate, String endDate, String status,int page, int size) {
+    public Page<Report> getReportListPagination(String startDate,
+                                                String endDate,
+                                                String status,
+                                                int page,
+                                                int size,
+                                                String tag,
+                                                String search) {
         //페이지 번호(page)와 페이지 크기(size) 설정
         Pageable pageable = PageRequest.of(page, size);
         //데이터의 시작 위치를 지정
         int offset = page * size;
-        List<Report> report = reportRepository.getReportListPagination(startDate,endDate,status,size,offset);
+        List<Report> report = reportRepository.getReportListPagination(startDate,endDate,status,size,offset,tag,search);
         long total = reportRepository.countFilterReports(startDate,endDate,status);
+
         // new PageImpl<>(...)의 매개변수 순서는 중요
         // 순서 : 리스트 데이터, 페이지 정보, 전체 데이터 수
         return new PageImpl<>(report, pageable,total);

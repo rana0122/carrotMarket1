@@ -115,6 +115,15 @@
         <!-- 조회 조건 폼 -->
         <form th:action="@{/admin/reports}" th:method="get" class="filter-form">
             <div>
+                <select id="tag" name="tag" class="input-select">
+                    <option th:value="email">이메일</option>
+                    <option th:value="title">상품명</option>
+                    <option th:value="name">이름</option>
+                </select>
+                <input type="text" name="search" />
+
+            </div>
+            <div>
                 <label for="startDate">시작 날짜:</label>
                 <input type="date" id="startDate" name="startDate" class="input-date">
 
@@ -124,7 +133,9 @@
                 <label for="status">상태:</label>
                 <select id="status" name="status" class="input-select">
                     <option value="">전체</option>
-                    <option th:each="stat : ${statusList}" th:value="${stat.name()}" th:text="${stat.displayName}"></option>
+                    <option th:each="stat : ${statusList}"
+                            th:value="${stat.name()}"
+                            th:text="${stat.displayName}"></option>
                 </select>
 
                 <button type="submit" class="btn">조회</button>
@@ -137,10 +148,11 @@
         <thead>
         <tr>
             <th>신고자</th>
-            <th>상품 ID</th>
+            <th>상품명</th>
             <th>카테고리</th>
             <th>상태</th>
             <th>신고일</th>
+
             <th>수정</th>
         </tr>
         </thead>
@@ -156,12 +168,29 @@
                         </span>
             </td>
             <td th:text="${#dates.format(report.createdAt, 'yyyy-MM-dd')}"></td>
+
             <td>
                 <a th:href="@{'/admin/reports/' + ${report.id}}" class="btn">수정</a>
             </td>
         </tr>
         </tbody>
     </table>
+
+        <!--검색 기능-->
+        <!--<form th:action="@{/admin/reports}" th:method="get" class="search">
+            <div>
+                <select id="tag" name="tag" class="input-select">
+                    <option th:value="email">이메일</option>
+                    <option th:value="title">상품명</option>
+                    <option th:value="name">이름</option>
+                </select>
+                <input type="text" name="search" /> <input type="submit" value="검색">
+
+            </div>
+        </form>-->
+
+
+
         <div class="pagination" style="display: flex; justify-content: center; margin-top: 20px;">
             <ul class="pagination" style="list-style: none; display: flex; gap: 10px;">
                 <li th:if="${page.hasPrevious()}" style="display: inline-block;">
