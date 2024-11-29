@@ -191,4 +191,11 @@ public class ProductService {
             }
         }
     }
+    public List<Product> findByCategoryId(Long categoryId) {
+        return productRepository.findByCategoryId(categoryId);
+    }
+
+    public List<Product> findAvailableByCategoryId(Long categoryId) {
+        return productRepository.findAvailableByCategoryId(categoryId);
+    }
 }

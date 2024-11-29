@@ -11,6 +11,9 @@ import java.util.List;
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    public Category findById(Long categoryId) {
+        return categoryRepository.findById(categoryId);
+    }
 
     @Autowired
     public CategoryService(CategoryRepository categoryRepository) {
