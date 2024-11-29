@@ -12,6 +12,7 @@ import java.util.List;
 public class MySQLProductRepository implements ProductRepository {
 
     private final ProductDAO productDAO;
+
     @Autowired
     public MySQLProductRepository(ProductDAO productDAO) {
         this.productDAO = productDAO;
@@ -51,5 +52,13 @@ public class MySQLProductRepository implements ProductRepository {
     @Override
     public void updateProduct(Product product) {
         productDAO.updateProduct(product);
+    }
+
+    public List<Product> findByCategoryId(Long categoryId) {
+        return productDAO.findByCategoryId(categoryId);
+    }
+
+    public List<Product> findAvailableByCategoryId(Long categoryId) {
+        return productDAO.findAvailableByCategoryId(categoryId);
     }
 }

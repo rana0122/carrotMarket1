@@ -27,13 +27,13 @@ public interface ProductDAO {
 
 
     // 판매중인 상품에 대한 게시글 목록 조회
-    @Select("SELECT * FROM product WHERE status = 'AVAILABLE'")
+    @Select("SELECT * FROM product WHERE status = 'SALE'")
     @Results({
             @Result(property = "id", column = "id"),
             @Result(property = "user", column = "user_id", javaType = User.class,
                     one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
             @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")), // 경로 수정
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
             @Result(property = "images", column = "id", javaType = List.class,
                     many = @Many(select = "selectProductImagesByProductId"))
     })
@@ -78,4 +78,27 @@ public interface ProductDAO {
     @Update("UPDATE product SET title = #{title}, description = #{description}, " +
             "price = #{price}, category_id = #{categoryId} WHERE id = #{id}")
     void updateProduct(Product product);
+    @Select("SELECT * FROM product WHERE category_id = #{categoryId}")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId"))
+    })
+    List<Product> findByCategoryId(Long categoryId);
+
+    @Select("SELECT * FROM product WHERE category_id = #{categoryId} AND status = 'SALE'")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId"))
+    })
+    List<Product> findAvailableByCategoryId(Long categoryId);
 }
