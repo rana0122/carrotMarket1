@@ -41,14 +41,12 @@ public class ProductController {
     //상품 목록 상세조회
     @GetMapping("/detail/{id}")
     public String showProduct(Model model, @PathVariable Long id, HttpSession session) {
+        //게시글 조회
         Product product = productService.findItemById(id);
+        //로그인 user  정보 조회
         User loggedInUser = (User) session.getAttribute("loggedInUser");
-
-
+        //판매자(게시글소유자) 정보 조회
         User user = userService.findById(product.getUserId());
-        //System.out.println("세션에 저장된 사용자: " + session.getAttribute("user"));
-        System.out.println("세션에 저장된 사용자: " + session.getAttribute("loggedInUser"));
-
 
         model.addAttribute("product", product);
         model.addAttribute("user", user);

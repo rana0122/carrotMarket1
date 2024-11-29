@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>상품 상세</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         .product-detail {
             display: flex;
@@ -56,8 +57,35 @@
         }
         .carousel-item img {
             width: 100%;
-            height: 400px;
+            height: 400px; /* 필요한 경우 */
             object-fit: contain;
+        }    /* 화살표 컨트롤 버튼의 크기와 위치 조정 */
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            width: 40px; /* 버튼 크기 */
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+            border-radius: 50%; /* 원형 버튼 */
+            background-size: 60%; /* 화살표 아이콘 크기 */
+        }
+
+        /* 버튼 hover 효과 */
+        .carousel-control-prev:hover .carousel-control-prev-icon,
+        .carousel-control-next:hover .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.8); /* hover 시 더 진한 배경 */
+        }
+
+        /* 버튼 위치 중앙 정렬 */
+        .carousel-control-prev,
+        .carousel-control-next {
+            top: 50%; /* 중앙 위치 */
+            transform: translateY(-50%);
+        }
+
+        /* 화살표 버튼의 z-index를 높여 다른 요소보다 위에 표시 */
+        .carousel-control-prev,
+        .carousel-control-next {
+            z-index: 5;
         }
         .footer {
             text-align: center;
@@ -73,29 +101,27 @@
 <div class="container mt-5">
     <div class="product-detail">
         <div class="product-image">
-            <div class="carousel slide" th:id="'carouselExampleControls' + ${product.id}" ride="carousel">
+            <div id="productCarousel" class="carousel slide">
                 <div class="carousel-inner">
+                    <!-- 이미지 순회 -->
                     <div class="carousel-item" th:each="image, stat : ${product.images}"
                          th:classappend="${stat.first} ? 'active' : ''">
                         <img th:src="${image.imageUrl}" class="d-block w-100" alt="상품 이미지">
                     </div>
                 </div>
-
-                <a class="carousel-control-prev"
-                   th:href="'#carouselExampleControls' + ${product.id}"
-                   role="button"
-                   slide="prev">
+                <!-- 이전 버튼 -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">이전</span>
-                </a>
-                <a class="carousel-control-next"
-                   th:href="'#carouselExampleControls' + ${product.id}"
-                   role="button"
-                   slide="next">
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <!-- 다음 버튼 -->
+                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">다음</span>
-                </a>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
+
+
         </div>
 
         <div class="product-info">
@@ -131,6 +157,22 @@
     </div>
 </div>
 </th:block>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- 페이지별 JavaScript -->
+<th:block layout:fragment="pageScript">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const carouselElement = document.querySelector('#productCarousel');
+            if (carouselElement) {
+                // 버튼 클릭으로만 이동하도록 설정 (Bootstrap 기본 동작)
+                new bootstrap.Carousel(carouselElement, {
+                    interval: false, // 자동 전환 비활성화
+                });
+            } else {
+                console.error('Carousel element not found!');
+            }
+        });
+
+    </script>
+</th:block>
 </body>
 </html>
