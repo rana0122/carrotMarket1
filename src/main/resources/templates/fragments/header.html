@@ -2,23 +2,29 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <a class="navbar-brand text-orange font-weight-bold" th:href="@{/}">당근마켓</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto align-items-center">
                     <!-- 로그인 버튼 -->
                     <li class="nav-item" th:if="${session.loggedInUser == null}">
-                        <button type="button" class="btn btn-outline-orange" data-toggle="modal" data-target="#loginModal">로그인</button>
+                        <button type="button" class="btn btn-outline-orange" data-toggle="modal"
+                                data-target="#loginModal">로그인
+                        </button>
                     </li>
                     <!-- 로그인된 사용자 정보 -->
                     <li class="nav-item d-flex align-items-center" th:if="${session.loggedInUser != null}">
-                        <a th:href="@{/edit-profile}" class="nav-link d-flex align-items-center text-decoration-none mr-3" data-bs-toggle="tooltip" title="마이페이지">
+                        <a th:href="@{/edit-profile}"
+                           class="nav-link d-flex align-items-center text-decoration-none mr-3" data-bs-toggle="tooltip"
+                           title="마이페이지">
                             <img th:if="${session.loggedInUser.profileImage != null}"
                                  th:src="${session.loggedInUser.profileImage}"
                                  alt="Profile Image" class="rounded-circle mr-2"
                                  style="width: 30px; height: 30px;">
-                            <span class="ml-1 font-weight-bold" th:text="${session.loggedInUser.username + ' 님 마이페이지'}"></span>
+                            <span class="ml-1 font-weight-bold"
+                                  th:text="${session.loggedInUser.username + ' 님 마이페이지'}"></span>
                         </a>
                         <a th:href="@{/logout}" class="btn btn-orange ml-3">로그아웃</a>
                         <a th:href="@{/chatroom}" class="nav-link d-flex align-items-center ml-3">
@@ -46,16 +52,20 @@
                     <form id="loginForm" action="/login" method="post">
                         <div class="form-group">
                             <label for="loginEmail">이메일</label>
-                            <input type="email" class="form-control" id="loginEmail" name="email" placeholder="이메일 입력" required>
+                            <input type="email" class="form-control" id="loginEmail" name="email" placeholder="이메일 입력"
+                                   required>
                         </div>
                         <div class="form-group">
                             <label for="loginPassword">비밀번호</label>
-                            <input type="password" class="form-control" id="loginPassword" name="password" placeholder="비밀번호 입력" required>
+                            <input type="password" class="form-control" id="loginPassword" name="password"
+                                   placeholder="비밀번호 입력" required>
                         </div>
                         <input type="hidden" id="loginLatitude" name="latitude">
                         <input type="hidden" id="loginLongitude" name="longitude">
                         <input type="hidden" id="loginLocation" name="location">
-                        <button type="submit" class="btn btn-orange btn-block" onclick="event.preventDefault(); getLocationAndSubmit();">로그인</button>
+                        <button type="submit" class="btn btn-orange btn-block"
+                                onclick="event.preventDefault(); getLocationAndSubmit();">로그인
+                        </button>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -122,8 +132,10 @@
                     alert("주소를 가져오는 중 오류가 발생했습니다.");
                 });
         }
+
         //로그인 체크(이메일 비번이 다른 경우 다시 로그인창으로 리다이렉트
         document.body.onload = checkLoginError;
+
         function checkLoginError() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('loginError')) {
@@ -132,6 +144,7 @@
                 document.getElementById('password').value = ''; // 비밀번호 필드 지우기
             }
         }
+
         window.getLocationAndSubmit = getLocationAndSubmit;
         window.convertLatLngToAddress = convertLatLngToAddress;
     </script>
