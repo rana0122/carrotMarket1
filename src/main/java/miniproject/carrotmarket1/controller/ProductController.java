@@ -38,6 +38,7 @@ public class ProductController {
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false, defaultValue = "ALL") String status,
             @RequestParam(required = false) String keyword,
+            HttpSession session,
             Model model) {
 
         // 모든 카테고리 로드
@@ -47,31 +48,65 @@ public class ProductController {
         model.addAttribute("keyword", keyword);
 
         List<Product> products;
+        // 세션에서 사용자 위치 정보 가져오기
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser != null && loggedInUser.getLatitude() != null && loggedInUser.getLongitude() != null) {
+            double userLatitude = loggedInUser.getLatitude();
+            double userLongitude = loggedInUser.getLongitude();
+            double radiusKm = 5.0; // 기본 반경 거리
 
-        // 카테고리와 상태에 따른 상품 필터링
-        if (categoryId != null) {
-            Category selectedCategory = categoryService.findById(categoryId);
-            model.addAttribute("selectedCategory", selectedCategory);
-            model.addAttribute("selectedCategoryId", categoryId);
+            // 필터 조건에 따라 반경 내 게시글 조회
+            if (categoryId != null) {
+                Category selectedCategory = categoryService.findById(categoryId);
+                model.addAttribute("selectedCategory", selectedCategory);
+                model.addAttribute("selectedCategoryId", categoryId);
 
-            if ("SALE".equals(status)) {
-                products = (keyword != null && !keyword.isEmpty())
-                        ? productService.findByCategoryAndKeyword(categoryId, keyword)
-                        : productService.findAvailableByCategoryId(categoryId);
+                if ("SALE".equals(status)) {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findProductsWithinRadiusByCategoryAndKeyword(userLatitude, userLongitude, radiusKm, categoryId, keyword)
+                            : productService.findAvailableProductsWithinRadiusByCategory(userLatitude, userLongitude, radiusKm, categoryId);
+                } else {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findProductsWithinRadiusByCategoryAndKeyword(userLatitude, userLongitude, radiusKm, categoryId, keyword)
+                            : productService.findProductsWithinRadiusByCategory(userLatitude, userLongitude, radiusKm, categoryId);
+                }
             } else {
-                products = (keyword != null && !keyword.isEmpty())
-                        ? productService.findByCategoryAndKeyword(categoryId, keyword)
-                        : productService.findByCategoryId(categoryId);
+                if ("SALE".equals(status)) {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findAvailableProductsWithinRadiusByKeyword(userLatitude, userLongitude, radiusKm, keyword)
+                            : productService.findAvailableProductsWithinRadius(userLatitude, userLongitude, radiusKm);
+                } else {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findProductsWithinRadiusByKeyword(userLatitude, userLongitude, radiusKm, keyword)
+                            : productService.findProductsWithinRadius(userLatitude, userLongitude, radiusKm);
+                }
             }
         } else {
-            if ("SALE".equals(status)) {
-                products = (keyword != null && !keyword.isEmpty())
-                        ? productService.findAvailableByKeyword(keyword)
-                        : productService.findAvailableItems();
+            // 기존 로직 사용
+            if (categoryId != null) {
+                Category selectedCategory = categoryService.findById(categoryId);
+                model.addAttribute("selectedCategory", selectedCategory);
+                model.addAttribute("selectedCategoryId", categoryId);
+
+                if ("SALE".equals(status)) {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findByCategoryAndKeyword(categoryId, keyword)
+                            : productService.findAvailableByCategoryId(categoryId);
+                } else {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findByCategoryAndKeyword(categoryId, keyword)
+                            : productService.findByCategoryId(categoryId);
+                }
             } else {
-                products = (keyword != null && !keyword.isEmpty())
-                        ? productService.findAllByKeyword(keyword)
-                        : productService.findAll();
+                if ("SALE".equals(status)) {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findAvailableByKeyword(keyword)
+                            : productService.findAvailableItems();
+                } else {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findAllByKeyword(keyword)
+                            : productService.findAll();
+                }
             }
         }
 

@@ -215,4 +215,32 @@ public class ProductService {
     public List<Product> findAllByKeyword(String keyword) {
         return productRepository.findAllByTitleContainingIgnoreCase(keyword);
     }
+    public List<Product> findProductsWithinRadiusByCategoryAndKeyword(double latitude, double longitude, double radiusKm, Long categoryId, String keyword) {
+        return productRepository.findProductsWithinRadiusByCategoryAndKeyword(latitude, longitude, radiusKm, categoryId, keyword);
+    }
+
+    public List<Product> findAvailableProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId) {
+        return productRepository.findAvailableProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId);
+    }
+
+    public List<Product> findAvailableProductsWithinRadius(double latitude, double longitude, double radiusKm) {
+        return productRepository.findAvailableProductsWithinRadius(latitude, longitude, radiusKm);
+    }
+
+    public List<Product> findProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword) {
+        return productRepository.findProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword);
+    }
+    public List<Product> findProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId) {
+        return productRepository.findProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId);
+    }
+
+    public List<Product> findAvailableProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword) {
+        return productRepository.findAvailableProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword);
+    }
+
+    public List<Product> findProductsWithinRadius(double latitude, double longitude, double radiusKm) {
+        return productRepository.findProductsWithinRadius(latitude, longitude, radiusKm);
+    }
+
+
 }

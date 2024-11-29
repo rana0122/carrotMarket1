@@ -137,4 +137,191 @@ public interface ProductDAO {
                     many = @Many(select = "selectProductImagesByProductId"))
     })
     List<Product> findByCategoryAndTitleContainingIgnoreCase(@Param("categoryId") Long categoryId, @Param("keyword") String keyword);
+
+    @Select("""
+    SELECT *, (
+        6371 * acos(
+            cos(radians(#{latitude})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(#{longitude})) +
+            sin(radians(#{latitude})) * sin(radians(latitude))
+        )
+    ) AS distance
+    FROM product
+    WHERE category_id = #{categoryId}
+    HAVING distance <= #{radiusKm}
+    ORDER BY distance
+""")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId"))
+    })
+    List<Product> findProductsWithinRadiusByCategory(@Param("latitude") double latitude,
+                                                     @Param("longitude") double longitude,
+                                                     @Param("radiusKm") double radiusKm,
+                                                     @Param("categoryId") Long categoryId);
+
+    @Select("""
+    SELECT *, (
+        6371 * acos(
+            cos(radians(#{latitude})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(#{longitude})) +
+            sin(radians(#{latitude})) * sin(radians(latitude))
+        )
+    ) AS distance
+    FROM product
+    WHERE title LIKE CONCAT('%', #{keyword}, '%') AND status = 'SALE'
+    HAVING distance <= #{radiusKm}
+    ORDER BY distance
+""")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId"))
+    })
+    List<Product> findAvailableProductsWithinRadiusByKeyword(@Param("latitude") double latitude,
+                                                             @Param("longitude") double longitude,
+                                                             @Param("radiusKm") double radiusKm,
+                                                             @Param("keyword") String keyword);
+
+    @Select("""
+    SELECT *, (
+        6371 * acos(
+            cos(radians(#{latitude})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(#{longitude})) +
+            sin(radians(#{latitude})) * sin(radians(latitude))
+        )
+    ) AS distance
+    FROM product
+    HAVING distance <= #{radiusKm}
+    ORDER BY distance
+""")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId"))
+    })
+    List<Product> findProductsWithinRadius(@Param("latitude") double latitude,
+                                           @Param("longitude") double longitude,
+                                           @Param("radiusKm") double radiusKm);
+    @Select("""
+    SELECT *, (
+        6371 * acos(
+            cos(radians(#{latitude})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(#{longitude})) +
+            sin(radians(#{latitude})) * sin(radians(latitude))
+        )
+    ) AS distance
+    FROM product
+    WHERE category_id = #{categoryId} AND title LIKE CONCAT('%', #{keyword}, '%')
+    HAVING distance <= #{radiusKm}
+    ORDER BY distance
+""")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId"))
+    })
+    List<Product> findProductsWithinRadiusByCategoryAndKeyword(@Param("latitude") double latitude,
+                                                               @Param("longitude") double longitude,
+                                                               @Param("radiusKm") double radiusKm,
+                                                               @Param("categoryId") Long categoryId,
+                                                               @Param("keyword") String keyword);
+
+    @Select("""
+    SELECT *, (
+        6371 * acos(
+            cos(radians(#{latitude})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(#{longitude})) +
+            sin(radians(#{latitude})) * sin(radians(latitude))
+        )
+    ) AS distance
+    FROM product
+    WHERE category_id = #{categoryId} AND status = 'SALE'
+    HAVING distance <= #{radiusKm}
+    ORDER BY distance
+""")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId"))
+    })
+    List<Product> findAvailableProductsWithinRadiusByCategory(@Param("latitude") double latitude,
+                                                              @Param("longitude") double longitude,
+                                                              @Param("radiusKm") double radiusKm,
+                                                              @Param("categoryId") Long categoryId);
+
+    @Select("""
+    SELECT *, (
+        6371 * acos(
+            cos(radians(#{latitude})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(#{longitude})) +
+            sin(radians(#{latitude})) * sin(radians(latitude))
+        )
+    ) AS distance
+    FROM product
+    WHERE status = 'SALE'
+    HAVING distance <= #{radiusKm}
+    ORDER BY distance
+""")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId"))
+    })
+    List<Product> findAvailableProductsWithinRadius(@Param("latitude") double latitude,
+                                                    @Param("longitude") double longitude,
+                                                    @Param("radiusKm") double radiusKm);
+
+    @Select("""
+    SELECT *, (
+        6371 * acos(
+            cos(radians(#{latitude})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(#{longitude})) +
+            sin(radians(#{latitude})) * sin(radians(latitude))
+        )
+    ) AS distance
+    FROM product
+    WHERE title LIKE CONCAT('%', #{keyword}, '%')
+    HAVING distance <= #{radiusKm}
+    ORDER BY distance
+""")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId"))
+    })
+    List<Product> findProductsWithinRadiusByKeyword(@Param("latitude") double latitude,
+                                                    @Param("longitude") double longitude,
+                                                    @Param("radiusKm") double radiusKm,
+                                                    @Param("keyword") String keyword);
+
 }

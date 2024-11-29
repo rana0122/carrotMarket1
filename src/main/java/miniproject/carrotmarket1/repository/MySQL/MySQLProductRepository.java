@@ -75,4 +75,40 @@ public class MySQLProductRepository implements ProductRepository {
     public List<Product> findByCategoryAndTitleContainingIgnoreCase(Long categoryId, String keyword) {
         return productDAO.findByCategoryAndTitleContainingIgnoreCase(categoryId, keyword);
     }
+
+    @Override
+    public List<Product> findProductsWithinRadiusByCategoryAndKeyword(double latitude, double longitude, double radiusKm, Long categoryId, String keyword) {
+        return productDAO.findProductsWithinRadiusByCategoryAndKeyword(latitude, longitude, radiusKm, categoryId, keyword);
+    }
+
+    @Override
+    public List<Product> findAvailableProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId) {
+        return productDAO.findAvailableProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId);
+    }
+
+    @Override
+    public List<Product> findAvailableProductsWithinRadius(double latitude, double longitude, double radiusKm) {
+        return productDAO.findAvailableProductsWithinRadius(latitude, longitude, radiusKm);
+    }
+
+    @Override
+    public List<Product> findProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword) {
+        return productDAO.findProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword);
+    }
+    @Override
+    public List<Product> findProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId) {
+        return productDAO.findProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId);
+    }
+
+    @Override
+    public List<Product> findAvailableProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword) {
+        return productDAO.findAvailableProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword);
+    }
+
+    @Override
+    public List<Product> findProductsWithinRadius(double latitude, double longitude, double radiusKm) {
+        return productDAO.findProductsWithinRadius(latitude, longitude, radiusKm);
+    }
+
+
 }

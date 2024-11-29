@@ -32,4 +32,13 @@ public interface ProductRepository {
     List<Product> findAvailableByTitleContainingIgnoreCase(String keyword);
 
     List<Product> findByCategoryAndTitleContainingIgnoreCase(Long categoryId, String keyword);
+
+    List<Product> findProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId);
+    List<Product> findAvailableProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword);
+    List<Product> findProductsWithinRadius(double latitude, double longitude, double radiusKm);
+    List<Product> findProductsWithinRadiusByCategoryAndKeyword(double latitude, double longitude, double radiusKm, Long categoryId, String keyword);
+    List<Product> findAvailableProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId);
+    List<Product> findAvailableProductsWithinRadius(double latitude, double longitude, double radiusKm);
+    List<Product> findProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword);
+
 }
