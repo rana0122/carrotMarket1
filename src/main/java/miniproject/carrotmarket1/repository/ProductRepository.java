@@ -16,4 +16,6 @@ public interface ProductRepository {
 
     //ID로 상품 상세 조회
     Product findById(Long productId);
+
+    void insertProduct(Product product);
 }

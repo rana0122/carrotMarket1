@@ -40,4 +40,10 @@ public class MySQLProductRepository implements ProductRepository {
     public Product findById(Long productId) {
         return productDAO.findById(productId);
     }
+
+    //게시글 저장
+    @Override
+    public void insertProduct(Product product) {
+        productDAO.insertProduct(product);
+    }
 }
