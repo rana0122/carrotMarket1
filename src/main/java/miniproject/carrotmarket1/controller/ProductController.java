@@ -33,15 +33,7 @@ public class ProductController {
     }
 
     //상품 목록 페이지
-    @GetMapping
-    public String listAllProducts(Model model) {
-        List<Product> products = productService.findAll();
-        Long categoryId= 1L;
-        //xml 연동 테스트
-        List<Product> productsFiltered = productService.findAvailableItemsByCategory(categoryId);
-        model.addAttribute("products", products);
-        return "products/list";
-    }
+
     //상품 목록 상세조회
     @GetMapping("/detail/{id}")
     public String showProduct(Model model, @PathVariable Long id, HttpSession session) {
@@ -125,6 +117,43 @@ public class ProductController {
 
         productService.updateProductWithImages(id, product, newImages, deleteImageIds);
         return "redirect:/products/detail/" + id;
+    }
+
+
+    @GetMapping
+    public String listAllProducts(
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false, defaultValue = "ALL") String status,
+            Model model) {
+
+        // 모든 카테고리 로드
+        List<Category> categories = categoryService.findAll();
+        model.addAttribute("categories", categories);
+        model.addAttribute("status", status);
+
+        List<Product> products;
+
+        // 카테고리와 상태에 따른 상품 필터링
+        if (categoryId != null) {
+            Category selectedCategory = categoryService.findById(categoryId);
+            model.addAttribute("selectedCategory", selectedCategory);
+            model.addAttribute("selectedCategoryId", categoryId);
+
+            if ("SALE".equals(status)) {
+                products = productService.findAvailableByCategoryId(categoryId);
+            } else {
+                products = productService.findByCategoryId(categoryId);
+            }
+        } else {
+            if ("SALE".equals(status)) {
+                products = productService.findAvailableItems();
+            } else {
+                products = productService.findAll();
+            }
+        }
+
+        model.addAttribute("products", products);
+        return "products/list";
     }
 
 }

@@ -22,4 +22,7 @@ public interface ProductRepository {
     
     //게시글 수정
     void updateProduct(Product existingProduct);
+    List<Product> findByCategoryId(Long categoryId);
+
+    List<Product> findAvailableByCategoryId(Long categoryId);
 }

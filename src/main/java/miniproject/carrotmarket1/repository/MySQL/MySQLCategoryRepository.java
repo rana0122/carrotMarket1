@@ -25,4 +25,8 @@ public class MySQLCategoryRepository implements CategoryRepository {
     public List<Category> selectByCategoryId(Long id) {
         return categoryDAO.selectByCategoryId(id);
     }
+    public Category findById(Long categoryId){
+        return categoryDAO.findById(categoryId);
+    }
+
 }
