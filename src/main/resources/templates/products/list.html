@@ -12,7 +12,8 @@
         body { background-color: #f8f9fa; }
         .card { border: none; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: 0.3s; }
         .card:hover { box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); }
-        .btn-orange { background-color: #ff8a3d; color: white; border: none; }
+        .btn-orange { background-color: #ff8a3d; color: white; border: none;margin-top: 10px; /* 버튼과 카테고리 간격 조정 */
+        }
         .btn-orange:hover { background-color: #e6762d; color: white; }
         /* 카드 크기 고정 */
         .card {
@@ -32,6 +33,9 @@
         .card-body {
             height: 60px; /* 카드 본문의 높이 유지 (기존과 동일) */
         }
+        .list-group {
+            width: 100%; /* 카테고리의 너비를 버튼과 맞춤 */
+        }
     </style>
 
 </head>
@@ -44,27 +48,34 @@
             <!-- 왼쪽 사이드바 -->
             <div class="col-md-3">
                 <h5>카테고리</h5>
-                <ul class="list-group">
-                    <li class="list-group-item">전자기기</li>
-                    <li class="list-group-item">의류</li>
-                    <li class="list-group-item">가구/인테리어</li>
-                    <li class="list-group-item">스포츠/레저</li>
-                    <li class="list-group-item">도서</li>
-                </ul>
+                <div class="d-flex flex-column align-items-start">
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item">전자기기</li>
+                        <li class="list-group-item">의류</li>
+                        <li class="list-group-item">가구/인테리어</li>
+                        <li class="list-group-item">스포츠/레저</li>
+                        <li class="list-group-item">도서</li>
+                    </ul>
+                    <!-- 게시글 작성 페이지로 이동하는 버튼 -->
+                    <th:block th:if="${session.loggedInUser!=null}">
+                        <a th:href="@{/products/write}" class="btn btn-orange w-100">게시글 작성하기</a>
+                    </th:block>
+                </div>
             </div>
+
             <!-- 상품 목록 (한 줄에 4개씩) -->
             <div class="col-md-9">
                 <h5>근처의 인기 상품</h5>
                 <div class="row row-cols-1 row-cols-md-4">
                     <div class="col mb-4" th:each="item, itemStat : ${products}">
                         <div class="card">
-<!--                            <img th:src="${item.images[0]}" class="card-img-top" alt="상품 이미지">-->
+                            <!--                            <img th:src="${item.images[0]}" class="card-img-top" alt="상품 이미지">-->
                             <div class="carousel slide" data-ride="carousel" th:id="'carouselExampleControls' + ${itemStat.index}">
                                 <div class="carousel-inner">
-<!--                                    <div th:each="image, stat : ${item.images}" th:classappend="${stat.first} ? 'active'">-->
+                                    <!--                                    <div th:each="image, stat : ${item.images}" th:classappend="${stat.first} ? 'active'">-->
                                     <div th:each="image, stat : ${item.images}" th:classappend="${stat.first} ? 'active' : ''" class="carousel-item">
 
-                                    <!--                                        <img th:src="${image}" class="d-block w-100" alt="상품 이미지">-->
+                                        <!--                                        <img th:src="${image}" class="d-block w-100" alt="상품 이미지">-->
                                         <img th:src="${image.imageUrl}" class="d-block w-100 card-img-top" alt="상품 이미지">
                                     </div>
                                 </div>
@@ -81,6 +92,7 @@
                                 <h6 class="card-title" th:text="${item.title}">상품명</h6>
                                 <p class="card-text text-muted" th:text="'₩ ' + ${item.price}">가격</p>
                                 <a th:href="@{'/products/detail/' + ${item.id}}" class="btn btn-orange btn-block">자세히 보기</a>
+
                             </div>
                         </div>
                     </div>

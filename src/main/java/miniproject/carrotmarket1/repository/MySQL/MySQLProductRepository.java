@@ -28,4 +28,28 @@ public class MySQLProductRepository implements ProductRepository {
 
         return productDAO.findAvailableItems();
     }
+
+    //xml 연동 테스트
+    @Override
+    public List<Product> findProductsByConditions(Long category) {
+        return productDAO.findProductsByConditions(category);
+    }
+
+    //ID로 상품 상세 조회
+    @Override
+    public Product findById(Long productId) {
+        return productDAO.findById(productId);
+    }
+
+    //게시글 저장
+    @Override
+    public void insertProduct(Product product) {
+        productDAO.insertProduct(product);
+    }
+
+    //게시글 수정
+    @Override
+    public void updateProduct(Product product) {
+        productDAO.updateProduct(product);
+    }
 }

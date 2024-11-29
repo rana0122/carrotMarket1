@@ -15,7 +15,4 @@ public class ProductImage {
     private Long productId;
     private String imageUrl;
     private Timestamp uploadedAt;
-
-    // Product 객체 관계 매핑
-    private Product product;
 }
