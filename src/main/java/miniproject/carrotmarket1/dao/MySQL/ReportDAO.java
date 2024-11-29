@@ -13,7 +13,9 @@ public interface ReportDAO {
                                          @Param("endDate") String endDate,
                                          @Param("status") String status,
                                          @Param("size") int size,
-                                         @Param("offset") int offset);
+                                         @Param("offset") int offset,
+                                         @Param("tag") String tag,
+                                         @Param("search") String search);
 
     //신고 목록 조회(필터 기능)-- xml의 동적 쿼리로 구현
     long countFilterReports(@Param("startDate") String startDate,
