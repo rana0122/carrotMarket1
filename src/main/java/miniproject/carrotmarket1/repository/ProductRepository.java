@@ -17,5 +17,9 @@ public interface ProductRepository {
     //ID로 상품 상세 조회
     Product findById(Long productId);
 
+    //게시글 생성
     void insertProduct(Product product);
+    
+    //게시글 수정
+    void updateProduct(Product existingProduct);
 }

@@ -110,8 +110,85 @@ public class ProductService {
         }
     }
 
+    // 모든 카테고리 조회
     public List<Category> getAllCategories() {
-        // 모든 카테고리 조회
         return categoryRepository.findAll();
+    }
+
+    //게시글 수정
+    @Transactional
+    public void updateProductWithImages(Long id, Product updatedProduct,
+                                        List<MultipartFile> newImages,
+                                        List<Long> deleteImageIds) throws IOException {
+        Product existingProduct = findItemById(id);
+        if (existingProduct == null) {
+            throw new RuntimeException("Product not found");
+        }
+
+        // 기본 정보 업데이트
+        existingProduct.setTitle(updatedProduct.getTitle());
+        existingProduct.setDescription(updatedProduct.getDescription());
+        existingProduct.setPrice(updatedProduct.getPrice());
+        existingProduct.setCategoryId(updatedProduct.getCategoryId());
+
+        productRepository.updateProduct(existingProduct);
+
+        // 이미지 삭제 처리
+        if (deleteImageIds != null && !deleteImageIds.isEmpty()) {
+            for (Long imageId : deleteImageIds) {
+                ProductImage image = productImageRepository.findById(imageId);
+                if (image != null && image.getProductId().equals(id)) {  // 상품 ID 확인 추가
+                    // 실제 파일 삭제
+                    if (image.getImageUrl() != null) {
+                        String fileName = image.getImageUrl().substring(image.getImageUrl().lastIndexOf("/") + 1);
+                        Path filePath = Paths.get(uploadDir).resolve(fileName);
+                        try {
+                            Files.deleteIfExists(filePath);
+                        } catch (IOException e) {
+                            // 파일 삭제 실패 로깅
+                            e.printStackTrace();
+                        }
+                    }
+
+                    // DB에서 삭제
+                    productImageRepository.deleteById(imageId);
+                }
+            }
+        }
+
+        // 새 이미지 추가
+        if (newImages != null && !newImages.isEmpty()) {
+            Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            for (MultipartFile imageFile : newImages) {
+                if (!imageFile.isEmpty()) {
+                    // 새 이미지 엔티티 생성
+                    ProductImage productImage = ProductImage.builder()
+                            .productId(id)
+                            .uploadedAt(new Timestamp(System.currentTimeMillis()))
+                            .build();
+
+                    // DB에 이미지 정보 저장
+                    productImageRepository.insertProductImage(productImage);
+
+                    // 파일 이름 생성 및 저장
+                    String originalFilename = imageFile.getOriginalFilename();
+                    String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                    String fileName = productImage.getId() + "_" + id + fileExtension;
+
+                    // 파일 저장
+                    Path filePath = uploadPath.resolve(fileName);
+                    Files.copy(imageFile.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
+                    // 이미지 URL 업데이트
+                    productImage.setImageUrl("/itemimages/" + fileName);
+                    productImageRepository.updateProductImage(productImage);
+                }
+            }
+        }
     }
 }

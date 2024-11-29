@@ -46,4 +46,10 @@ public class MySQLProductRepository implements ProductRepository {
     public void insertProduct(Product product) {
         productDAO.insertProduct(product);
     }
+
+    //게시글 수정
+    @Override
+    public void updateProduct(Product product) {
+        productDAO.updateProduct(product);
+    }
 }

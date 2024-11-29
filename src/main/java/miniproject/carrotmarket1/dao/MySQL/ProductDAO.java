@@ -73,4 +73,9 @@ public interface ProductDAO {
 
     //xml 연동 테스트
     List<Product> findProductsByConditions( @Param("category") Long category);
+
+    //게시글 수정
+    @Update("UPDATE product SET title = #{title}, description = #{description}, " +
+            "price = #{price}, category_id = #{categoryId} WHERE id = #{id}")
+    void updateProduct(Product product);
 }

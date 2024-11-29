@@ -87,4 +87,44 @@ public class ProductController {
 
         return "redirect:/products";
     }
+
+    //게시글 수정 페이지
+    @GetMapping("/edit/{id}")
+    public String showEditPage(@PathVariable Long id, Model model, HttpSession session) {
+        Product product = productService.findItemById(id);
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+
+        if (!product.getUserId().equals(loggedInUser.getId())) {
+            return "redirect:/products";
+        }
+
+        List<Category> categories = categoryService.findAll();
+        model.addAttribute("category", categories);
+        model.addAttribute("product", product);
+        return "products/edit";
+    }
+
+    //게시글 수정 저장
+    @PostMapping("/update/{id}")
+    public String updateProduct(@PathVariable Long id,
+                                @ModelAttribute Product product,
+                                @RequestParam(value = "productImages", required = false) List<MultipartFile> newImages,
+                                @RequestParam(value = "deleteImageIds", required = false) List<Long> deleteImageIds,
+                                HttpSession session) throws IOException {
+
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        Product existingProduct = productService.findItemById(id);
+
+        // 기존 상품이 없거나 로그인한 사용자가 상품 소유자가 아닌 경우
+        if (existingProduct == null || !existingProduct.getUserId().equals(loggedInUser.getId())) {
+            return "redirect:/products";
+        }
+
+        // 기존 상품의 userId를 유지
+        product.setUserId(existingProduct.getUserId());
+
+        productService.updateProductWithImages(id, product, newImages, deleteImageIds);
+        return "redirect:/products/detail/" + id;
+    }
+
 }

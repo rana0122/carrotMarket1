@@ -17,14 +17,26 @@ public class MySQLProductImageRepository implements ProductImageRepository {
         this.productImageDAO = productImageDAO;
     }
 
+    //게시글 이미지 생성
     public void insertProductImage(ProductImage productImage){
        productImageDAO.insertProductImage(productImage);
     }
 
+    //게시글 이미지 수정
     public void updateProductImage(ProductImage productImage){
-
         productImageDAO.updateProductImage(productImage);
+    }
 
+    //id로 게시글 이미지 조회
+    @Override
+    public ProductImage findById(Long id) {
+        return productImageDAO.findById(id);
+    }
+
+    //게시글 이미지 삭제
+    @Override
+    public void deleteById(Long id) {
+        productImageDAO.deleteById(id);
     }
 
 }
