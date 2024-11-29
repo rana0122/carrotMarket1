@@ -10,52 +10,8 @@
     .carousel {
       position: relative;
     }
-    .carousel-inner {
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    .carousel-item {
-      display: none;
-    }
-    .carousel-item.active {
-      display: block;
-    }
-    .carousel-item img {
-      width: 100%;
-      height: 300px;
-      object-fit: cover;
-    }
-    .btn-close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.5);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      cursor: pointer;
-    }
-    .carousel-nav {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    .carousel-nav button {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #ddd;
-      border: none;
-      cursor: pointer;
-    }
-    .carousel-nav button.active {
-      background: #666;
-    }
 
-    /* 수정된 부분: 이미지 미리보기 영역 스타일 */
+    /* 이미지 미리보기 영역 스타일 */
     .image-preview {
       display: flex;
       gap: 10px;
@@ -74,10 +30,19 @@
       object-fit: cover;
     }
 
-    .delete-checkbox {
-      text-align: center;
-      margin-top: 5px;
+    .delete-icon {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
     }
+
     .submit-btn {
       background-color: #ff8a3d;
       color: white;
@@ -101,31 +66,27 @@
           method="post" enctype="multipart/form-data">
 
       <div class="content-wrapper">
-        <div class="content-wrapper">
-          <div class="image-section">
-            <!-- 기존 이미지 표시 영역 -->
-            <div class="image-preview" th:if="${!#lists.isEmpty(product.images)}">
-              <div class="carousel">
-                <div th:each="image : ${product.images}" class="image-item">
-                  <img th:src="${image.imageUrl}" style="width: 100px; height: 100px;" />
-                  <div class="delete-checkbox">
-                    <input type="checkbox" name="deleteImageIds" th:value="${image.id}" /> 삭제
-                  </div>
-                </div>
+        <div class="image-section">
+          <!-- 기존 이미지 표시 영역 -->
+          <div class="image-preview" id="existingImagePreview" th:if="${!#lists.isEmpty(product.images)}">
+            <div th:each="image, iterStat : ${product.images}" class="image-item" th:id="${'image-' + iterStat.index}">
+              <img th:src="${image.imageUrl}" style="width: 100px; height: 100px;" />
+              <div class="delete-checkbox">
+                <button type="button" class="delete-icon"
+                        onclick="deleteExistingImage([[${iterStat.index}]])">X</button>
               </div>
-            </div>
-
-            <!-- 새 이미지 업로드 영역 -->
-            <div class="image-upload">
-              <p>이미지를 업로드해주세요</p>
-              <input type="file" name="productImages" multiple accept="image/*" />
             </div>
           </div>
 
+          <!-- 새 이미지 업로드 영역 -->
+          <div class="image-upload">
+            <p>이미지를 업로드해주세요</p>
+            <input type="file" id="imageInput" name="productImages" multiple accept="image/*"/>
+          </div>
+        </div>
+
         <div class="form-section">
-
           <div class="form-group">
-
             <label class="form-label">카테고리</label>
             <select id="category" name="categoryId" class="form-control" required>
               <option value="" disabled>카테고리를 선택하세요</option>
@@ -152,7 +113,6 @@
           </div>
 
           <button type="submit" class="submit-btn">등록하기</button>
-
         </div>
       </div>
     </form>
@@ -161,43 +121,48 @@
 
 <th:block layout:fragment="pageScript">
   <script>
-    function showSlide(index) {
-      const items = document.querySelectorAll('.carousel-item');
-      const navButtons = document.querySelectorAll('.carousel-nav button');
+    // 새 이미지 업로드 시 미리보기 추가
+    document.getElementById('imageInput').addEventListener('change', function (e) {
+      const existingImagePreview = document.getElementById('existingImagePreview');
 
-      items.forEach(item => item.classList.remove('active'));
-      navButtons.forEach(btn => btn.classList.remove('active'));
-
-      items[index].classList.add('active');
-      navButtons[index].classList.add('active');
-    }
-
-    function deleteImage(imageId) {
-      if (!confirm('이미지를 삭제하시겠습니까?')) return;
-
-      fetch(`/api/images/${imageId}`, {
-        method: 'DELETE'
-      }).then(response => {
-        if (response.ok) location.reload();
-      });
-    }
-
-    document.getElementById('imageInput').addEventListener('change', function(e) {
-      if (!e.target.files.length) return;
-
-      const formData = new FormData();
+      // 새로 업로드된 파일을 기존 이미지 표시 영역에 추가
       for (let file of e.target.files) {
-        formData.append('images', file);
-      }
+        const reader = new FileReader();
 
-      fetch(`/api/products/${productId}/images`, {
-        method: 'POST',
-        body: formData
-      }).then(response => response.json())
-              .then(() => location.reload());
+        reader.onload = function (event) {
+          const imgWrapper = document.createElement('div');
+          imgWrapper.classList.add('image-item');
+
+          const img = document.createElement('img');
+          img.src = event.target.result;
+          img.style.width = '100px';
+          img.style.height = '100px';
+          img.style.objectFit = 'cover';
+
+          const deleteButton = document.createElement('button');
+          deleteButton.classList.add('delete-icon');
+          deleteButton.textContent = 'X';
+          deleteButton.onclick = function () {
+            imgWrapper.remove();
+          };
+
+          imgWrapper.appendChild(img);
+          imgWrapper.appendChild(deleteButton);
+          existingImagePreview.appendChild(imgWrapper);
+        };
+
+        reader.readAsDataURL(file);
+      }
     });
+
+    // 기존 이미지 삭제 함수
+    function deleteExistingImage(index) {
+      const imageElement = document.getElementById('image-' + index);
+      if (imageElement) {
+        imageElement.remove();
+      }
+    }
   </script>
 </th:block>
 </body>
 </html>
-
