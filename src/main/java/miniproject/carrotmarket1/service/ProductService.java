@@ -130,6 +130,9 @@ public class ProductService {
         existingProduct.setDescription(updatedProduct.getDescription());
         existingProduct.setPrice(updatedProduct.getPrice());
         existingProduct.setCategoryId(updatedProduct.getCategoryId());
+        existingProduct.setLocation(updatedProduct.getLocation());
+        existingProduct.setLongitude(updatedProduct.getLongitude());
+        existingProduct.setLatitude(updatedProduct.getLatitude());
 
         productRepository.updateProduct(existingProduct);
 

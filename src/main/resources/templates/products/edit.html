@@ -225,6 +225,26 @@
             </div>
           </div>
 
+          <div class="form-group">
+            <label for="address">주소</label>
+            <input type="text" class="form-control" id="address" placeholder="주소를 입력하세요" oninput="searchAddress()">
+            <div id="addressList" class="list-group" style="max-height: 200px; overflow-y: auto;"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="location">위치</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="location" name="location" placeholder="현재 위치를 가져오세요" readonly>
+              <div class="input-group-append">
+                <button type="button" class="btn btn-outline-secondary" onclick="getCurrentLocation()">현재 위치 수집</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 숨겨진 위도와 경도 필드 -->
+          <input type="hidden" id="latitude" name="latitude">
+          <input type="hidden" id="longitude" name="longitude">
+
           <input type="hidden" name="deleteImageIds" id="deleteImageIds">
           <button type="submit" class="submit-btn">수정완료</button>
         </div>
@@ -234,6 +254,7 @@
 </div>
 
 <div layout:fragment="pageScript">
+<!--  <script th:src="'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoJavascriptKey} + '&libraries=services'"></script>-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.js"></script>
   <script th:inline="javascript">
     let swiper;
@@ -319,6 +340,91 @@
         alert('최소 1장의 이미지를 업로드해야 합니다.');
       }
     });
+    //========================구글 위치정보 수집========================//
+    // 사용자 위치 정보 수집 - 위도, 경도
+    function getCurrentLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(success, error);
+      } else {
+        alert("현재 위치 정보를 사용할 수 없습니다.");
+      }
+    }
+
+    function success(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      document.getElementById("latitude").value = latitude;
+      document.getElementById("longitude").value = longitude;
+      convertLatLngToAddress(latitude, longitude);
+    }
+
+    function error() {
+      alert("위치 정보를 가져오는 데 실패했습니다.");
+    }
+
+    // 위도와 경도를 주소로 변환하여 위치 필드에 설정
+    function convertLatLngToAddress(latitude, longitude) {
+      const url = `/get-address?latitude=${latitude}&longitude=${longitude}`;
+
+      $.getJSON(url, function(data) {
+        if (data.status === "OK" && data.results[0]) {
+          let address = data.results[0].formatted_address;
+          // "대한민국" 문자열 제거
+          address = address.replace("대한민국 ", ""); // "대한민국"과 그 뒤 공백을 제거
+          console.log("Converted Address: ", address);  // 주소 출력
+          document.getElementById("location").value = address;
+
+        } else {
+          alert("주소 변환에 실패했습니다.");
+        }
+      }).fail(function() {
+        alert("주소를 가져오는 중 오류가 발생했습니다.");
+      });
+    }
+    //========================Kakao 위치정보 수집========================//
+    // Kakao API 주소 검색 기능 추가 (REST API 호출)
+    function searchAddress() {
+      const query = document.getElementById('address').value;
+      if (!query) {
+        document.getElementById('addressList').innerHTML = '';
+        return;
+      }
+
+      // REST API를 호출하여 주소 검색
+      fetch(`/get-address-kakao?query=${encodeURIComponent(query)}`)
+              .then(response => response.json())
+              .then(data => {
+                if (data.documents) {
+                  const addressList = document.getElementById('addressList');
+                  addressList.innerHTML = '';
+
+                  data.documents.forEach(function(place) {
+                    const listItem = document.createElement('a');
+                    listItem.href = "#";
+                    listItem.className = 'list-group-item list-group-item-action';
+                    listItem.innerText = place.address_name;
+                    listItem.onclick = function() {
+                      selectAddress(place);
+                    };
+                    addressList.appendChild(listItem);
+                  });
+                }
+              })
+              .catch(error => {
+                console.error('Error fetching address:', error);
+                alert("주소를 가져오는 중 오류가 발생했습니다.");
+              });
+    }
+
+    // 주소 선택 시 위도, 경도 설정
+    function selectAddress(place) {
+      document.getElementById('address').value = place.address_name;
+      document.getElementById('location').value = place.address_name;
+      document.getElementById('latitude').value = place.y;
+      document.getElementById('longitude').value = place.x;
+      document.getElementById('addressList').innerHTML = ''; // 주소 리스트 초기화
+    }
 
     document.addEventListener('DOMContentLoaded', initializeSwiper);
   </script>

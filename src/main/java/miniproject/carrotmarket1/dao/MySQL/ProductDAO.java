@@ -76,6 +76,7 @@ public interface ProductDAO {
 
     //게시글 수정
     @Update("UPDATE product SET title = #{title}, description = #{description}, " +
+            "location = #{location}, latitude = #{latitude}, longitude = #{longitude}, " +
             "price = #{price}, category_id = #{categoryId} WHERE id = #{id}")
     void updateProduct(Product product);
     @Select("SELECT * FROM product WHERE category_id = #{categoryId}")

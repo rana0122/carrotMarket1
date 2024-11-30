@@ -22,12 +22,6 @@ public class UserController {
     private final UserService userService;
     private final ServletContext servletContext;
 
-    // application.properties에 설정된 API 키를 가져옴
-    @Value("${google.api.key}")
-    private String apiKey;
-    // kakao 주소 api JavaScript 키 가져오기
-    @Value("${kakao.api.javascript.key}")
-    private String kakaoJavascriptKey;
     //profile upload folder
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -70,23 +64,7 @@ public class UserController {
         session.invalidate();
         return "redirect:/products";
     }
-    @GetMapping("/get-address")
-    @ResponseBody
-    public String getAddress(@RequestParam double latitude, @RequestParam double longitude) {
-        String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude + "&key=" + apiKey+ "&language=ko";
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.getForObject(url, String.class);
 
-    }
-    //입력받은 주소로 위도,경도 갱신하기.
-    @GetMapping("/get-latlng")
-    @ResponseBody
-    public String getLatLng(@RequestParam("address") String address) {
-        String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + apiKey;
-        RestTemplate restTemplate = new RestTemplate();
-        String response = restTemplate.getForObject(url, String.class);
-        return response; // API의 JSON 응답을 클라이언트에 반환
-    }
 
     //=================회원가입==========================//
     @GetMapping("/register")
@@ -124,8 +102,6 @@ public class UserController {
     public String editProfile(Model model, HttpSession session) {
         User user = userService.getLoggedInUser(session);
         model.addAttribute("user", user);
-        // Kakao JavaScript API 키를 모델에 추가
-        model.addAttribute("kakaoJavascriptKey", kakaoJavascriptKey);
         return "user/edit-profile";
     }
     // 프로필 업데이트
