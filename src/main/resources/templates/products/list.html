@@ -138,6 +138,50 @@
         .input-group .input-group-append .btn {
             margin: 0; /* 버튼에 여분의 마진 제거 */
         }
+        /* 페이지네이션 스타일 */
+        .pagination-custom {
+            padding: 0;
+        }
+
+        .pagination .page-item {
+            margin: 0 5px; /* 각 페이지 버튼 간의 간격 조정 */
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #ff8a3d; /* 당근마켓 오렌지 색상 */
+            border-color: #ff8a3d;
+            color: #fff;
+        }
+
+        .pagination .page-item .page-link {
+            color: #ff8a3d; /* 당근마켓 오렌지 색상 */
+            border: 1px solid #ff8a3d;
+            transition: all 0.3s ease; /* 부드러운 색상 전환 */
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #ddd;
+        }
+
+        .pagination .page-item .page-link:hover {
+            background-color: #ff8a3d; /* 버튼 마우스 오버 시 배경색 변경 */
+            color: #fff;
+        }
+
+        .page-link {
+            border-radius: 20px; /* 버튼을 둥글게 */
+            padding: 8px 12px; /* 버튼 크기 조정 */
+            text-align: center;
+        }
+
+        .page-link-orange {
+            color: #ff8a3d;
+        }
+
+        .page-link-orange:hover {
+            color: #fff;
+            background-color: #ff8a3d;
+        }
     </style>
 
 </head>
@@ -203,13 +247,10 @@
                 <div class="row row-cols-1 row-cols-md-4">
                     <div class="col mb-4" th:each="item, itemStat : ${products}">
                         <div class="card">
-                            <!--                            <img th:src="${item.images[0]}" class="card-img-top" alt="상품 이미지">-->
                             <div class="carousel slide" data-ride="carousel" th:id="'carouselExampleControls' + ${itemStat.index}">
                                 <div class="carousel-inner">
-                                    <!--                                    <div th:each="image, stat : ${item.images}" th:classappend="${stat.first} ? 'active'">-->
                                     <div th:each="image, stat : ${item.images}" th:classappend="${stat.first} ? 'active' : ''" class="carousel-item">
 
-                                        <!--                                        <img th:src="${image}" class="d-block w-100" alt="상품 이미지">-->
                                         <img th:src="${image.imageUrl}" class="d-block w-100 card-img-top" alt="상품 이미지">
                                     </div>
                                 </div>
@@ -231,6 +272,30 @@
                         </div>
                     </div>
                 </div>
+                <!-- 페이지네이션 버튼 -->
+                <nav aria-label="Page navigation" class="d-flex justify-content-end mt-4">
+                    <ul class="pagination pagination-custom">
+                        <!-- 이전 페이지 버튼 -->
+                        <li th:classappend="${products.hasPrevious()} ? 'page-item' : 'page-item disabled'">
+                            <a th:href="@{'/products'(page=${products.number - 1}, categoryId=${selectedCategoryId}, status=${status}, keyword=${keyword})}"
+                               class="page-link page-link-orange">이전</a>
+                        </li>
+
+                        <!-- 페이지 번호 버튼 -->
+                        <li th:each="page : ${#numbers.sequence(0, products.totalPages - 1)}"
+                            th:classappend="${page == products.number} ? 'page-item active' : 'page-item'">
+                            <a th:href="@{'/products'(page=${page}, categoryId=${selectedCategoryId}, status=${status}, keyword=${keyword})}"
+                               class="page-link page-link-orange" th:text="${page + 1}">1</a>
+                        </li>
+
+                        <!-- 다음 페이지 버튼 -->
+                        <li th:classappend="${products.hasNext()} ? 'page-item' : 'page-item disabled'">
+                            <a th:href="@{'/products'(page=${products.number + 1}, categoryId=${selectedCategoryId}, status=${status}, keyword=${keyword})}"
+                               class="page-link page-link-orange">다음</a>
+                        </li>
+                    </ul>
+                </nav>
+
             </div>
         </div>
     </div>

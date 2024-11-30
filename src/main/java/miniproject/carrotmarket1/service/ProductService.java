@@ -1,6 +1,5 @@
 package miniproject.carrotmarket1.service;
 
-import miniproject.carrotmarket1.dao.MySQL.ProductDAO;
 import miniproject.carrotmarket1.entity.Category;
 import miniproject.carrotmarket1.entity.Product;
 import miniproject.carrotmarket1.entity.ProductImage;
@@ -9,6 +8,8 @@ import miniproject.carrotmarket1.repository.ProductImageRepository;
 import miniproject.carrotmarket1.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,15 +40,6 @@ public class ProductService {
        this.categoryRepository = categoryRepository;
    }
 
-    //게시글 전체 목록 조회
-    public List<Product> findAll() {
-        return productRepository.findAll();
-    }
-
-    //판매중인 상품에 대한 게시글 목록 조회
-    public List<Product> findAvailableItems() {
-        return productRepository.findAvailableItems();
-    }
 
     //xml 연동 테스트
     public  List<Product> findAvailableItemsByCategory(Long category) {
@@ -194,55 +186,64 @@ public class ProductService {
             }
         }
     }
+    //게시글 전체 목록 조회
+    public Page<Product> findAll(Pageable pageable) {
+        return productRepository.findAll(pageable);
+    }
+
+    //판매중인 상품에 대한 게시글 목록 조회
+    public Page<Product> findAvailableItems(Pageable pageable) {
+        return productRepository.findAvailableItems(pageable);
+    }
     //기존 카테고리 검색시 사용
-    public List<Product> findByCategoryId(Long categoryId) {
-        return productRepository.findByCategoryId(categoryId);
+    public Page<Product> findByCategoryId(Long categoryId, Pageable pageable) {
+        return productRepository.findByCategoryId(categoryId, pageable);
     }
 
     //기존 카테고리 검색시 사용
-    public List<Product> findAvailableByCategoryId(Long categoryId) {
-        return null;
+    public Page<Product> findAvailableByCategoryId(Long categoryId, Pageable pageable) {
+        return productRepository.findAvailableByCategoryId(categoryId, pageable);
     }
 
     // 카테고리 및 검색어로 상품 조회
-    public List<Product> findByCategoryAndKeyword(Long categoryId, String keyword) {
-        return productRepository.findByCategoryAndTitleContainingIgnoreCase(categoryId, keyword);
+    public Page<Product> findByCategoryAndKeyword(Long categoryId, String keyword, Pageable pageable) {
+        return productRepository.findByCategoryAndTitleContainingIgnoreCase(categoryId, keyword, pageable);
     }
 
     // 검색어로 판매 중인 상품 조회
-    public List<Product> findAvailableByKeyword(String keyword) {
-        return productRepository.findAvailableByTitleContainingIgnoreCase(keyword);
+    public Page<Product> findAvailableByKeyword(String keyword, Pageable pageable) {
+        return productRepository.findAvailableByTitleContainingIgnoreCase(keyword, pageable);
     }
 
     // 검색어로 모든 상품 조회
-    public List<Product> findAllByKeyword(String keyword) {
-        return productRepository.findAllByTitleContainingIgnoreCase(keyword);
+    public Page<Product> findAllByKeyword(String keyword, Pageable pageable) {
+        return productRepository.findAllByTitleContainingIgnoreCase(keyword, pageable);
     }
-    public List<Product> findProductsWithinRadiusByCategoryAndKeyword(double latitude, double longitude, double radiusKm, Long categoryId, String keyword) {
-        return productRepository.findProductsWithinRadiusByCategoryAndKeyword(latitude, longitude, radiusKm, categoryId, keyword);
-    }
-
-    public List<Product> findAvailableProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId) {
-        return productRepository.findAvailableProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId);
+    public Page<Product> findProductsWithinRadiusByCategoryAndKeyword(double latitude, double longitude, double radiusKm, Long categoryId, String keyword, Pageable pageable) {
+        return productRepository.findProductsWithinRadiusByCategoryAndKeyword(latitude, longitude, radiusKm, categoryId, keyword, pageable);
     }
 
-    public List<Product> findAvailableProductsWithinRadius(double latitude, double longitude, double radiusKm) {
-        return productRepository.findAvailableProductsWithinRadius(latitude, longitude, radiusKm);
+    public Page<Product> findAvailableProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId, Pageable pageable) {
+        return productRepository.findAvailableProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId, pageable);
     }
 
-    public List<Product> findProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword) {
-        return productRepository.findProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword);
-    }
-    public List<Product> findProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId) {
-        return productRepository.findProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId);
+    public Page<Product> findAvailableProductsWithinRadius(double latitude, double longitude, double radiusKm, Pageable pageable) {
+        return productRepository.findAvailableProductsWithinRadius(latitude, longitude, radiusKm, pageable);
     }
 
-    public List<Product> findAvailableProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword) {
-        return productRepository.findAvailableProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword);
+    public Page<Product> findProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword, Pageable pageable) {
+        return productRepository.findProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword, pageable);
+    }
+    public Page<Product> findProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId, Pageable pageable) {
+        return productRepository.findProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId, pageable);
     }
 
-    public List<Product> findProductsWithinRadius(double latitude, double longitude, double radiusKm) {
-        return productRepository.findProductsWithinRadius(latitude, longitude, radiusKm);
+    public Page<Product> findAvailableProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword, Pageable pageable) {
+        return productRepository.findAvailableProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword,pageable);
+    }
+
+    public Page<Product> findProductsWithinRadius(double latitude, double longitude, double radiusKm, Pageable pageable) {
+        return productRepository.findProductsWithinRadius(latitude, longitude, radiusKm, pageable);
     }
 
 

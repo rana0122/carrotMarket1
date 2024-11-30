@@ -4,6 +4,9 @@ import miniproject.carrotmarket1.dao.MySQL.ProductDAO;
 import miniproject.carrotmarket1.entity.Product;
 import miniproject.carrotmarket1.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,18 +19,6 @@ public class MySQLProductRepository implements ProductRepository {
     @Autowired
     public MySQLProductRepository(ProductDAO productDAO) {
         this.productDAO = productDAO;
-    }
-
-    //게시글 전체 목록 조회
-    public List<Product> findAll() {
-
-        return productDAO.findAll();
-    }
-
-    //판매중인 상품에 대한 게시글 목록 조회
-    public List<Product> findAvailableItems() {
-
-        return productDAO.findAvailableItems();
     }
 
     //xml 연동 테스트
@@ -53,61 +44,99 @@ public class MySQLProductRepository implements ProductRepository {
     public void updateProduct(Product product) {
         productDAO.updateProduct(product);
     }
-
-    public List<Product> findByCategoryId(Long categoryId) {
-        return productDAO.findByCategoryId(categoryId);
+    //게시글 전체 목록 조회
+    public Page<Product> findAll(Pageable pageable) {
+        List<Product> products = productDAO.findAll(pageable.getPageSize(), (int) pageable.getOffset());
+        System.out.println("pageable.getPageSize() = " + pageable.getPageSize());
+        System.out.println("pageable.getOffset() = " + pageable.getOffset());
+        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
     }
 
-    public List<Product> findAvailableByCategoryId(Long categoryId) {
-        return productDAO.findAvailableByCategoryId(categoryId);
-    }
-    @Override
-    public List<Product> findAllByTitleContainingIgnoreCase(String keyword) {
-        return productDAO.findAllByTitleContainingIgnoreCase(keyword);
+    //판매중인 상품에 대한 게시글 목록 조회
+    public Page<Product> findAvailableItems(Pageable pageable) {
+        List<Product> products = productDAO.findAvailableItems(pageable.getPageSize(), (int) pageable.getOffset());
+        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
     }
 
-    @Override
-    public List<Product> findAvailableByTitleContainingIgnoreCase(String keyword) {
-        return productDAO.findAvailableByTitleContainingIgnoreCase(keyword);
+    public Page<Product> findByCategoryId(Long categoryId, Pageable pageable) {
+        List<Product> products =  productDAO.findByCategoryId(categoryId,pageable.getPageSize(), (int) pageable.getOffset());
+        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+
     }
 
+    public Page<Product> findAvailableByCategoryId(Long categoryId, Pageable pageable) {
+        List<Product> products =  productDAO.findAvailableByCategoryId(categoryId,pageable.getPageSize(), (int) pageable.getOffset());
+        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+
+    }
     @Override
-    public List<Product> findByCategoryAndTitleContainingIgnoreCase(Long categoryId, String keyword) {
-        return productDAO.findByCategoryAndTitleContainingIgnoreCase(categoryId, keyword);
+    public Page<Product> findAllByTitleContainingIgnoreCase(String keyword, Pageable pageable) {
+        List<Product> products =  productDAO.findAllByTitleContainingIgnoreCase(keyword,pageable.getPageSize(), (int) pageable.getOffset());
+        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+
     }
 
-    @Override
-    public List<Product> findProductsWithinRadiusByCategoryAndKeyword(double latitude, double longitude, double radiusKm, Long categoryId, String keyword) {
-        return productDAO.findProductsWithinRadiusByCategoryAndKeyword(latitude, longitude, radiusKm, categoryId, keyword);
-    }
 
     @Override
-    public List<Product> findAvailableProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId) {
-        return productDAO.findAvailableProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId);
-    }
+    public Page<Product> findAvailableByTitleContainingIgnoreCase(String keyword, Pageable pageable) {
+        List<Product> products =  productDAO.findAvailableByTitleContainingIgnoreCase(keyword,pageable.getPageSize(), (int) pageable.getOffset());
+        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
 
-    @Override
-    public List<Product> findAvailableProductsWithinRadius(double latitude, double longitude, double radiusKm) {
-        return productDAO.findAvailableProductsWithinRadius(latitude, longitude, radiusKm);
-    }
-
-    @Override
-    public List<Product> findProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword) {
-        return productDAO.findProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword);
-    }
-    @Override
-    public List<Product> findProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId) {
-        return productDAO.findProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId);
     }
 
     @Override
-    public List<Product> findAvailableProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword) {
-        return productDAO.findAvailableProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword);
+    public Page<Product> findByCategoryAndTitleContainingIgnoreCase(Long categoryId, String keyword, Pageable pageable) {
+        List<Product> products =  productDAO.findByCategoryAndTitleContainingIgnoreCase(categoryId, keyword,pageable.getPageSize(), (int) pageable.getOffset());
+        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+
     }
 
     @Override
-    public List<Product> findProductsWithinRadius(double latitude, double longitude, double radiusKm) {
-        return productDAO.findProductsWithinRadius(latitude, longitude, radiusKm);
+    public Page<Product> findProductsWithinRadiusByCategoryAndKeyword(double latitude, double longitude, double radiusKm, Long categoryId, String keyword, Pageable pageable) {
+        List<Product> products =  productDAO.findProductsWithinRadiusByCategoryAndKeyword(latitude, longitude, radiusKm, categoryId, keyword,pageable.getPageSize(), (int) pageable.getOffset());
+        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+
+    }
+
+    @Override
+    public Page<Product> findAvailableProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId, Pageable pageable) {
+        List<Product> products =  productDAO.findAvailableProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId,pageable.getPageSize(), (int) pageable.getOffset());
+        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+
+    }
+
+    @Override
+    public Page<Product> findAvailableProductsWithinRadius(double latitude, double longitude, double radiusKm, Pageable pageable) {
+        List<Product> products =  productDAO.findAvailableProductsWithinRadius(latitude, longitude, radiusKm,pageable.getPageSize(), (int) pageable.getOffset());
+        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+
+    }
+
+    @Override
+    public Page<Product> findProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword, Pageable pageable) {
+        List<Product> products =  productDAO.findProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword,pageable.getPageSize(), (int) pageable.getOffset());
+        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+
+    }
+    @Override
+    public Page<Product> findProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId, Pageable pageable) {
+        List<Product> products =  productDAO.findProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId,pageable.getPageSize(), (int) pageable.getOffset());
+        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+
+    }
+
+    @Override
+    public Page<Product> findAvailableProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword, Pageable pageable) {
+        List<Product> products =  productDAO.findAvailableProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword,pageable.getPageSize(), (int) pageable.getOffset());
+        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+
+    }
+
+    @Override
+    public Page<Product> findProductsWithinRadius(double latitude, double longitude, double radiusKm, Pageable pageable) {
+        List<Product> products =  productDAO.findProductsWithinRadius(latitude, longitude, radiusKm,pageable.getPageSize(), (int) pageable.getOffset());
+        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+
     }
 
 

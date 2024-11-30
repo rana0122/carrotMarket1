@@ -8,10 +8,13 @@ import miniproject.carrotmarket1.service.CategoryService;
 import miniproject.carrotmarket1.service.ProductService;
 import miniproject.carrotmarket1.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,6 +40,8 @@ public class ProductController {
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false, defaultValue = "ALL") String status,
             @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page, // 페이지 번호 추가
+            @RequestParam(defaultValue = "8") int size, // 한 페이지에 보여줄 아이템 수
             HttpSession session,
             Model model) {
 
@@ -46,7 +51,9 @@ public class ProductController {
         model.addAttribute("status", status);
         model.addAttribute("keyword", keyword);
 
-        List<Product> products;
+        Page<Product> products = null;
+        Pageable pageable = PageRequest.of(page, size);
+
         // 세션에서 사용자 위치 정보 가져오기
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser != null && loggedInUser.getLatitude() != null && loggedInUser.getLongitude() != null) {
@@ -62,22 +69,22 @@ public class ProductController {
 
                 if ("SALE".equals(status)) {
                     products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findProductsWithinRadiusByCategoryAndKeyword(userLatitude, userLongitude, radiusKm, categoryId, keyword)
-                            : productService.findAvailableProductsWithinRadiusByCategory(userLatitude, userLongitude, radiusKm, categoryId);
+                            ? productService.findProductsWithinRadiusByCategoryAndKeyword(userLatitude, userLongitude, radiusKm, categoryId, keyword, pageable)
+                            : productService.findAvailableProductsWithinRadiusByCategory(userLatitude, userLongitude, radiusKm, categoryId, pageable);
                 } else {
                     products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findProductsWithinRadiusByCategoryAndKeyword(userLatitude, userLongitude, radiusKm, categoryId, keyword)
-                            : productService.findProductsWithinRadiusByCategory(userLatitude, userLongitude, radiusKm, categoryId);
+                            ? productService.findProductsWithinRadiusByCategoryAndKeyword(userLatitude, userLongitude, radiusKm, categoryId, keyword, pageable)
+                            : productService.findProductsWithinRadiusByCategory(userLatitude, userLongitude, radiusKm, categoryId, pageable);
                 }
             } else {
                 if ("SALE".equals(status)) {
                     products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findAvailableProductsWithinRadiusByKeyword(userLatitude, userLongitude, radiusKm, keyword)
-                            : productService.findAvailableProductsWithinRadius(userLatitude, userLongitude, radiusKm);
+                            ? productService.findAvailableProductsWithinRadiusByKeyword(userLatitude, userLongitude, radiusKm, keyword, pageable)
+                            : productService.findAvailableProductsWithinRadius(userLatitude, userLongitude, radiusKm, pageable);
                 } else {
                     products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findProductsWithinRadiusByKeyword(userLatitude, userLongitude, radiusKm, keyword)
-                            : productService.findProductsWithinRadius(userLatitude, userLongitude, radiusKm);
+                            ? productService.findProductsWithinRadiusByKeyword(userLatitude, userLongitude, radiusKm, keyword, pageable)
+                            : productService.findProductsWithinRadius(userLatitude, userLongitude, radiusKm, pageable);
                 }
             }
         } else {
@@ -89,29 +96,30 @@ public class ProductController {
 
                 if ("SALE".equals(status)) {
                     products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findByCategoryAndKeyword(categoryId, keyword)
-                            : productService.findAvailableByCategoryId(categoryId);
+                            ? productService.findByCategoryAndKeyword(categoryId, keyword, pageable)
+                            : productService.findAvailableByCategoryId(categoryId, pageable);
                 } else {
                     products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findByCategoryAndKeyword(categoryId, keyword)
-                            : productService.findByCategoryId(categoryId);
+                            ? productService.findByCategoryAndKeyword(categoryId, keyword, pageable)
+                            : productService.findByCategoryId(categoryId, pageable);
                 }
             } else {
                 if ("SALE".equals(status)) {
                     products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findAvailableByKeyword(keyword)
-                            : productService.findAvailableItems();
+                            ? productService.findAvailableByKeyword(keyword, pageable)
+                            : productService.findAvailableItems(pageable);
                 } else {
                     products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findAllByKeyword(keyword)
-                            : productService.findAll();
+                            ? productService.findAllByKeyword(keyword, pageable)
+                            : productService.findAll(pageable);
                 }
             }
         }
-
+        System.out.println("총 페이지 수: " + products.getTotalPages());  // 로그 출력
         model.addAttribute("products", products);
         return "products/list";
     }
+
 
     //상품 목록 상세조회
     @GetMapping("/detail/{id}")
