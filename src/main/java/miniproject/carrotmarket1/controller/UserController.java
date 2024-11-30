@@ -20,16 +20,15 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-    private final ServletContext servletContext;
 
     //profile upload folder
     @Value("${file.upload-dir}")
     private String uploadDir;
 
     @Autowired
-    public UserController(UserService userService, ServletContext servletContext) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.servletContext = servletContext;
+
     }
 
     //========================로그인(위치정보 수집)===============================//
@@ -141,4 +140,5 @@ public class UserController {
         User loggedInUser = userService.getLoggedInUser(session);
         return loggedInUser != null && loggedInUser.getPassword().equals(currentPassword);
     }
+
 }
