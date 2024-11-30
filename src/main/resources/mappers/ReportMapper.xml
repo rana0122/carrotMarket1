@@ -32,7 +32,7 @@
                 and report.status = #{status}
             </if>
             <if test="tag == 'email' and search != ''">
-                and user.username like concat('%', #{search},'%')
+                and user.email like concat('%', #{search},'%')
             </if>
             <if test="tag == 'title' and search != ''">
                 and product.title like concat('%', #{search},'%')
