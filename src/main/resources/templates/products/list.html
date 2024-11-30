@@ -273,6 +273,7 @@
                     </div>
                 </div>
                 <!-- 페이지네이션 버튼 -->
+                <th:block th:if="${products.size > 0}">
                 <nav aria-label="Page navigation" class="d-flex justify-content-end mt-4">
                     <ul class="pagination pagination-custom">
                         <!-- 이전 페이지 버튼 -->
@@ -295,6 +296,7 @@
                         </li>
                     </ul>
                 </nav>
+                </th:block>
 
             </div>
         </div>

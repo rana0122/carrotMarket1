@@ -115,7 +115,6 @@ public class ProductController {
                 }
             }
         }
-        System.out.println("총 페이지 수: " + products.getTotalPages());  // 로그 출력
         model.addAttribute("products", products);
         return "products/list";
     }

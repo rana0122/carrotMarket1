@@ -47,32 +47,65 @@ public class MySQLProductRepository implements ProductRepository {
     //게시글 전체 목록 조회
     public Page<Product> findAll(Pageable pageable) {
         List<Product> products = productDAO.findAll(pageable.getPageSize(), (int) pageable.getOffset());
-        System.out.println("pageable.getPageSize() = " + pageable.getPageSize());
-        System.out.println("pageable.getOffset() = " + pageable.getOffset());
-        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+
+        return new PageImpl<>(products, pageable, totalCount);
     }
 
     //판매중인 상품에 대한 게시글 목록 조회
     public Page<Product> findAvailableItems(Pageable pageable) {
         List<Product> products = productDAO.findAvailableItems(pageable.getPageSize(), (int) pageable.getOffset());
-        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+
+        return new PageImpl<>(products, pageable, totalCount);
     }
 
     public Page<Product> findByCategoryId(Long categoryId, Pageable pageable) {
         List<Product> products =  productDAO.findByCategoryId(categoryId,pageable.getPageSize(), (int) pageable.getOffset());
-        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+
+        return new PageImpl<>(products, pageable, totalCount);
 
     }
 
     public Page<Product> findAvailableByCategoryId(Long categoryId, Pageable pageable) {
         List<Product> products =  productDAO.findAvailableByCategoryId(categoryId,pageable.getPageSize(), (int) pageable.getOffset());
-        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+
+        return new PageImpl<>(products, pageable, totalCount);
 
     }
     @Override
     public Page<Product> findAllByTitleContainingIgnoreCase(String keyword, Pageable pageable) {
         List<Product> products =  productDAO.findAllByTitleContainingIgnoreCase(keyword,pageable.getPageSize(), (int) pageable.getOffset());
-        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+
+        return new PageImpl<>(products, pageable, totalCount);
 
     }
 
@@ -80,62 +113,122 @@ public class MySQLProductRepository implements ProductRepository {
     @Override
     public Page<Product> findAvailableByTitleContainingIgnoreCase(String keyword, Pageable pageable) {
         List<Product> products =  productDAO.findAvailableByTitleContainingIgnoreCase(keyword,pageable.getPageSize(), (int) pageable.getOffset());
-        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+
+        return new PageImpl<>(products, pageable, totalCount);
 
     }
 
     @Override
     public Page<Product> findByCategoryAndTitleContainingIgnoreCase(Long categoryId, String keyword, Pageable pageable) {
         List<Product> products =  productDAO.findByCategoryAndTitleContainingIgnoreCase(categoryId, keyword,pageable.getPageSize(), (int) pageable.getOffset());
-        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+
+        return new PageImpl<>(products, pageable, totalCount);
 
     }
 
     @Override
     public Page<Product> findProductsWithinRadiusByCategoryAndKeyword(double latitude, double longitude, double radiusKm, Long categoryId, String keyword, Pageable pageable) {
         List<Product> products =  productDAO.findProductsWithinRadiusByCategoryAndKeyword(latitude, longitude, radiusKm, categoryId, keyword,pageable.getPageSize(), (int) pageable.getOffset());
-        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+
+        return new PageImpl<>(products, pageable, totalCount);
 
     }
 
     @Override
     public Page<Product> findAvailableProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId, Pageable pageable) {
         List<Product> products =  productDAO.findAvailableProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId,pageable.getPageSize(), (int) pageable.getOffset());
-        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+        return new PageImpl<>(products, pageable, totalCount);
 
     }
 
     @Override
     public Page<Product> findAvailableProductsWithinRadius(double latitude, double longitude, double radiusKm, Pageable pageable) {
         List<Product> products =  productDAO.findAvailableProductsWithinRadius(latitude, longitude, radiusKm,pageable.getPageSize(), (int) pageable.getOffset());
-        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+        return new PageImpl<>(products, pageable, totalCount);
 
     }
 
     @Override
     public Page<Product> findProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword, Pageable pageable) {
         List<Product> products =  productDAO.findProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword,pageable.getPageSize(), (int) pageable.getOffset());
-        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+
+        return new PageImpl<>(products, pageable, totalCount);
 
     }
     @Override
     public Page<Product> findProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId, Pageable pageable) {
         List<Product> products =  productDAO.findProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId,pageable.getPageSize(), (int) pageable.getOffset());
-        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+
+        return new PageImpl<>(products, pageable, totalCount);
 
     }
 
     @Override
     public Page<Product> findAvailableProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword, Pageable pageable) {
         List<Product> products =  productDAO.findAvailableProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword,pageable.getPageSize(), (int) pageable.getOffset());
-        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+
+        return new PageImpl<>(products, pageable, totalCount);
 
     }
 
     @Override
     public Page<Product> findProductsWithinRadius(double latitude, double longitude, double radiusKm, Pageable pageable) {
         List<Product> products =  productDAO.findProductsWithinRadius(latitude, longitude, radiusKm,pageable.getPageSize(), (int) pageable.getOffset());
-        return new PageImpl<>(products, pageable, products.get(0).getTotalCount());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+        return new PageImpl<>(products, pageable, totalCount);
 
     }
 
