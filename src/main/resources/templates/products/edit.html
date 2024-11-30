@@ -234,7 +234,7 @@
           <div class="form-group">
             <label for="location">위치</label>
             <div class="input-group">
-              <input type="text" class="form-control" id="location" name="location" placeholder="현재 위치를 가져오세요" readonly>
+              <input type="text" class="form-control" id="location" name="location" th:field="*{location}" placeholder="현재 위치를 가져오세요" readonly>
               <div class="input-group-append">
                 <button type="button" class="btn btn-outline-secondary" onclick="getCurrentLocation()">현재 위치 수집</button>
               </div>
