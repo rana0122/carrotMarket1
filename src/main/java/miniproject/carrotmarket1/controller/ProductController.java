@@ -53,7 +53,7 @@ public class ProductController {
         if (loggedInUser != null && loggedInUser.getLatitude() != null && loggedInUser.getLongitude() != null) {
             double userLatitude = loggedInUser.getLatitude();
             double userLongitude = loggedInUser.getLongitude();
-            double radiusKm = 5.0; // 기본 반경 거리
+            double radiusKm = loggedInUser.getRadiusKm();
 
             // 필터 조건에 따라 반경 내 게시글 조회
             if (categoryId != null) {
