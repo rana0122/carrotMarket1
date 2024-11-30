@@ -3,166 +3,325 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
 <head>
+  <meta charset="UTF-8">
   <title>상품 수정</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.css" rel="stylesheet">
   <style>
-    .carousel {
+    .write-container {
+      max-width: 768px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .content-wrapper {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+    .image-section {
+      margin-bottom: 32px;
+    }
+    .image-carousel {
       position: relative;
+      width: 100%;
+      height: 300px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
     }
-
-    /* 이미지 미리보기 영역 스타일 */
-    .image-preview {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 10px;
+    .swiper {
+      width: 100%;
+      height: 100%;
     }
-
-    .image-item {
-      display: inline-block;
+    .swiper-slide {
       position: relative;
+      background: #f8f9fa;
     }
-
-    .image-item img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
+    .swiper-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
-
-    .delete-icon {
+    .delete-btn {
       position: absolute;
-      top: 0;
-      right: 0;
-      background: rgba(0, 0, 0, 0.5);
+      top: 8px;
+      right: 8px;
+      width: 24px;
+      height: 24px;
+      background: rgba(0,0,0,0.5);
       color: white;
       border: none;
       border-radius: 50%;
-      width: 20px;
-      height: 20px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      z-index: 10;
     }
-
+    .image-upload-btn {
+      width: 100%;
+      height: 48px;
+      background: #f8f9fa;
+      border: 1px dashed #dee2e6;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #868e96;
+      margin-top: 16px;
+    }
+    .form-group {
+      margin-bottom: 24px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #212529;
+    }
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      height: 48px; /* 높이를 넉넉하게 설정 */
+      line-height: 1.5; /* 높이에 맞춰 줄 간격 조정 */
+      padding-top: 8px; /* 높이와의 균형을 맞추기 위한 패딩 조정 */
+      padding-bottom: 8px;
+      box-sizing: border-box; /* 패딩 포함한 크기 조정 */
+    }
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
     .submit-btn {
-      background-color: #ff8a3d;
+      width: 100%;
+      height: 48px;
+      background: #ff6f0f;
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
+      border-radius: 8px;
       font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
+      transition: background-color 0.2s;
     }
-
     .submit-btn:hover {
-      background-color: #e6762d;
+      background: #ff8534;
+    }
+    .price-input {
+      position: relative;
+    }
+    .price-input::before {
+      content: "₩";
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #495057;
+    }
+    .price-input input {
+      padding-left: 28px;
+    }
+    .swiper-button-next,
+    .swiper-button-prev {
+      color: #ff6f0f;
     }
   </style>
 </head>
 <body>
 <div layout:fragment="content">
   <div class="write-container">
-    <h1 class="mb-4">상품 수정</h1>
     <form th:action="@{/products/update/{id}(id=${product.id})}"
-          method="post" enctype="multipart/form-data">
+          method="post"
+          enctype="multipart/form-data"
+          th:object="${product}">
 
       <div class="content-wrapper">
         <div class="image-section">
-          <!-- 기존 이미지 표시 영역 -->
-          <div class="image-preview" id="existingImagePreview" th:if="${!#lists.isEmpty(product.images)}">
-            <div th:each="image, iterStat : ${product.images}" class="image-item" th:id="${'image-' + iterStat.index}">
-              <img th:src="${image.imageUrl}" style="width: 100px; height: 100px;" />
-              <div class="delete-checkbox">
-                <button type="button" class="delete-icon"
-                        onclick="deleteExistingImage([[${iterStat.index}]])">X</button>
+          <div class="image-carousel">
+            <div class="swiper">
+              <div class="swiper-wrapper">
+                <th:block th:if="${product.images != null}">
+                  <div th:each="image : ${product.images}"
+                       class="swiper-slide"
+                       th:data-image-id="${image.id}">
+                    <img th:src="${image.imageUrl}" alt="상품 이미지">
+                    <button type="button" class="delete-btn"
+                            th:onclick="'deleteImage(' + ${image.id} + ')'">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </th:block>
               </div>
+              <div class="swiper-pagination"></div>
+              <div class="swiper-button-next"></div>
+              <div class="swiper-button-prev"></div>
             </div>
           </div>
-
-          <!-- 새 이미지 업로드 영역 -->
-          <div class="image-upload">
-            <p>이미지를 업로드해주세요</p>
-            <input type="file" id="imageInput" name="productImages" multiple accept="image/*"/>
-          </div>
+          <label class="image-upload-btn">
+            <input type="file"
+                   name="productImages"
+                   multiple
+                   accept="image/*"
+                   style="display: none;"
+                   onchange="handleImageUpload(this)">
+            <i class="fas fa-camera"></i>
+            <span class="ml-2">이미지 업로드 (최대 10장)</span>
+          </label>
         </div>
 
         <div class="form-section">
           <div class="form-group">
-            <label class="form-label">카테고리</label>
-            <select id="category" name="categoryId" class="form-control" required>
-              <option value="" disabled>카테고리를 선택하세요</option>
-              <option th:each="category : ${category}"
-                      th:value="${category.id}"
-                      th:text="${category.name}"
-                      th:selected="${product.categoryId == category.id}"></option>
-            </select><br>
+            <label for="category">카테고리</label>
+            <select id="category"
+                    class="form-control" required
+                    th:field="*{categoryId}">
+              <option value="" disabled >카테고리를 선택하세요</option>
+              <option th:each="cat : ${category}"
+                      th:value="${cat.id}"
+                      th:text="${cat.name}"
+                      th:selected="${product.categoryId==cat.id}">
+              </option>
+            </select>
           </div>
 
           <div class="form-group">
-            <label class="form-label">제목</label>
-            <input type="text" class="form-control" name="title" th:field="*{product.title}" th:value="${product.title}" required>
+            <label for="title">제목</label>
+            <input type="text"
+                   id="title"
+                   class="form-control"
+                   th:field="*{title}"
+                   placeholder="상품 제목을 입력해주세요">
           </div>
 
           <div class="form-group">
-            <label class="form-label">설명</label>
-            <textarea class="form-control" name="description" rows="5" th:field="*{product.description}" required th:text="${product.description}"></textarea>
+            <label for="description">설명</label>
+            <textarea id="description"
+                      class="form-control"
+                      th:field="*{description}"
+                      placeholder="상품 설명을 입력해주세요"></textarea>
           </div>
 
           <div class="form-group">
-            <label class="form-label">가격</label>
-            <input type="number" class="form-control" name="price" th:field="*{product.price}" th:value="${product.price}" required>
+            <label for="price">가격</label>
+            <div class="price-input">
+              <input type="number"
+                     id="price"
+                     class="form-control"
+                     th:field="*{price}"
+                     placeholder="숫자만 입력해주세요">
+            </div>
           </div>
 
-          <button type="submit" class="submit-btn">등록하기</button>
+          <input type="hidden" name="deleteImageIds" id="deleteImageIds">
+          <button type="submit" class="submit-btn">수정완료</button>
         </div>
       </div>
     </form>
   </div>
 </div>
 
-<th:block layout:fragment="pageScript">
-  <script>
-    // 새 이미지 업로드 시 미리보기 추가
-    document.getElementById('imageInput').addEventListener('change', function (e) {
-      const existingImagePreview = document.getElementById('existingImagePreview');
+<div layout:fragment="pageScript">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.js"></script>
+  <script th:inline="javascript">
+    let swiper;
+    let deletedImageIds = [];
 
-      // 새로 업로드된 파일을 기존 이미지 표시 영역에 추가
-      for (let file of e.target.files) {
+    function initializeSwiper() {
+      if (document.querySelector('.swiper-slide')) {
+        swiper = new Swiper('.swiper', {
+          slidesPerView: 1,
+          spaceBetween: 30,
+          loop: false,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev'
+          }
+        });
+      }
+    }
+
+    function deleteImage(imageId) {
+      const slideElement = document.querySelector(`[data-image-id="${imageId}"]`);
+      if (slideElement) {
+        swiper.removeSlide(swiper.activeIndex);
+
+        if (swiper.slides.length === 0) {
+          alert('최소 1장의 이미지를 업로드해야 합니다.');
+          return;
+        }
+
+        if (imageId) {
+          deletedImageIds.push(imageId);
+          document.getElementById('deleteImageIds').value = deletedImageIds.join(',');
+        }
+
+        if (swiper.slides.length === 0) {
+          document.querySelector('.image-carousel').style.display = 'none';
+        }
+      }
+    }
+
+    function handleImageUpload(input) {
+      const files = input.files;
+      const maxFiles = 10;
+      const currentImages = document.querySelectorAll('.swiper-slide').length;
+
+      if (files.length + currentImages > maxFiles) {
+        alert(`이미지는 최대 ${maxFiles}장까지 업로드 가능합니다.`);
+        input.value = '';
+        return;
+      }
+
+      document.querySelector('.image-carousel').style.display = 'block';
+
+      if (!swiper) {
+        initializeSwiper();
+      }
+
+      Array.from(files).forEach(file => {
         const reader = new FileReader();
-
-        reader.onload = function (event) {
-          const imgWrapper = document.createElement('div');
-          imgWrapper.classList.add('image-item');
-
-          const img = document.createElement('img');
-          img.src = event.target.result;
-          img.style.width = '100px';
-          img.style.height = '100px';
-          img.style.objectFit = 'cover';
-
-          const deleteButton = document.createElement('button');
-          deleteButton.classList.add('delete-icon');
-          deleteButton.textContent = 'X';
-          deleteButton.onclick = function () {
-            imgWrapper.remove();
-          };
-
-          imgWrapper.appendChild(img);
-          imgWrapper.appendChild(deleteButton);
-          existingImagePreview.appendChild(imgWrapper);
+        reader.onload = function(e) {
+          const newSlide = `
+                            <div class="swiper-slide">
+                                <img src="${e.target.result}" alt="상품 이미지">
+                                <button type="button" class="delete-btn" onclick="deleteImage(null)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
+          swiper.appendSlide(newSlide);
         };
-
         reader.readAsDataURL(file);
+      });
+    }
+    document.querySelector('form').addEventListener('submit', function(e) {
+      const imagesCount = document.querySelectorAll('.swiper-slide').length;
+
+      if (imagesCount < 1) {
+        e.preventDefault();
+        alert('최소 1장의 이미지를 업로드해야 합니다.');
       }
     });
 
-    // 기존 이미지 삭제 함수
-    function deleteExistingImage(index) {
-      const imageElement = document.getElementById('image-' + index);
-      if (imageElement) {
-        imageElement.remove();
-      }
-    }
+    document.addEventListener('DOMContentLoaded', initializeSwiper);
   </script>
-</th:block>
+</div>
 </body>
 </html>
