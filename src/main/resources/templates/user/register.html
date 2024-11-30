@@ -283,23 +283,7 @@
         document.getElementById('radiusValue').textContent = '현재 설정: ' + value + 'km';
     }
 
-    // function convertLatLngToAddress(latitude, longitude) {
-    //     const apiKey = "AIzaSyAGgvPzN57_n5tGKb1sNvZJgg6Ogiv1CkY"; //구글 (Geocoding API) key 사용
-    //     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`;
-    //
-    //     $.getJSON(url, function(data) {
-    //         if (data.status === "OK" && data.results[0]) {
-    //             const address = data.results[0].formatted_address;
-    //             document.getElementById("location").value = address;
-    //         } else {
-    //             console.log(data);  // 오류 세부 정보 확인
-    //             alert("주소 변환에 실패했습니다.");
-    //         }
-    //     }).fail(function(jqXHR, textStatus, errorThrown) {
-    //         console.log(jqXHR, textStatus, errorThrown);  // 오류 세부 정보 확인
-    //         alert("주소를 가져오는 중 오류가 발생했습니다.");
-    //     });
-    // }
+
 </script>
 </th:block>
 </body>

@@ -123,7 +123,7 @@
 <!-- 페이지별 JavaScript -->
 <th:block layout:fragment="pageScript">
 <!-- Kakao Maps SDK -->
-<script th:src="'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoJavascriptKey} + '&libraries=services'"></script>
+<!--<script th:src="'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoJavascriptKey} + '&libraries=services'"></script>-->
 <script>
     // 프로필 사진 미리보기 기능
     function previewImage(event) {
@@ -137,48 +137,6 @@
         if (file) {
             reader.readAsDataURL(file);
         }
-    }
-
-    // 사용자 위치 정보 수집 - 위도, 경도
-    function getCurrentLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(success, error);
-        } else {
-            alert("현재 위치 정보를 사용할 수 없습니다.");
-        }
-    }
-
-    function success(position) {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-
-        document.getElementById("latitude").value = latitude;
-        document.getElementById("longitude").value = longitude;
-        convertLatLngToAddress(latitude, longitude);
-    }
-
-    function error() {
-        alert("위치 정보를 가져오는 데 실패했습니다.");
-    }
-
-    // 위도와 경도를 주소로 변환하여 위치 필드에 설정
-    function convertLatLngToAddress(latitude, longitude) {
-        const url = `/get-address?latitude=${latitude}&longitude=${longitude}`;
-
-        $.getJSON(url, function(data) {
-            if (data.status === "OK" && data.results[0]) {
-                let address = data.results[0].formatted_address;
-                // "대한민국" 문자열 제거
-                address = address.replace("대한민국 ", ""); // "대한민국"과 그 뒤 공백을 제거
-                console.log("Converted Address: ", address);  // 주소 출력
-                document.getElementById("location").value = address;
-
-            } else {
-                alert("주소 변환에 실패했습니다.");
-            }
-        }).fail(function() {
-            alert("주소를 가져오는 중 오류가 발생했습니다.");
-        });
     }
 
     // 비밀번호 확인 유효성 검사
@@ -226,7 +184,8 @@
         document.getElementById('passwordError').style.display = 'none';
     });
 
-    // Kakao API 주소 검색
+    //==============================KAKAO===========================//
+    // 서버의 REST API를 사용하여 주소 검색
     function searchAddress() {
         const query = document.getElementById('address').value;
         if (!query) {
@@ -234,27 +193,33 @@
             return;
         }
 
-        const ps = new kakao.maps.services.Places();
-        ps.keywordSearch(query, function(data, status) {
-            if (status === kakao.maps.services.Status.OK) {
-                const addressList = document.getElementById('addressList');
-                addressList.innerHTML = '';
+        // REST API를 호출하여 주소 검색
+        fetch(`/get-address-kakao?query=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.documents) {
+                    const addressList = document.getElementById('addressList');
+                    addressList.innerHTML = '';
 
-                data.forEach(function(place) {
-                    const listItem = document.createElement('a');
-                    listItem.href = "#";
-                    listItem.className = 'list-group-item list-group-item-action';
-                    listItem.innerText = place.address_name;
-                    listItem.onclick = function() {
-                        selectAddress(place);
-                    };
-                    addressList.appendChild(listItem);
-                });
-            }
-        });
+                    data.documents.forEach(function(place) {
+                        const listItem = document.createElement('a');
+                        listItem.href = "#";
+                        listItem.className = 'list-group-item list-group-item-action';
+                        listItem.innerText = place.address_name;
+                        listItem.onclick = function() {
+                            selectAddress(place);
+                        };
+                        addressList.appendChild(listItem);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching address:', error);
+                alert("주소를 가져오는 중 오류가 발생했습니다.");
+            });
     }
 
-    // kakado 주소 선택 시 위도, 경도 설정
+    // 서버의 REST API를 통해 선택된 주소 정보로 위도, 경도 설정
     function selectAddress(place) {
         document.getElementById('address').value = place.address_name;
         document.getElementById('location').value = place.address_name;
@@ -265,6 +230,50 @@
     // 반경 설정 값 업데이트 기능
     function updateRadiusValue(value) {
         document.getElementById('radiusValue').textContent = '현재 설정: ' + value + 'km';
+    }
+
+    //============================구글=============================//
+
+    // 사용자 위치 정보 수집 - 위도, 경도
+    function getCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(success, error);
+        } else {
+            alert("현재 위치 정보를 사용할 수 없습니다.");
+        }
+    }
+
+    function success(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        document.getElementById("latitude").value = latitude;
+        document.getElementById("longitude").value = longitude;
+        convertLatLngToAddress(latitude, longitude);
+    }
+
+    function error() {
+        alert("위치 정보를 가져오는 데 실패했습니다.");
+    }
+
+    // 위도와 경도를 주소로 변환하여 위치 필드에 설정
+    function convertLatLngToAddress(latitude, longitude) {
+        const url = `/get-address?latitude=${latitude}&longitude=${longitude}`;
+
+        $.getJSON(url, function(data) {
+            if (data.status === "OK" && data.results[0]) {
+                let address = data.results[0].formatted_address;
+                // "대한민국" 문자열 제거
+                address = address.replace("대한민국 ", ""); // "대한민국"과 그 뒤 공백을 제거
+                console.log("Converted Address: ", address);  // 주소 출력
+                document.getElementById("location").value = address;
+
+            } else {
+                alert("주소 변환에 실패했습니다.");
+            }
+        }).fail(function() {
+            alert("주소를 가져오는 중 오류가 발생했습니다.");
+        });
     }
 </script>
 </th:block>

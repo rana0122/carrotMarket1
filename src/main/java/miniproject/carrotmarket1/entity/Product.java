@@ -25,6 +25,7 @@ public class Product {
     private Timestamp createdAt;
     private Long userId;
     private String status;
+    private int totalCount;
 
     // 관계 매핑
     private User user;

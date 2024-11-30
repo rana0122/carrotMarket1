@@ -5,6 +5,7 @@ import miniproject.carrotmarket1.entity.Product;
 import miniproject.carrotmarket1.entity.ProductImage;
 import miniproject.carrotmarket1.entity.User;
 import org.apache.ibatis.annotations.*;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -25,32 +26,6 @@ public interface ProductDAO {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insertProductImage(ProductImage productImage);
 
-
-    // 판매중인 상품에 대한 게시글 목록 조회
-    @Select("SELECT * FROM product WHERE status = 'AVAILABLE'")
-    @Results({
-            @Result(property = "id", column = "id"),
-            @Result(property = "user", column = "user_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
-            @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")), // 경로 수정
-            @Result(property = "images", column = "id", javaType = List.class,
-                    many = @Many(select = "selectProductImagesByProductId"))
-    })
-    List<Product> findAvailableItems();
-
-    //모든 상품에 대한 게시글 목록 조회
-    @Select("SELECT * FROM product")
-    @Results({
-            @Result(property = "id", column = "id"),
-            @Result(property = "user", column = "user_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
-            @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")), // 경로 수정
-            @Result(property = "images", column = "id", javaType = List.class,
-                    many = @Many(select = "selectProductImagesByProductId"))
-    })
-    List<Product> findAll();
 
     //게시글 상세조회
     @Select("SELECT * FROM product WHERE id = #{id}")
@@ -76,6 +51,370 @@ public interface ProductDAO {
 
     //게시글 수정
     @Update("UPDATE product SET title = #{title}, description = #{description}, " +
+            "location = #{location}, latitude = #{latitude}, longitude = #{longitude}, " +
             "price = #{price}, category_id = #{categoryId} WHERE id = #{id}")
     void updateProduct(Product product);
+
+    // 판매중인 상품에 대한 게시글 목록 조회
+    @Select("SELECT * " +
+            ", COUNT(*) OVER() AS total_count "+
+            "FROM product " +
+            "WHERE status = 'SALE' " +
+            "LIMIT #{pageSize} OFFSET #{offset}")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId")),
+            @Result(property = "totalCount", column = "total_count")  // total_count 값을 매핑
+    })
+    List<Product> findAvailableItems(@Param("pageSize") int pageSize,
+                                     @Param("offset") int offset);
+
+    //모든 상품에 대한 게시글 목록 조회
+    @Select("SELECT * " +
+            ", COUNT(*) OVER() AS total_count "+
+            "FROM product " +
+            "LIMIT #{pageSize} OFFSET #{offset}")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")), // 경로 수정
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId")),
+            @Result(property = "totalCount", column = "total_count")  // total_count 값을 매핑
+    })
+    List<Product> findAll(@Param("pageSize") int pageSize,
+                          @Param("offset") int offset);
+
+    @Select("SELECT * " +
+            ", COUNT(*) OVER() AS total_count "+
+            "FROM product " +
+            "WHERE category_id = #{categoryId} " +
+            "LIMIT #{pageSize} OFFSET #{offset}")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId")),
+            @Result(property = "totalCount", column = "total_count")  // total_count 값을 매핑
+    })
+    List<Product> findByCategoryId(@Param("categoryId") Long categoryId,
+                                   @Param("pageSize") int pageSize,
+                                   @Param("offset") int offset);
+
+    @Select("SELECT * " +
+            ", COUNT(*) OVER() AS total_count "+
+            "FROM product " +
+            "WHERE category_id = #{categoryId} " +
+            "AND status = 'SALE' " +
+            "LIMIT #{pageSize} OFFSET #{offset}")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId")),
+            @Result(property = "totalCount", column = "total_count")  // total_count 값을 매핑
+    })
+    List<Product> findAvailableByCategoryId(@Param("categoryId") Long categoryId,
+                                            @Param("pageSize") int pageSize,
+                                            @Param("offset") int offset);
+
+    @Select("SELECT * " +
+            ", COUNT(*) OVER() AS total_count "+
+            "FROM product " +
+            "WHERE title LIKE CONCAT('%', #{keyword}, '%') " +
+            "LIMIT #{pageSize} OFFSET #{offset}")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId")),
+            @Result(property = "totalCount", column = "total_count")  // total_count 값을 매핑
+
+    })
+    List<Product> findAllByTitleContainingIgnoreCase(@Param("keyword") String keyword,
+                                                     @Param("pageSize") int pageSize,
+                                                     @Param("offset") int offset);
+
+    @Select("SELECT * " +
+            ", COUNT(*) OVER() AS total_count "+
+            "FROM product " +
+            "WHERE title LIKE CONCAT('%', #{keyword}, '%') " +
+            "AND status = 'SALE' " +
+            "LIMIT #{pageSize} OFFSET #{offset}")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId")),
+            @Result(property = "totalCount", column = "total_count")  // total_count 값을 매핑
+    })
+    List<Product> findAvailableByTitleContainingIgnoreCase(@Param("keyword") String keyword,
+                                                           @Param("pageSize") int pageSize,
+                                                           @Param("offset") int offset);
+
+
+    @Select("SELECT * " +
+            ", COUNT(*) OVER() AS total_count "+
+            "FROM product " +
+            "WHERE category_id = #{categoryId} " +
+            "AND title LIKE CONCAT('%', #{keyword}, '%') " +
+            "LIMIT #{pageSize} OFFSET #{offset}")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId")),
+            @Result(property = "totalCount", column = "total_count")  // total_count 값을 매핑
+    })
+    List<Product> findByCategoryAndTitleContainingIgnoreCase(@Param("categoryId") Long categoryId,
+                                                             @Param("keyword") String keyword,
+                                                             @Param("pageSize") int pageSize,
+                                                             @Param("offset") int offset);
+
+
+    @Select("""
+    SELECT * , COUNT(*) OVER() AS total_count
+         , (
+            6371 * acos(
+            cos(radians(#{latitude})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(#{longitude})) +
+            sin(radians(#{latitude})) * sin(radians(latitude))
+        )
+    ) AS distance
+    FROM product
+    WHERE category_id = #{categoryId}
+    HAVING distance <= #{radiusKm}
+    ORDER BY distance
+    LIMIT #{pageSize} OFFSET #{offset}
+""")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId")),
+            @Result(property = "totalCount", column = "total_count")  // total_count 값을 매핑
+    })
+    List<Product> findProductsWithinRadiusByCategory(@Param("latitude") double latitude,
+                                                     @Param("longitude") double longitude,
+                                                     @Param("radiusKm") double radiusKm,
+                                                     @Param("categoryId") Long categoryId,
+                                                     @Param("pageSize") int pageSize,
+                                                     @Param("offset") int offset);
+
+
+    @Select("""
+    SELECT * , COUNT(*) OVER() AS total_count
+         , (
+            6371 * acos(
+            cos(radians(#{latitude})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(#{longitude})) +
+            sin(radians(#{latitude})) * sin(radians(latitude))
+        )
+    ) AS distance
+    FROM product
+    WHERE title LIKE CONCAT('%', #{keyword}, '%') AND status = 'SALE'
+    HAVING distance <= #{radiusKm}
+    ORDER BY distance
+    LIMIT #{pageSize} OFFSET #{offset}
+""")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId")),
+            @Result(property = "totalCount", column = "total_count")  // total_count 값을 매핑
+    })
+    List<Product> findAvailableProductsWithinRadiusByKeyword(@Param("latitude") double latitude,
+                                                             @Param("longitude") double longitude,
+                                                             @Param("radiusKm") double radiusKm,
+                                                             @Param("keyword") String keyword,
+                                                             @Param("pageSize") int pageSize,
+                                                             @Param("offset") int offset);
+
+    @Select("""
+    SELECT * , COUNT(*) OVER() AS total_count
+         , (
+            6371 * acos(
+            cos(radians(#{latitude})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(#{longitude})) +
+            sin(radians(#{latitude})) * sin(radians(latitude))
+        )
+    ) AS distance
+    FROM product
+    HAVING distance <= #{radiusKm}
+    ORDER BY distance
+    LIMIT #{pageSize} OFFSET #{offset}
+""")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId")),
+            @Result(property = "totalCount", column = "total_count")  // total_count 값을 매핑
+    })
+    List<Product> findProductsWithinRadius(@Param("latitude") double latitude,
+                                           @Param("longitude") double longitude,
+                                           @Param("radiusKm") double radiusKm,
+                                           @Param("pageSize") int pageSize,
+                                           @Param("offset") int offset);
+    @Select("""
+    SELECT * , COUNT(*) OVER() AS total_count
+         , (
+            6371 * acos(
+            cos(radians(#{latitude})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(#{longitude})) +
+            sin(radians(#{latitude})) * sin(radians(latitude))
+        )
+    ) AS distance
+    FROM product
+    WHERE category_id = #{categoryId} AND title LIKE CONCAT('%', #{keyword}, '%')
+    HAVING distance <= #{radiusKm}
+    ORDER BY distance
+     LIMIT #{pageSize} OFFSET #{offset}
+""")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId")),
+            @Result(property = "totalCount", column = "total_count")  // total_count 값을 매핑
+    })
+    List<Product> findProductsWithinRadiusByCategoryAndKeyword(@Param("latitude") double latitude,
+                                                               @Param("longitude") double longitude,
+                                                               @Param("radiusKm") double radiusKm,
+                                                               @Param("categoryId") Long categoryId,
+                                                               @Param("keyword") String keyword,
+                                                               @Param("pageSize") int pageSize,
+                                                               @Param("offset") int offset);
+
+    @Select("""
+      SELECT * , COUNT(*) OVER() AS total_count
+         , (
+            6371 * acos(
+            cos(radians(#{latitude})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(#{longitude})) +
+            sin(radians(#{latitude})) * sin(radians(latitude))
+        )
+    ) AS distance
+    FROM product
+    WHERE category_id = #{categoryId} AND status = 'SALE'
+    HAVING distance <= #{radiusKm}
+    ORDER BY distance
+    LIMIT #{pageSize} OFFSET #{offset}
+""")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId")),
+            @Result(property = "totalCount", column = "total_count")  // total_count 값을 매핑
+    })
+    List<Product> findAvailableProductsWithinRadiusByCategory(@Param("latitude") double latitude,
+                                                              @Param("longitude") double longitude,
+                                                              @Param("radiusKm") double radiusKm,
+                                                              @Param("categoryId") Long categoryId,
+                                                              @Param("pageSize") int pageSize,
+                                                              @Param("offset") int offset);
+
+    @Select("""
+    SELECT * , COUNT(*) OVER() AS total_count
+         , (
+            6371 * acos(
+            cos(radians(#{latitude})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(#{longitude})) +
+            sin(radians(#{latitude})) * sin(radians(latitude))
+        )
+    ) AS distance
+    FROM product
+    WHERE status = 'SALE'
+    HAVING distance <= #{radiusKm}
+    ORDER BY distance
+    LIMIT #{pageSize} OFFSET #{offset}
+""")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId")),
+            @Result(property = "totalCount", column = "total_count")  // total_count 값을 매핑
+    })
+    List<Product> findAvailableProductsWithinRadius(@Param("latitude") double latitude,
+                                                    @Param("longitude") double longitude,
+                                                    @Param("radiusKm") double radiusKm,
+                                                    @Param("pageSize") int pageSize,
+                                                    @Param("offset") int offset);
+
+
+    @Select("""
+    SELECT * , COUNT(*) OVER() AS total_count
+         , (
+            6371 * acos(
+            cos(radians(#{latitude})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(#{longitude})) +
+            sin(radians(#{latitude})) * sin(radians(latitude))
+        )
+    ) AS distance
+    FROM product
+    WHERE title LIKE CONCAT('%', #{keyword}, '%')
+    HAVING distance <= #{radiusKm}
+    ORDER BY distance
+    LIMIT #{pageSize} OFFSET #{offset}
+""")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId")),
+            @Result(property = "totalCount", column = "total_count")  // total_count 값을 매핑
+    })
+    List<Product> findProductsWithinRadiusByKeyword(@Param("latitude") double latitude,
+                                                    @Param("longitude") double longitude,
+                                                    @Param("radiusKm") double radiusKm,
+                                                    @Param("keyword") String keyword,
+                                                    @Param("pageSize") int pageSize,
+                                                    @Param("offset") int offset);
+
 }

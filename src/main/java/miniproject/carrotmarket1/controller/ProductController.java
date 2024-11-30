@@ -8,13 +8,15 @@ import miniproject.carrotmarket1.service.CategoryService;
 import miniproject.carrotmarket1.service.ProductService;
 import miniproject.carrotmarket1.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -34,14 +36,90 @@ public class ProductController {
 
     //상품 목록 페이지
     @GetMapping
-    public String listAllProducts(Model model) {
-        List<Product> products = productService.findAll();
-        Long categoryId= 1L;
-        //xml 연동 테스트
-        List<Product> productsFiltered = productService.findAvailableItemsByCategory(categoryId);
+    public String listAllProducts(
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false, defaultValue = "ALL") String status,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page, // 페이지 번호 추가
+            @RequestParam(defaultValue = "8") int size, // 한 페이지에 보여줄 아이템 수
+            HttpSession session,
+            Model model) {
+
+        // 모든 카테고리 로드
+        List<Category> categories = categoryService.findAll();
+        model.addAttribute("categories", categories);
+        model.addAttribute("status", status);
+        model.addAttribute("keyword", keyword);
+
+        Page<Product> products = null;
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 세션에서 사용자 위치 정보 가져오기
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser != null && loggedInUser.getLatitude() != null && loggedInUser.getLongitude() != null) {
+            double userLatitude = loggedInUser.getLatitude();
+            double userLongitude = loggedInUser.getLongitude();
+            double radiusKm = loggedInUser.getRadiusKm();
+
+            // 필터 조건에 따라 반경 내 게시글 조회
+            if (categoryId != null) {
+                Category selectedCategory = categoryService.findById(categoryId);
+                model.addAttribute("selectedCategory", selectedCategory);
+                model.addAttribute("selectedCategoryId", categoryId);
+
+                if ("SALE".equals(status)) {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findProductsWithinRadiusByCategoryAndKeyword(userLatitude, userLongitude, radiusKm, categoryId, keyword, pageable)
+                            : productService.findAvailableProductsWithinRadiusByCategory(userLatitude, userLongitude, radiusKm, categoryId, pageable);
+                } else {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findProductsWithinRadiusByCategoryAndKeyword(userLatitude, userLongitude, radiusKm, categoryId, keyword, pageable)
+                            : productService.findProductsWithinRadiusByCategory(userLatitude, userLongitude, radiusKm, categoryId, pageable);
+                }
+            } else {
+                if ("SALE".equals(status)) {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findAvailableProductsWithinRadiusByKeyword(userLatitude, userLongitude, radiusKm, keyword, pageable)
+                            : productService.findAvailableProductsWithinRadius(userLatitude, userLongitude, radiusKm, pageable);
+                } else {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findProductsWithinRadiusByKeyword(userLatitude, userLongitude, radiusKm, keyword, pageable)
+                            : productService.findProductsWithinRadius(userLatitude, userLongitude, radiusKm, pageable);
+                }
+            }
+        } else {
+            // 기존 로직 사용
+            if (categoryId != null) {
+                Category selectedCategory = categoryService.findById(categoryId);
+                model.addAttribute("selectedCategory", selectedCategory);
+                model.addAttribute("selectedCategoryId", categoryId);
+
+                if ("SALE".equals(status)) {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findByCategoryAndKeyword(categoryId, keyword, pageable)
+                            : productService.findAvailableByCategoryId(categoryId, pageable);
+                } else {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findByCategoryAndKeyword(categoryId, keyword, pageable)
+                            : productService.findByCategoryId(categoryId, pageable);
+                }
+            } else {
+                if ("SALE".equals(status)) {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findAvailableByKeyword(keyword, pageable)
+                            : productService.findAvailableItems(pageable);
+                } else {
+                    products = (keyword != null && !keyword.isEmpty())
+                            ? productService.findAllByKeyword(keyword, pageable)
+                            : productService.findAll(pageable);
+                }
+            }
+        }
         model.addAttribute("products", products);
         return "products/list";
     }
+
+
     //상품 목록 상세조회
     @GetMapping("/detail/{id}")
     public String showProduct(Model model, @PathVariable Long id, HttpSession session) {
@@ -126,5 +204,8 @@ public class ProductController {
         productService.updateProductWithImages(id, product, newImages, deleteImageIds);
         return "redirect:/products/detail/" + id;
     }
+
+
+
 
 }
