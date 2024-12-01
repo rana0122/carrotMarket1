@@ -2,6 +2,7 @@ package miniproject.carrotmarket1.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import miniproject.carrotmarket1.entity.Product;
 import miniproject.carrotmarket1.entity.User;
@@ -10,11 +11,17 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 public class LocationController {
@@ -114,5 +121,26 @@ public class LocationController {
         return "정보 없음";
     }
 
+    @GetMapping("/navigate")
+    public void navigate(
+            @RequestParam double userLat,
+            @RequestParam double userLng,
+            @RequestParam double destLat,
+            @RequestParam double destLng,
+            HttpServletResponse response) throws IOException {
+
+        // 한글 문자열을 URL 인코딩
+        String from = URLEncoder.encode("내위치", StandardCharsets.UTF_8);
+        String to = URLEncoder.encode("목적지", StandardCharsets.UTF_8);
+
+        // 카카오 네비게이션 URL 생성
+        String naviUrl = String.format(
+                "https://map.kakao.com/link/from/%s,%f,%f/to/%s,%f,%f",
+                from, userLat, userLng, to, destLat, destLng
+        );
+
+        // 리다이렉트
+        response.sendRedirect(naviUrl);
+    }
 
 }

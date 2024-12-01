@@ -282,7 +282,10 @@
                                 <th:block th:if="${session.loggedInUser!=null}">
                                     <p class="card-text small text-drivingTime">
                                         <i class="fas fa-car text-carrot-orange mr-1"></i>
+                                        <a th:href="@{'/navigate?userLat=' + ${session.loggedInUser.latitude} + '&userLng=' + ${session.loggedInUser.longitude} + '&destLat=' + ${item.latitude} + '&destLng=' + ${item.longitude}}"
+                                           target="_blank">
                                         자동차로 <span th:text="${item.drivingTime}+' 예상'">0분</span>
+                                        </a>
                                     </p>
                                 </th:block>
 
@@ -326,25 +329,5 @@
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> <!-- jQuery Full 버전 -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script>
-    function updateURLParameter(url, param, value) {
-        var newAdditionalURL = "";
-        var tempArray = url.split("?");
-        var baseURL = tempArray[0];
-        var additionalURL = tempArray[1];
-        var temp = "";
-        if (additionalURL) {
-            tempArray = additionalURL.split("&");
-            for (var i=0; i<tempArray.length; i++) {
-                if (tempArray[i].split('=')[0] != param) {
-                    newAdditionalURL += temp + tempArray[i];
-                    temp = "&";
-                }
-            }
-        }
-        var rows_txt = temp + "" + param + "=" + value;
-        return baseURL + "?" + newAdditionalURL + rows_txt;
-    }
-</script>
 </body>
 </html>
