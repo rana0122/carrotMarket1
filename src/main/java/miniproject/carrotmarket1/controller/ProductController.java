@@ -1,5 +1,7 @@
 package miniproject.carrotmarket1.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import miniproject.carrotmarket1.entity.Category;
 import miniproject.carrotmarket1.entity.Product;
@@ -26,12 +28,15 @@ public class ProductController {
     private final ProductService productService;
     private final UserService userService;
     private final CategoryService categoryService;
+    private LocationController locationController;
 
     @Autowired
-    public ProductController(ProductService productService, UserService userService, CategoryService categoryService) {
+    public ProductController(ProductService productService, UserService userService,
+                             CategoryService categoryService, LocationController locationController) {
         this.productService = productService;
         this.userService = userService;
         this.categoryService = categoryService;
+        this.locationController = locationController;
     }
 
     //상품 목록 페이지
@@ -60,6 +65,11 @@ public class ProductController {
             products = productService.findProductsWithinRadius(
                     loggedInUser.getLatitude(), loggedInUser.getLongitude(), loggedInUser.getRadiusKm(),
                     categoryId, status, keyword, pageable);
+            for (Product product : products) {
+                String drivingTime = locationController.calculateDistanceKakao(loggedInUser, product, "CAR");
+                product.setDrivingTime(drivingTime);
+            }
+
         } else {//게시글 조회(로그인 안한 경우)
             products = productService.findProductsByConditions(categoryId, status, keyword, pageable);
         }
@@ -67,6 +77,7 @@ public class ProductController {
         model.addAttribute("products", products);
         return "products/list";
     }
+
 
 
     //상품 목록 상세조회

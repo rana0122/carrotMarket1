@@ -1,5 +1,10 @@
 package miniproject.carrotmarket1.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpSession;
+import miniproject.carrotmarket1.entity.Product;
+import miniproject.carrotmarket1.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -38,6 +43,7 @@ public class LocationController {
         return restTemplate.getForObject(url, String.class);
     }
 
+
     // 주소를 검색하고 관련된 정보 반환 (카카오 API와 통신)
     @GetMapping("/get-address-kakao")
     @ResponseBody
@@ -69,4 +75,44 @@ public class LocationController {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         return response.getBody();
     }
+
+    public String calculateDistanceKakao(User originUser, Product destinationProduct, String mode) {
+        String url = "https://apis-navi.kakaomobility.com/v1/directions?origin="
+                + originUser.getLongitude() + "," + originUser.getLatitude()
+                + "&destination=" + destinationProduct.getLongitude() + "," + destinationProduct.getLatitude()
+                + "&car_type=1"; // priority 관련 파라미터 제거
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "KakaoAK " + kakaoApiKey);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(response.getBody());
+            JsonNode durationNode = rootNode.path("routes").get(0).path("summary").path("duration");
+
+            int durationInSeconds = durationNode.asInt();
+            int hours = durationInSeconds / 3600;
+            int minutes = (durationInSeconds % 3600) / 60;
+
+            StringBuilder durationString = new StringBuilder();
+            if (hours > 0) {
+                durationString.append(hours).append("시간 ");
+            }
+            if (minutes > 0) {
+                durationString.append(minutes).append("분 ");
+            }
+
+            return durationString.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "정보 없음";
+    }
+
+
 }

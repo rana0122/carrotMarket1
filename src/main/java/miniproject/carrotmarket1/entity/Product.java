@@ -27,6 +27,9 @@ public class Product {
     private String status;
     private int totalCount;
 
+    // Google Maps API를 통해 계산된 이동 시간 정보
+    private String drivingTime;    // 차량으로 걸리는 시간
+
     // 관계 매핑
     private User user;
     private Category category;
