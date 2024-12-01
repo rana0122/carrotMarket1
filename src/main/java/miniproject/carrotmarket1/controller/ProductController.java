@@ -56,65 +56,14 @@ public class ProductController {
 
         // 세션에서 사용자 위치 정보 가져오기
         User loggedInUser = (User) session.getAttribute("loggedInUser");
-        if (loggedInUser != null && loggedInUser.getLatitude() != null && loggedInUser.getLongitude() != null) {
-            double userLatitude = loggedInUser.getLatitude();
-            double userLongitude = loggedInUser.getLongitude();
-            double radiusKm = loggedInUser.getRadiusKm();
-
-            // 필터 조건에 따라 반경 내 게시글 조회
-            if (categoryId != null) {
-                Category selectedCategory = categoryService.findById(categoryId);
-                model.addAttribute("selectedCategory", selectedCategory);
-                model.addAttribute("selectedCategoryId", categoryId);
-
-                if ("SALE".equals(status)) {
-                    products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findProductsWithinRadiusByCategoryAndKeyword(userLatitude, userLongitude, radiusKm, categoryId, keyword, pageable)
-                            : productService.findAvailableProductsWithinRadiusByCategory(userLatitude, userLongitude, radiusKm, categoryId, pageable);
-                } else {
-                    products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findProductsWithinRadiusByCategoryAndKeyword(userLatitude, userLongitude, radiusKm, categoryId, keyword, pageable)
-                            : productService.findProductsWithinRadiusByCategory(userLatitude, userLongitude, radiusKm, categoryId, pageable);
-                }
-            } else {
-                if ("SALE".equals(status)) {
-                    products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findAvailableProductsWithinRadiusByKeyword(userLatitude, userLongitude, radiusKm, keyword, pageable)
-                            : productService.findAvailableProductsWithinRadius(userLatitude, userLongitude, radiusKm, pageable);
-                } else {
-                    products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findProductsWithinRadiusByKeyword(userLatitude, userLongitude, radiusKm, keyword, pageable)
-                            : productService.findProductsWithinRadius(userLatitude, userLongitude, radiusKm, pageable);
-                }
-            }
-        } else {
-            // 기존 로직 사용
-            if (categoryId != null) {
-                Category selectedCategory = categoryService.findById(categoryId);
-                model.addAttribute("selectedCategory", selectedCategory);
-                model.addAttribute("selectedCategoryId", categoryId);
-
-                if ("SALE".equals(status)) {
-                    products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findByCategoryAndKeyword(categoryId, keyword, pageable)
-                            : productService.findAvailableByCategoryId(categoryId, pageable);
-                } else {
-                    products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findByCategoryAndKeyword(categoryId, keyword, pageable)
-                            : productService.findByCategoryId(categoryId, pageable);
-                }
-            } else {
-                if ("SALE".equals(status)) {
-                    products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findAvailableByKeyword(keyword, pageable)
-                            : productService.findAvailableItems(pageable);
-                } else {
-                    products = (keyword != null && !keyword.isEmpty())
-                            ? productService.findAllByKeyword(keyword, pageable)
-                            : productService.findAll(pageable);
-                }
-            }
+        if (loggedInUser != null && loggedInUser.getLatitude() != null && loggedInUser.getLongitude() != null) { //반경내 게시글 조회
+            products = productService.findProductsWithinRadius(
+                    loggedInUser.getLatitude(), loggedInUser.getLongitude(), loggedInUser.getRadiusKm(),
+                    categoryId, status, keyword, pageable);
+        } else {//게시글 조회(로그인 안한 경우)
+            products = productService.findProductsByConditions(categoryId, status, keyword, pageable);
         }
+
         model.addAttribute("products", products);
         return "products/list";
     }

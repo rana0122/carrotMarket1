@@ -3,12 +3,80 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="miniproject.carrotmarket1.dao.MySQL.ProductDAO">
 
-    <select id="findProductsByConditions" parameterType="java.lang.Long" resultType="miniproject.carrotmarket1.entity.Product">
-        SELECT * FROM product
-        WHERE 1=1
-        <if test="category != null and category != ''">
-            AND category_id = #{category}
-        </if>
+    <resultMap id="ProductResultMap" type="miniproject.carrotmarket1.entity.Product">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="price" column="price"/>
+        <result property="location" column="location"/>
+        <result property="latitude" column="latitude"/>
+        <result property="longitude" column="longitude"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="userId" column="user_id"/>
+        <result property="status" column="status"/>
+        <result property="totalCount" column="total_count"/>
+        <association property="user" column="user_id" javaType="miniproject.carrotmarket1.entity.User"
+                     select="miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById"/>
+        <association property="category" column="category_id" javaType="miniproject.carrotmarket1.entity.Category"
+                     select="miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById"/>
+        <collection property="images" column="id" ofType="miniproject.carrotmarket1.entity.ProductImage"
+                    select="selectProductImagesByProductId"/>
+    </resultMap>
+
+
+    <!-- 조건에 따라 동적으로 상품 조회 -->
+    <select id="findProductsByConditions" resultMap="ProductResultMap">
+        <![CDATA[
+    SELECT *, COUNT(*) OVER() AS total_count
+    FROM product
+    ]]>
+        <where>
+            <if test="categoryId != null">
+                AND category_id = #{categoryId}
+            </if>
+            <if test="status != null and status != 'ALL'">
+                AND status = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND title LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        <![CDATA[
+    LIMIT #{pageSize} OFFSET #{offset}
+    ]]>
     </select>
+
+    <!-- 반경 내 상품 조회 -->
+    <select id="findProductsWithinRadius" resultMap="ProductResultMap">
+        <![CDATA[
+        SELECT *, COUNT(*) OVER() AS total_count,
+        (
+        6371 * acos(
+        cos(radians(#{latitude})) * cos(radians(latitude)) *
+        cos(radians(longitude) - radians(#{longitude})) +
+        sin(radians(#{latitude})) * sin(radians(latitude))
+        )) AS distance
+        FROM product
+        ]]>
+        <where>
+            <if test="categoryId != null">
+                AND category_id = #{categoryId}
+            </if>
+            <if test="status != null and status != 'ALL'">
+                AND status = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND title LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        <![CDATA[
+        HAVING distance <= #{radiusKm}
+        ORDER BY distance
+        LIMIT #{pageSize} OFFSET #{offset}
+        ]]>
+    </select>
+
+
 
 </mapper>
