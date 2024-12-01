@@ -215,4 +215,9 @@ public class ProductService {
     public List<Product> findAllByKeyword(String keyword) {
         return productRepository.findAllByTitleContainingIgnoreCase(keyword);
     }
+
+    //사용자id로 작성한 게시글을 조회
+    public List<Product> findByUserId(Long userId) {
+       return productRepository.findByUserId(userId);
+    }
 }

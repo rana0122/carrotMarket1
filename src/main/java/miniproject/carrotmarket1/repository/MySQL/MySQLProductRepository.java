@@ -75,4 +75,9 @@ public class MySQLProductRepository implements ProductRepository {
     public List<Product> findByCategoryAndTitleContainingIgnoreCase(Long categoryId, String keyword) {
         return productDAO.findByCategoryAndTitleContainingIgnoreCase(categoryId, keyword);
     }
+
+    @Override
+    public List<Product> findByUserId(Long userId) {
+        return productDAO.findByUserId(userId);
+    }
 }

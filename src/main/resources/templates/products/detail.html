@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+x<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -183,6 +183,11 @@
                     <div th:if="${loggedInUser != null and loggedInUser.id == product.userId}" class="edit-button-container">
                         <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-orange">수정하기</a>
                     </div>
+
+                    <div th:if="${loggedInUser != null and loggedInUser.id == product.userId}" class="edit-button-container">
+                        <button type="button" class="btn btn-orange">삭제</button>
+                    </div>
+
 
                     <div th:if="${loggedInUser != null && loggedInUser.id != user.id}" class="mt-3">
                         <form th:action="@{/chatroom/create}" method="post">

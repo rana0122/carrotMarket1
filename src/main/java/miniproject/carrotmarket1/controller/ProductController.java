@@ -95,6 +95,7 @@ public class ProductController {
 
         return "products/detail";
     }
+
     //========================게시글 생성==========================//
     //게시글 생성페이지
     @GetMapping("/write")
@@ -105,6 +106,7 @@ public class ProductController {
         return "products/write";
 
     }
+
     //게시글 생성 저장
     @PostMapping("/save")
     public String createProduct(@ModelAttribute Product product,
@@ -164,7 +166,6 @@ public class ProductController {
         return "redirect:/products/detail/" + id;
     }
 
-
-
+    /* 게시글 삭제*/
 
 }

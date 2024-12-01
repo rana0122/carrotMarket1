@@ -32,4 +32,6 @@ public interface ProductRepository {
     List<Product> findAvailableByTitleContainingIgnoreCase(String keyword);
 
     List<Product> findByCategoryAndTitleContainingIgnoreCase(Long categoryId, String keyword);
+
+    List<Product> findByUserId(Long userId);
 }
