@@ -60,15 +60,15 @@
         FROM product
         WHERE 1=1
         ]]>
-            <if test="categoryId != null">
-                AND category_id = #{categoryId}
-            </if>
-            <if test="status != null and status != 'ALL'">
-                AND status = #{status}
-            </if>
-            <if test="keyword != null and keyword != ''">
-                AND title LIKE CONCAT('%', #{keyword}, '%')
-            </if>
+        <if test="categoryId != null">
+            AND category_id = #{categoryId}
+        </if>
+        <if test="status != null and status != 'ALL'">
+            AND status = #{status}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND title LIKE CONCAT('%', #{keyword}, '%')
+        </if>
         <![CDATA[
         HAVING distance <= #{radiusKm}
         ORDER BY distance
