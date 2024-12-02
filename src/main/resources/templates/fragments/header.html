@@ -26,6 +26,12 @@
                             <span class="ml-1 font-weight-bold"
                                   th:text="${session.loggedInUser.username + ' 님 마이페이지'}"></span>
                         </a>
+                        <!-- 위치 정보 표시 -->
+                        <!-- 위치 정보 표시 -->
+                        <div class="d-flex align-items-center ml-2">
+                            <i class="fas fa-map-marker-alt text-danger mr-1"></i> <!-- 위치 아이콘 -->
+                            <span class="text-muted" th:text="${session.loggedInUser.location}"></span>
+                        </div>
 
                         <a th:href="@{/logout}" class="btn btn-orange ml-3">로그아웃</a>
 
