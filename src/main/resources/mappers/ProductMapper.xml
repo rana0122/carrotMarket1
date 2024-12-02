@@ -58,8 +58,8 @@
         sin(radians(#{latitude})) * sin(radians(latitude))
         )) AS distance
         FROM product
+        WHERE 1=1
         ]]>
-        <where>
             <if test="categoryId != null">
                 AND category_id = #{categoryId}
             </if>
@@ -69,7 +69,6 @@
             <if test="keyword != null and keyword != ''">
                 AND title LIKE CONCAT('%', #{keyword}, '%')
             </if>
-        </where>
         <![CDATA[
         HAVING distance <= #{radiusKm}
         ORDER BY distance
