@@ -26,4 +26,9 @@ public interface ProductRepository {
 
     //채팅에서 상품 거래 상태 변경
     void updateReservationStatus(Long productId, String status);
+
+    //상품 삭제
+    void deleteById(Long id);
+
+    List<Product> findByUserId(Long userId);
 }

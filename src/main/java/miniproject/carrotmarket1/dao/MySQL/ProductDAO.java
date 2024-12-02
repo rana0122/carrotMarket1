@@ -74,4 +74,20 @@ public interface ProductDAO {
     //채팅룸에서 거래 상태 변경
     @Update("UPDATE product SET status = #{status} WHERE id = #{productId}")
     void updateReservationStatus(@Param("productId") Long productId, @Param("status") String status);
+
+    @Delete("DELETE FROM product WHERE id = #{id}")
+    void deleteById(Long id);
+
+    /* 사용자 id로 작성한 게시글을 조회*/
+    @Select("SELECT * FROM product WHERE user_id = #{userId}")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")), // 경로 수정
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "selectProductImagesByProductId"))
+    })
+    List<Product> findByUserId(Long userId);
 }

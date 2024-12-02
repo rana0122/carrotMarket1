@@ -196,4 +196,19 @@ public class ProductService {
     public void updateReservationStatus(Long productId, String status) {
        productRepository.updateReservationStatus(productId, status);
     }
+
+    //게시글 삭제
+    public boolean deleteProductById(Long id, Long userId) {
+        Product product = productRepository.findById(id);
+        if (product != null && product.getUserId().equals(userId)) {
+            productImageRepository.deleteByProductId(id);
+            productRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+    public List<Product> findByUserId(Long userId) {
+        return productRepository.findByUserId(userId);
+    }
 }

@@ -75,4 +75,16 @@ public class MySQLProductRepository implements ProductRepository {
         productDAO.updateReservationStatus(productId,status);
     }
 
+    @Override
+    public List<Product> findByUserId(Long userId) {
+        return productDAO.findByUserId(userId);
+    }
+
+    //게시글 삭제시 이미지 삭제
+    @Override
+    public void deleteById(Long id) {
+        productDAO.deleteById(id);
+    }
+
+
 }

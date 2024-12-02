@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
@@ -165,6 +166,16 @@ public class ProductController {
         return "redirect:/products/detail/" + id;
     }
 
+    /* 게시글 삭제*/
+    @PostMapping("/delete/{id}")
+    public String deleteProduct(@PathVariable Long id, HttpSession session, RedirectAttributes redirectAttributes) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        boolean isDeleted = productService.deleteProductById(id, loggedInUser.getId());
+        if (isDeleted) {
+            redirectAttributes.addFlashAttribute("success", "상품이 삭제되었습니다.");
+        }
+        return "redirect:/myproduct/sell/" + loggedInUser.getId();
+    }
 
 
 

@@ -23,4 +23,8 @@ public interface ProductImageDAO {
     //게시글 이미지 삭제
     @Delete("DELETE FROM product_image WHERE id = #{id}")
     void deleteById(Long id);
+
+    // 상품의 id를 기준으로 이미지 삭제
+    @Delete("DELETE FROM product_image WHERE product_id = #{productId}")
+    void deleteByProductId(Long productId);
 }
