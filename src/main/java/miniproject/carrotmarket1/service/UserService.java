@@ -105,7 +105,7 @@ public class UserService {
         // 파일 저장
         profileImageFile.transferTo(filePath.toFile());
 
-        return "/profileImages/" + fileName;  // 저장된 파일 경로 반환
+        return "/profileImages/" + fileName; // 저장된 파일 경로 반환
     }
 
     public boolean emailExists(String email) {

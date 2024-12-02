@@ -4,6 +4,9 @@ import miniproject.carrotmarket1.dao.MySQL.ProductDAO;
 import miniproject.carrotmarket1.entity.Product;
 import miniproject.carrotmarket1.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,23 +21,6 @@ public class MySQLProductRepository implements ProductRepository {
         this.productDAO = productDAO;
     }
 
-    //게시글 전체 목록 조회
-    public List<Product> findAll() {
-
-        return productDAO.findAll();
-    }
-
-    //판매중인 상품에 대한 게시글 목록 조회
-    public List<Product> findAvailableItems() {
-
-        return productDAO.findAvailableItems();
-    }
-
-    //xml 연동 테스트
-    @Override
-    public List<Product> findProductsByConditions(Long category) {
-        return productDAO.findProductsByConditions(category);
-    }
 
     //ID로 상품 상세 조회
     @Override
@@ -54,30 +40,51 @@ public class MySQLProductRepository implements ProductRepository {
         productDAO.updateProduct(product);
     }
 
-    public List<Product> findByCategoryId(Long categoryId) {
-        return productDAO.findByCategoryId(categoryId);
+    //반경내 게시글 조회
+    @Override
+    public Page<Product> findProductsWithinRadius(Double latitude, Double longitude, Double radiusKm,
+                                                  Long categoryId, String status, String keyword, Pageable pageable) {
+        List<Product> products = productDAO.findProductsWithinRadius(latitude, longitude, radiusKm, categoryId, status, keyword,
+                                                                        pageable.getPageSize(), (int) pageable.getOffset());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+
+        return new PageImpl<>(products, pageable, totalCount);
     }
 
-    public List<Product> findAvailableByCategoryId(Long categoryId) {
-        return productDAO.findAvailableByCategoryId(categoryId);
-    }
+    //게시글 조회(로그인 안한 경우)
     @Override
-    public List<Product> findAllByTitleContainingIgnoreCase(String keyword) {
-        return productDAO.findAllByTitleContainingIgnoreCase(keyword);
+    public Page<Product> findProductsByConditions(Long categoryId, String status, String keyword, Pageable pageable) {
+        List<Product> products = productDAO.findProductsByConditions(categoryId, status, keyword,pageable.getPageSize(), (int) pageable.getOffset());
+        long totalCount = 0;
+        if (!products.isEmpty()) {
+            totalCount = products.get(0).getTotalCount();
+        }else{
+            return Page.empty();
+        }
+
+        return new PageImpl<>(products, pageable, totalCount);
     }
 
     @Override
-    public List<Product> findAvailableByTitleContainingIgnoreCase(String keyword) {
-        return productDAO.findAvailableByTitleContainingIgnoreCase(keyword);
-    }
-
-    @Override
-    public List<Product> findByCategoryAndTitleContainingIgnoreCase(Long categoryId, String keyword) {
-        return productDAO.findByCategoryAndTitleContainingIgnoreCase(categoryId, keyword);
+    public void updateReservationStatus(Long productId, String status) {
+        productDAO.updateReservationStatus(productId,status);
     }
 
     @Override
     public List<Product> findByUserId(Long userId) {
         return productDAO.findByUserId(userId);
     }
+
+    //게시글 삭제시 이미지 삭제
+    @Override
+    public void deleteById(Long id) {
+        productDAO.deleteById(id);
+    }
+
+
 }

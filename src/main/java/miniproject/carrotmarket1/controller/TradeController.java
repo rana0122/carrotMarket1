@@ -1,7 +1,6 @@
 package miniproject.carrotmarket1.controller;
 
 import jakarta.servlet.http.HttpSession;
-import miniproject.carrotmarket1.entity.Category;
 import miniproject.carrotmarket1.entity.Product;
 import miniproject.carrotmarket1.entity.User;
 import miniproject.carrotmarket1.service.ProductService;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-@RequestMapping("/products/myproduct")
+@RequestMapping("/myproduct")
 public class TradeController {
     private TradeService tradeService;
     private ProductService productService;
@@ -29,15 +28,21 @@ public class TradeController {
 
 
     /* 로그인된 id가 작성한 글만 뷰에 올리기*/
-    @GetMapping("/{userId}")
+    @GetMapping("/sell/{userId}")
     public String showMyProduct(@PathVariable Long userId, Model model, HttpSession session) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
-        List<Product> products = productService.findByUserId(userId);
-        List<Product> trade = tradeService.findByBuyerId(userId);
+        List<Product> products = productService.findByUserId(userId); //판매물품 내역 조회
         model.addAttribute("products", products);
         model.addAttribute("user", loggedInUser);
-        model.addAttribute("trades", trade);
+        return "products/myproduct";
+    }
 
+    @GetMapping("/buy/{userId}")
+    public String showBuyProduct(@PathVariable Long userId, Model model, HttpSession session) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        List<Product> products = tradeService.findByBuyerId(userId); //구매물품 내역 조회
+        model.addAttribute("products", products);
+        model.addAttribute("user", loggedInUser);
         return "products/myproduct";
     }
 }

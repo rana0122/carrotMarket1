@@ -1,18 +1,13 @@
 package miniproject.carrotmarket1.repository;
 
 import miniproject.carrotmarket1.entity.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ProductRepository {
-    // 게시글 전체 목록 조회
-    List<Product> findAll();
 
-    // 판매중인 상품에 대한 게시글 목록 조회
-    List<Product> findAvailableItems();
-
-    //xml 연동 테스트
-    List<Product> findProductsByConditions(Long category);
 
     //ID로 상품 상세 조회
     Product findById(Long productId);
@@ -23,15 +18,17 @@ public interface ProductRepository {
     //게시글 수정
     void updateProduct(Product existingProduct);
 
-    List<Product> findByCategoryId(Long categoryId);
+    //반경내 게시글 조회
+    Page<Product> findProductsWithinRadius(Double latitude, Double longitude, Double radiusKm, Long categoryId, String status, String keyword, Pageable pageable);
 
-    List<Product> findAvailableByCategoryId(Long categoryId);
+    //게시글 조회(로그인 안한 경우)
+    Page<Product> findProductsByConditions(Long categoryId, String status, String keyword, Pageable pageable);
 
-    List<Product> findAllByTitleContainingIgnoreCase(String keyword);
+    //채팅에서 상품 거래 상태 변경
+    void updateReservationStatus(Long productId, String status);
 
-    List<Product> findAvailableByTitleContainingIgnoreCase(String keyword);
-
-    List<Product> findByCategoryAndTitleContainingIgnoreCase(Long categoryId, String keyword);
+    //상품 삭제
+    void deleteById(Long id);
 
     List<Product> findByUserId(Long userId);
 }

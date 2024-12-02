@@ -1,5 +1,7 @@
 package miniproject.carrotmarket1.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import miniproject.carrotmarket1.entity.Category;
 import miniproject.carrotmarket1.entity.Product;
@@ -8,13 +10,16 @@ import miniproject.carrotmarket1.service.CategoryService;
 import miniproject.carrotmarket1.service.ProductService;
 import miniproject.carrotmarket1.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -24,12 +29,15 @@ public class ProductController {
     private final ProductService productService;
     private final UserService userService;
     private final CategoryService categoryService;
+    private LocationController locationController;
 
     @Autowired
-    public ProductController(ProductService productService, UserService userService, CategoryService categoryService) {
+    public ProductController(ProductService productService, UserService userService,
+                             CategoryService categoryService, LocationController locationController) {
         this.productService = productService;
         this.userService = userService;
         this.categoryService = categoryService;
+        this.locationController = locationController;
     }
 
     //상품 목록 페이지
@@ -38,6 +46,9 @@ public class ProductController {
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false, defaultValue = "ALL") String status,
             @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page, // 페이지 번호 추가
+            @RequestParam(defaultValue = "8") int size, // 한 페이지에 보여줄 아이템 수
+            HttpSession session,
             Model model) {
 
         // 모든 카테고리 로드
@@ -46,38 +57,29 @@ public class ProductController {
         model.addAttribute("status", status);
         model.addAttribute("keyword", keyword);
 
-        List<Product> products;
+        Page<Product> products = null;
+        Pageable pageable = PageRequest.of(page, size);
 
-        // 카테고리와 상태에 따른 상품 필터링
-        if (categoryId != null) {
-            Category selectedCategory = categoryService.findById(categoryId);
-            model.addAttribute("selectedCategory", selectedCategory);
-            model.addAttribute("selectedCategoryId", categoryId);
+        // 세션에서 사용자 위치 정보 가져오기
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser != null && loggedInUser.getLatitude() != null && loggedInUser.getLongitude() != null) { //반경내 게시글 조회
+            products = productService.findProductsWithinRadius(
+                    loggedInUser.getLatitude(), loggedInUser.getLongitude(), loggedInUser.getRadiusKm(),
+                    categoryId, status, keyword, pageable);
+            for (Product product : products) {
+                String drivingTime = locationController.calculateDistanceKakao(loggedInUser, product, "CAR");
+                product.setDrivingTime(drivingTime);
+            }
 
-            if ("SALE".equals(status)) {
-                products = (keyword != null && !keyword.isEmpty())
-                        ? productService.findByCategoryAndKeyword(categoryId, keyword)
-                        : productService.findAvailableByCategoryId(categoryId);
-            } else {
-                products = (keyword != null && !keyword.isEmpty())
-                        ? productService.findByCategoryAndKeyword(categoryId, keyword)
-                        : productService.findByCategoryId(categoryId);
-            }
-        } else {
-            if ("SALE".equals(status)) {
-                products = (keyword != null && !keyword.isEmpty())
-                        ? productService.findAvailableByKeyword(keyword)
-                        : productService.findAvailableItems();
-            } else {
-                products = (keyword != null && !keyword.isEmpty())
-                        ? productService.findAllByKeyword(keyword)
-                        : productService.findAll();
-            }
+        } else {//게시글 조회(로그인 안한 경우)
+            products = productService.findProductsByConditions(categoryId, status, keyword, pageable);
         }
 
         model.addAttribute("products", products);
         return "products/list";
     }
+
+
 
     //상품 목록 상세조회
     @GetMapping("/detail/{id}")
@@ -95,7 +97,6 @@ public class ProductController {
 
         return "products/detail";
     }
-
     //========================게시글 생성==========================//
     //게시글 생성페이지
     @GetMapping("/write")
@@ -106,7 +107,6 @@ public class ProductController {
         return "products/write";
 
     }
-
     //게시글 생성 저장
     @PostMapping("/save")
     public String createProduct(@ModelAttribute Product product,
@@ -167,5 +167,16 @@ public class ProductController {
     }
 
     /* 게시글 삭제*/
+    @PostMapping("/delete/{id}")
+    public String deleteProduct(@PathVariable Long id, HttpSession session, RedirectAttributes redirectAttributes) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        boolean isDeleted = productService.deleteProductById(id, loggedInUser.getId());
+        if (isDeleted) {
+            redirectAttributes.addFlashAttribute("success", "상품이 삭제되었습니다.");
+        }
+        return "redirect:/myproduct/sell/" + loggedInUser.getId();
+    }
+
+
 
 }

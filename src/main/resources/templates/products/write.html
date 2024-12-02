@@ -96,6 +96,23 @@
       cursor: pointer;
       margin-top: 20px;
     }
+    .delete-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        z-index: 10;
+    }
   </style>
 </head>
 <body>
@@ -107,12 +124,11 @@
       <div class="image-section">
         <div class="image-upload">
           <!-- input type이 file이고, name이 productImages로 설정됨 -->
-          <label for="productImages">
-          <input type="file" id="productImages" name="productImages" multiple accept="image/*" style="display: none;">
-
-            <i class="fas fa-camera" style="font-size: 48px; color: #adb5bd; margin-bottom: 12px;"></i>
-            <p style="margin: 0; color: #495057;">이미지를 업로드해주세요</p>
-          </label>
+            <input type="file" id="productImages" name="productImages" multiple accept="image/*" required style="width: 1px; height: 1px; opacity: 0; position: absolute;">
+            <label for="productImages" class="image-upload-btn">
+                <i class="fas fa-camera" style="font-size: 48px; color: #adb5bd; margin-bottom: 12px;"></i>
+                <p style="margin: 0; color: #495057;">이미지를 업로드해주세요</p>
+            </label>
         </div>
         <div class="image-preview">
           <div class="carousel"></div>
@@ -158,6 +174,13 @@
 
 <th:block layout:fragment="pageScript">
   <script>
+      document.querySelector('form').addEventListener('submit', function(e) {
+          const files = document.getElementById('productImages').files;
+          if (files.length < 1) {
+              e.preventDefault();
+              alert('최소 1장의 이미지를 업로드해야 합니다.');
+          }
+      });
     document.addEventListener('DOMContentLoaded', function() {
       const imageInput = document.getElementById('productImages');
       const carousel = document.querySelector('.carousel');
@@ -167,7 +190,13 @@
 
       imageInput.addEventListener('change', function(e) {
         const files = e.target.files;
-        images = [];
+
+          if (files.length > 10) {
+              alert('이미지는 최대 10장까지 업로드 가능합니다.');
+              imageInput.value = ''; // 파일 선택 초기화
+              return;
+          }
+          images = [];
         carousel.innerHTML = '';
         carouselNav.innerHTML = '';
 
@@ -186,19 +215,39 @@
         carouselNav.innerHTML = '';
 
         images.forEach((image, index) => {
-          const img = document.createElement('img');
-          img.src = image;
-          img.className = index === currentSlide ? 'active' : '';
-          carousel.appendChild(img);
+            const slide = document.createElement('div');
+            slide.className = 'swiper-slide';
 
-          const dot = document.createElement('div');
-          dot.className = `carousel-dot ${index === currentSlide ? 'active' : ''}`;
-          dot.addEventListener('click', () => showSlide(index));
-          carouselNav.appendChild(dot);
+            const img = document.createElement('img');
+            img.src = image;
+            img.className = index === currentSlide ? 'active' : '';
+            carousel.appendChild(img);
+            // 삭제 버튼 추가
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+            deleteBtn.addEventListener('click', () => deleteImage(index));
+            slide.appendChild(deleteBtn);
+
+            carousel.appendChild(slide);
+
+            const dot = document.createElement('div');
+            dot.className = `carousel-dot ${index === currentSlide ? 'active' : ''}`;
+            dot.addEventListener('click', () => showSlide(index));
+            carouselNav.appendChild(dot);
         });
       }
+        function deleteImage(index) {
+            images.splice(index, 1);
+            updateCarousel();
+            if (images.length === 0) {
+                alert('최소 1장의 이미지를 업로드해야 합니다.');
+            }
+        }
 
-      function showSlide(index) {
+
+        function showSlide(index) {
         currentSlide = index;
         const imgs = carousel.querySelectorAll('img');
         const dots = carouselNav.querySelectorAll('.carousel-dot');

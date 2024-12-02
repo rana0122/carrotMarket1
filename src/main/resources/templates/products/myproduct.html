@@ -164,8 +164,8 @@
             </a>
 
             <th:block>
-              <a class="btn">판매한 물품</a>
-              <a th:href="@{/products/myproduct/{userId}(userId=${session.loggedInUser.id})}" class="btn">구매한 물품</a>
+              <a th:href="@{/myproduct/sell/{userId}(userId=${session.loggedInUser.id})}" class="btn">판매한 물품</a>
+              <a th:href="@{/myproduct/buy/{userId}(userId=${session.loggedInUser.id})}" class="btn">구매한 물품</a>
             </th:block>
           </div>
 
@@ -173,9 +173,8 @@
           <!-- 글쓰기 버튼 -->
           <th:block th:if="${session.loggedInUser!=null}">
             <a th:href="@{/products/write}" class="btn btn-orange w-100">게시글 작성하기</a>
-          </th:block>
-          <th:block th:if="${session.loggedInUser!=null}">
-            <a th:href="@{/products/myproduct/{userId}(userId=${session.loggedInUser.id})}" class="btn btn-orange w-100">내가 작성한 게시글</a>
+            <br><br>
+            <a th:href="@{/myproduct/{userId}(userId=${session.loggedInUser.id})}" class="btn btn-orange w-100">내가 작성한 게시글</a>
           </th:block>
         </div>
 
@@ -185,13 +184,9 @@
           <div class="row row-cols-1 row-cols-md-4">
             <div class="col mb-4" th:each="item, itemStat : ${products}">
               <div class="card">
-                <!--                            <img th:src="${item.images[0]}" class="card-img-top" alt="상품 이미지">-->
                 <div class="carousel slide" data-ride="carousel" th:id="'carouselExampleControls' + ${itemStat.index}">
                   <div class="carousel-inner">
-                    <!--                                    <div th:each="image, stat : ${item.images}" th:classappend="${stat.first} ? 'active'">-->
                     <div th:each="image, stat : ${item.images}" th:classappend="${stat.first} ? 'active' : ''" class="carousel-item">
-
-                      <!--                                        <img th:src="${image}" class="d-block w-100" alt="상품 이미지">-->
                       <img th:src="${image.imageUrl}" class="d-block w-100 card-img-top" alt="상품 이미지">
                     </div>
                   </div>
@@ -221,25 +216,5 @@
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> <!-- jQuery Full 버전 -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script>
-    function updateURLParameter(url, param, value) {
-      var newAdditionalURL = "";
-      var tempArray = url.split("?");
-      var baseURL = tempArray[0];
-      var additionalURL = tempArray[1];
-      var temp = "";
-      if (additionalURL) {
-        tempArray = additionalURL.split("&");
-        for (var i=0; i<tempArray.length; i++) {
-          if (tempArray[i].split('=')[0] != param) {
-            newAdditionalURL += temp + tempArray[i];
-            temp = "&";
-          }
-        }
-      }
-      var rows_txt = temp + "" + param + "=" + value;
-      return baseURL + "?" + newAdditionalURL + rows_txt;
-    }
-  </script>
 </body>
 </html>

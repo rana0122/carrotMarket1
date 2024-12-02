@@ -14,4 +14,7 @@ public interface ProductImageRepository {
 
     //상품이미지 삭제
     void deleteById(Long id);
+
+    // 상품의 id를 기준으로 이미지 삭제
+    void deleteByProductId(Long productId);
 }

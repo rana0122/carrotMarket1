@@ -26,11 +26,29 @@
                             <span class="ml-1 font-weight-bold"
                                   th:text="${session.loggedInUser.username + ' 님 마이페이지'}"></span>
                         </a>
+                        <!-- 위치 정보 표시 -->
+                        <!-- 위치 정보 표시 -->
+                        <div class="d-flex align-items-center ml-2">
+                            <i class="fas fa-map-marker-alt text-danger mr-1"></i> <!-- 위치 아이콘 -->
+                            <span class="text-muted" th:text="${session.loggedInUser.location}"></span>
+                        </div>
+
                         <a th:href="@{/logout}" class="btn btn-orange ml-3">로그아웃</a>
+
+                        <th:block th:if="${session.loggedInUser.userGroup == 'GENERAL'}">
                         <a th:href="@{/chatroom}" class="nav-link d-flex align-items-center ml-3">
                             <i class="fas fa-comments chat-icon"></i>
                             <span class="ml-1 font-weight-bold">채팅방</span>
                         </a>
+                        </th:block>
+                        <th:block th:if="${session.loggedInUser.userGroup == 'ADMIN'}">
+                        <a th:href="@{/admin/reports}" class="nav-link d-flex align-items-center ml-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                                <path d="M8.982 1.566a1.5 1.5 0 0 0-2.664 0l-6.857 11.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.29-2.434l-6.857-11.5zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                            </svg>
+                            <span class="ml-1 font-weight-bold">신고내역</span>
+                        </a>
+                        </th:block>
                     </li>
                 </ul>
             </div>

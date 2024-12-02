@@ -5,6 +5,7 @@ import miniproject.carrotmarket1.entity.Product;
 import miniproject.carrotmarket1.entity.ProductImage;
 import miniproject.carrotmarket1.entity.User;
 import org.apache.ibatis.annotations.*;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -26,32 +27,6 @@ public interface ProductDAO {
     void insertProductImage(ProductImage productImage);
 
 
-    // 판매중인 상품에 대한 게시글 목록 조회
-    @Select("SELECT * FROM product WHERE status = 'SALE'")
-    @Results({
-            @Result(property = "id", column = "id"),
-            @Result(property = "user", column = "user_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
-            @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
-            @Result(property = "images", column = "id", javaType = List.class,
-                    many = @Many(select = "selectProductImagesByProductId"))
-    })
-    List<Product> findAvailableItems();
-
-    //모든 상품에 대한 게시글 목록 조회
-    @Select("SELECT * FROM product")
-    @Results({
-            @Result(property = "id", column = "id"),
-            @Result(property = "user", column = "user_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
-            @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")), // 경로 수정
-            @Result(property = "images", column = "id", javaType = List.class,
-                    many = @Many(select = "selectProductImagesByProductId"))
-    })
-    List<Product> findAll();
-
     //게시글 상세조회
     @Select("SELECT * FROM product WHERE id = #{id}")
     @Results({
@@ -71,74 +46,39 @@ public interface ProductDAO {
     @Select("SELECT * FROM product_image WHERE product_id = #{id}")
     List<ProductImage> selectProductImagesByProductId(Long id);
 
-    //xml 연동 테스트
-    List<Product> findProductsByConditions( @Param("category") Long category);
 
     //게시글 수정
     @Update("UPDATE product SET title = #{title}, description = #{description}, " +
+            "location = #{location}, latitude = #{latitude}, longitude = #{longitude}, " +
             "price = #{price}, category_id = #{categoryId} WHERE id = #{id}")
     void updateProduct(Product product);
-    @Select("SELECT * FROM product WHERE category_id = #{categoryId}")
-    @Results({
-            @Result(property = "id", column = "id"),
-            @Result(property = "user", column = "user_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
-            @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
-            @Result(property = "images", column = "id", javaType = List.class,
-                    many = @Many(select = "selectProductImagesByProductId"))
-    })
-    List<Product> findByCategoryId(Long categoryId);
 
-    @Select("SELECT * FROM product WHERE category_id = #{categoryId} AND status = 'SALE'")
-    @Results({
-            @Result(property = "id", column = "id"),
-            @Result(property = "user", column = "user_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
-            @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
-            @Result(property = "images", column = "id", javaType = List.class,
-                    many = @Many(select = "selectProductImagesByProductId"))
-    })
-    List<Product> findAvailableByCategoryId(Long categoryId);
 
-    @Select("SELECT * FROM product WHERE title LIKE CONCAT('%', #{keyword}, '%')")
-    @Results({
-            @Result(property = "id", column = "id"),
-            @Result(property = "user", column = "user_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
-            @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
-            @Result(property = "images", column = "id", javaType = List.class,
-                    many = @Many(select = "selectProductImagesByProductId"))
-    })
-    List<Product> findAllByTitleContainingIgnoreCase(String keyword);
+    //조건에 따라 동적으로 상품 조회
+    List<Product> findProductsByConditions(@Param("categoryId") Long categoryId,
+                                           @Param("status") String status,
+                                           @Param("keyword") String keyword,
+                                           @Param("pageSize") int pageSize,
+                                           @Param("offset") int offset);
 
-    @Select("SELECT * FROM product WHERE title LIKE CONCAT('%', #{keyword}, '%') AND status = 'SALE'")
-    @Results({
-            @Result(property = "id", column = "id"),
-            @Result(property = "user", column = "user_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
-            @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
-            @Result(property = "images", column = "id", javaType = List.class,
-                    many = @Many(select = "selectProductImagesByProductId"))
-    })
-    List<Product> findAvailableByTitleContainingIgnoreCase(String keyword);
+    //반경 내 상품 조회
+    List<Product> findProductsWithinRadius(@Param("latitude") double latitude,
+                                           @Param("longitude") double longitude,
+                                           @Param("radiusKm") double radiusKm,
+                                           @Param("categoryId") Long categoryId,
+                                           @Param("status") String status,
+                                           @Param("keyword") String keyword,
+                                           @Param("pageSize") int pageSize,
+                                           @Param("offset") int offset);
 
-    @Select("SELECT * FROM product WHERE category_id = #{categoryId} AND title LIKE CONCAT('%', #{keyword}, '%')")
-    @Results({
-            @Result(property = "id", column = "id"),
-            @Result(property = "user", column = "user_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
-            @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
-            @Result(property = "images", column = "id", javaType = List.class,
-                    many = @Many(select = "selectProductImagesByProductId"))
-    })
-    List<Product> findByCategoryAndTitleContainingIgnoreCase(@Param("categoryId") Long categoryId, @Param("keyword") String keyword);
+    //채팅룸에서 거래 상태 변경
+    @Update("UPDATE product SET status = #{status} WHERE id = #{productId}")
+    void updateReservationStatus(@Param("productId") Long productId, @Param("status") String status);
 
-    /* 사용자id로 작성한 게시글을 조회*/
+    @Delete("DELETE FROM product WHERE id = #{id}")
+    void deleteById(Long id);
+
+    /* 사용자 id로 작성한 게시글을 조회*/
     @Select("SELECT * FROM product WHERE user_id = #{userId}")
     @Results({
             @Result(property = "id", column = "id"),

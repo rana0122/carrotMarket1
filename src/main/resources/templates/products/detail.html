@@ -1,4 +1,4 @@
-x<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -18,25 +18,51 @@ x<!DOCTYPE html>
 
         .product-detail {
             display: flex;
-            align-items: flex-start; /* 이미지와 상세내역의 높이를 동일하게 */
+            align-items: flex-start;
             gap: 3rem;
         }
 
         .product-image {
             flex: 1;
             max-width: 600px;
-            height: 600px; /* 고정 높이 설정 */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #ddd; /* 이미지 테두리 추가 */
-            padding: 10px;
+            width: 100%;
+            aspect-ratio: 1;
+            border: 1px solid #ddd;
+            background: #f8f9fa;
         }
 
-        .product-image img {
-            width: 100%; /* 이미지가 컨테이너에 맞춰 조정되도록 */
-            height: 100%; /* 높이도 동일하게 조정 */
-            object-fit: contain; /* 이미지의 비율을 유지하면서 컨테이너에 맞게 조정 */
+        #productCarousel {
+            width: 100%;
+            height: 100%;
+        }
+
+        .carousel-inner, .carousel-item {
+            width: 100%;
+            height: 100%;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 1rem;
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            margin: 0 1rem;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            width: 20px;
+            height: 20px;
         }
 
         .product-info {
@@ -44,8 +70,6 @@ x<!DOCTYPE html>
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            max-height: 600px; /* 상세내용 영역 고정 높이 설정 */
-            overflow-y: auto; /* 내용을 스크롤할 수 있도록 설정 */
         }
 
         .title {
@@ -63,8 +87,8 @@ x<!DOCTYPE html>
         .description {
             font-size: 20px;
             line-height: 1.8;
-            height: 300px; /* 고정 높이 설정 */
-            overflow-y: auto; /* 내용이 많을 경우 스크롤 가능하도록 설정 */
+            max-height: 300px;
+            overflow-y: auto;
         }
 
         .location, .seller {
@@ -88,22 +112,6 @@ x<!DOCTYPE html>
             background-color: #ff7021;
         }
 
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            width: 40px;
-            height: 40px;
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
-            background-size: 60%;
-        }
-
-        .carousel-control-prev,
-        .carousel-control-next {
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 5;
-        }
-
         .btn-orange {
             background-color: #ff8a3d;
             color: white;
@@ -122,11 +130,19 @@ x<!DOCTYPE html>
             text-align: start;
         }
 
-        .footer {
-            text-align: center;
-            padding: 20px;
-            background-color: #f8f9fa;
-            margin-top: 50px;
+        @media (max-width: 768px) {
+            .product-detail {
+                flex-direction: column;
+            }
+
+            .product-image {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .product-info {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -139,28 +155,24 @@ x<!DOCTYPE html>
                 <div class="product-image">
                     <div id="productCarousel" class="carousel slide">
                         <div class="carousel-inner">
-                            <!-- 이미지 순회 -->
                             <div class="carousel-item" th:each="image, stat : ${product.images}"
                                  th:classappend="${stat.first} ? 'active' : ''">
                                 <img th:src="${image.imageUrl}" class="d-block w-100" alt="상품 이미지">
                             </div>
                         </div>
-                        <!-- 이전 버튼 -->
                         <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Previous</span>
                         </button>
-                        <!-- 다음 버튼 -->
                         <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Next</span>
                         </button>
                     </div>
-
                 </div>
 
                 <div class="product-info">
-                    <h1 id="상품명" th:text="${product.title}" class="title">상품명</h1>
+                    <h1 class="title" id="상품명" th:text="${product.title}">상품명</h1>
 
                     <div class="price" th:text="'₩ ' + ${product.price}">
                         가격
@@ -179,17 +191,12 @@ x<!DOCTYPE html>
                             판매자 : <span th:text="${user.username}">판매자명</span>
                         </div>
                     </div>
-                    <!-- 수정 버튼 (상품 소유자만 표시) -->
-                    <div th:if="${loggedInUser != null and loggedInUser.id == product.userId}" class="edit-button-container">
-                        <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-orange">수정하기</a>
+
+                    <div class="edit-button-container" th:if="${loggedInUser != null and loggedInUser.id == product.userId}">
+                        <a class="btn btn-orange" th:href="@{/products/edit/{id}(id=${product.id})}">수정하기</a>
                     </div>
 
-                    <div th:if="${loggedInUser != null and loggedInUser.id == product.userId}" class="edit-button-container">
-                        <button type="button" class="btn btn-orange">삭제</button>
-                    </div>
-
-
-                    <div th:if="${loggedInUser != null && loggedInUser.id != user.id}" class="mt-3">
+                    <div class="mt-3" th:if="${loggedInUser != null && loggedInUser.id != user.id}">
                         <form th:action="@{/chatroom/create}" method="post">
                             <input type="hidden" name="productId" th:value="${product.id}" />
                             <input type="hidden" name="sellerId" th:value="${user.id}" />

@@ -1,6 +1,5 @@
 package miniproject.carrotmarket1.service;
 
-import miniproject.carrotmarket1.dao.MySQL.ProductDAO;
 import miniproject.carrotmarket1.entity.Category;
 import miniproject.carrotmarket1.entity.Product;
 import miniproject.carrotmarket1.entity.ProductImage;
@@ -9,6 +8,8 @@ import miniproject.carrotmarket1.repository.ProductImageRepository;
 import miniproject.carrotmarket1.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,25 +35,11 @@ public class ProductService {
     public ProductService(ProductRepository productRepository,
                           ProductImageRepository productImageRepository,
                           CategoryRepository categoryRepository) {
-        this.productRepository = productRepository;
+       this.productRepository = productRepository;
        this.productImageRepository = productImageRepository;
        this.categoryRepository = categoryRepository;
    }
 
-    //게시글 전체 목록 조회
-    public List<Product> findAll() {
-        return productRepository.findAll();
-    }
-
-    //판매중인 상품에 대한 게시글 목록 조회
-    public List<Product> findAvailableItems() {
-        return productRepository.findAvailableItems();
-    }
-
-    //xml 연동 테스트
-    public  List<Product> findAvailableItemsByCategory(Long category) {
-       return  productRepository.findProductsByConditions(category);
-    }
 
     //ID로 상품 상세 조회
     public Product findItemById(Long id){
@@ -130,6 +117,9 @@ public class ProductService {
         existingProduct.setDescription(updatedProduct.getDescription());
         existingProduct.setPrice(updatedProduct.getPrice());
         existingProduct.setCategoryId(updatedProduct.getCategoryId());
+        existingProduct.setLocation(updatedProduct.getLocation());
+        existingProduct.setLongitude(updatedProduct.getLongitude());
+        existingProduct.setLatitude(updatedProduct.getLatitude());
 
         productRepository.updateProduct(existingProduct);
 
@@ -191,29 +181,35 @@ public class ProductService {
             }
         }
     }
-    //기존 카테고리 검색시 사용
-    public List<Product> findByCategoryId(Long categoryId) {
-        return productRepository.findByCategoryId(categoryId);
+
+    //반경내 게시글 조회
+    public Page<Product> findProductsWithinRadius(Double latitude, Double longitude, Double radiusKm, Long categoryId,
+                                                  String status, String keyword, Pageable pageable) {
+       return productRepository.findProductsWithinRadius(latitude, longitude, radiusKm, categoryId, status, keyword, pageable);
     }
 
-    //기존 카테고리 검색시 사용
-    public List<Product> findAvailableByCategoryId(Long categoryId) {
-        return null;
+    //게시글 조회(로그인 안한 경우)
+    public Page<Product> findProductsByConditions(Long categoryId, String status, String keyword, Pageable pageable) {
+       return  productRepository.findProductsByConditions(categoryId, status, keyword, pageable);
     }
 
-    // 카테고리 및 검색어로 상품 조회
-    public List<Product> findByCategoryAndKeyword(Long categoryId, String keyword) {
-        return productRepository.findByCategoryAndTitleContainingIgnoreCase(categoryId, keyword);
+    public void updateReservationStatus(Long productId, String status) {
+       productRepository.updateReservationStatus(productId, status);
     }
 
-    // 검색어로 판매 중인 상품 조회
-    public List<Product> findAvailableByKeyword(String keyword) {
-        return productRepository.findAvailableByTitleContainingIgnoreCase(keyword);
+    //게시글 삭제
+    public boolean deleteProductById(Long id, Long userId) {
+        Product product = productRepository.findById(id);
+        if (product != null && product.getUserId().equals(userId)) {
+            productImageRepository.deleteByProductId(id);
+            productRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
-    // 검색어로 모든 상품 조회
-    public List<Product> findAllByKeyword(String keyword) {
-        return productRepository.findAllByTitleContainingIgnoreCase(keyword);
+    public List<Product> findByUserId(Long userId) {
+        return productRepository.findByUserId(userId);
     }
 
     //사용자id로 작성한 게시글을 조회

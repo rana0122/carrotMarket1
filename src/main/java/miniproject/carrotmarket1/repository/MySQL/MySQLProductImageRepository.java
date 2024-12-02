@@ -39,4 +39,9 @@ public class MySQLProductImageRepository implements ProductImageRepository {
         productImageDAO.deleteById(id);
     }
 
+    @Override
+    public void deleteByProductId(Long productId) {
+        productImageDAO.deleteByProductId(productId);
+    }
+
 }

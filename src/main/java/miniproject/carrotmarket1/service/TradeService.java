@@ -1,7 +1,6 @@
 package miniproject.carrotmarket1.service;
 
 import miniproject.carrotmarket1.entity.Product;
-import miniproject.carrotmarket1.repository.ProductImageRepository;
 import miniproject.carrotmarket1.repository.ProductRepository;
 import miniproject.carrotmarket1.repository.TradeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
