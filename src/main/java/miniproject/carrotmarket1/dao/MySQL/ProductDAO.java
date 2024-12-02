@@ -70,4 +70,8 @@ public interface ProductDAO {
                                            @Param("keyword") String keyword,
                                            @Param("pageSize") int pageSize,
                                            @Param("offset") int offset);
+
+    //채팅룸에서 거래 상태 변경
+    @Update("UPDATE product SET status = #{status} WHERE id = #{productId}")
+    void updateReservationStatus(@Param("productId") Long productId, @Param("status") String status);
 }

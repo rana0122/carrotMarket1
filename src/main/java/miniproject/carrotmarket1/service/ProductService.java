@@ -35,7 +35,7 @@ public class ProductService {
     public ProductService(ProductRepository productRepository,
                           ProductImageRepository productImageRepository,
                           CategoryRepository categoryRepository) {
-        this.productRepository = productRepository;
+       this.productRepository = productRepository;
        this.productImageRepository = productImageRepository;
        this.categoryRepository = categoryRepository;
    }
@@ -193,5 +193,7 @@ public class ProductService {
        return  productRepository.findProductsByConditions(categoryId, status, keyword, pageable);
     }
 
-
+    public void updateReservationStatus(Long productId, String status) {
+       productRepository.updateReservationStatus(productId, status);
+    }
 }

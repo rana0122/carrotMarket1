@@ -24,4 +24,6 @@ public interface ProductRepository {
     //게시글 조회(로그인 안한 경우)
     Page<Product> findProductsByConditions(Long categoryId, String status, String keyword, Pageable pageable);
 
+    //채팅에서 상품 거래 상태 변경
+    void updateReservationStatus(Long productId, String status);
 }

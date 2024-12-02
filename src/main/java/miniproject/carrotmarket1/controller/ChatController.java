@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpSession;
 import miniproject.carrotmarket1.entity.ChatRoom;
 import miniproject.carrotmarket1.entity.User;
 import miniproject.carrotmarket1.service.ChatRoomService;
+import miniproject.carrotmarket1.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,17 +13,20 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
 public class ChatController {
 
     private final ChatRoomService chatRoomService;
+    private final ProductService productService;
 
     @Autowired
-    public ChatController(ChatRoomService chatRoomService) {
+    public ChatController(ChatRoomService chatRoomService, ProductService productService) {
 
         this.chatRoomService = chatRoomService;
+        this.productService = productService;
     }
 
     // 채팅룸 목록 보기
@@ -69,5 +73,23 @@ public class ChatController {
         } else {
             return "redirect:/error";  // 채팅방을 찾을 수 없을 때
         }
+    }
+
+    //채팅에서 상품 거래 상태 변경 처리
+    @PostMapping("/update-reservation-status")
+    @ResponseBody
+    public ResponseEntity<?> updateReservationStatus(@RequestBody Map<String, String> request) {
+        String status = request.get("status");
+        Long chatRoomId = Long.valueOf(request.get("chatRoomId"));
+        Optional<ChatRoom> chatRoomOptional = chatRoomService.findById(chatRoomId);
+        if (chatRoomOptional.isPresent()) {
+            ChatRoom chatRoom = chatRoomOptional.get();
+
+            // 예약 상태 업데이트 로직 (예: 데이터베이스 업데이트)
+            productService.updateReservationStatus(chatRoom.getProductId(), status);
+            //tradeService.updateReservationStatus(chatRoom.getProductId(), status);
+        }
+
+        return ResponseEntity.ok(Map.of("success", true));
     }
 }

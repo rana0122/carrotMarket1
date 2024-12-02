@@ -70,4 +70,9 @@ public class MySQLProductRepository implements ProductRepository {
         return new PageImpl<>(products, pageable, totalCount);
     }
 
+    @Override
+    public void updateReservationStatus(Long productId, String status) {
+        productDAO.updateReservationStatus(productId,status);
+    }
+
 }
