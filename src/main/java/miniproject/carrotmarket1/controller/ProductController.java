@@ -59,6 +59,9 @@ public class ProductController {
 
         Page<Product> products = null;
         Pageable pageable = PageRequest.of(page, size);
+        Category selectedCategory = categoryService.findById(categoryId);
+        model.addAttribute("selectedCategory", selectedCategory);
+        model.addAttribute("selectedCategoryId", categoryId);
 
         // 세션에서 사용자 위치 정보 가져오기
         User loggedInUser = (User) session.getAttribute("loggedInUser");

@@ -49,33 +49,33 @@
 
     <!-- 반경 내 상품 조회 -->
     <select id="findProductsWithinRadius" resultMap="ProductResultMap">
-    <![CDATA[
-        SELECT *
-        FROM (
-                 SELECT
-                     *,
-                     COUNT(*) OVER() AS total_count,
-                         (
-                             6371 * acos(
-                                     LEAST(1, GREATEST(-1,
-                                                       cos(radians(#{latitude})) * cos(radians(latitude)) *
-                                                       cos(radians(longitude) - radians(#{longitude})) +
-                                                       sin(radians(#{latitude})) * sin(radians(latitude))
-                                              ))
-                                    )
-                             ) AS distance
-                 FROM
-                     product
-             ) AS subquery
-        WHERE
-            distance <= #{radiusKm}
-        ORDER BY
-            distance
-            LIMIT
-            #{pageSize} OFFSET #{offset}
+        <![CDATA[
+        SELECT *, COUNT(*) OVER() AS total_count,
+        (
+        6371 * acos(
+        cos(radians(#{latitude})) * cos(radians(latitude)) *
+        cos(radians(longitude) - radians(#{longitude})) +
+        sin(radians(#{latitude})) * sin(radians(latitude))
+        )) AS distance
+        FROM product
         ]]>
-</select>
-
+        <where>
+            <if test="categoryId != null">
+                AND category_id = #{categoryId}
+            </if>
+            <if test="status != null and status != 'ALL'">
+                AND status = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND title LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        <![CDATA[
+        HAVING distance <= #{radiusKm}
+        ORDER BY distance
+        LIMIT #{pageSize} OFFSET #{offset}
+        ]]>
+    </select>
 
 
 </mapper>
