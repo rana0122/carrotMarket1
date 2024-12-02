@@ -198,18 +198,38 @@ public class ProductService {
     }
 
     //게시글 삭제
+    @Transactional
     public boolean deleteProductById(Long id, Long userId) {
         Product product = productRepository.findById(id);
         if (product != null && product.getUserId().equals(userId)) {
+            // 1. 상품의 모든 이미지 정보 조회
+            List<ProductImage> images = productImageRepository.findByProductId(id);
+
+            // 2. 각 이미지 파일 삭제
+            for (ProductImage image : images) {
+                if (image.getImageUrl() != null) {
+                    try {
+                        // 이미지 URL에서 파일명 추출
+                        String fileName = image.getImageUrl().substring(image.getImageUrl().lastIndexOf("/") + 1);
+                        // 전체 파일 경로 생성
+                        Path filePath = Paths.get(uploadDir).resolve(fileName);
+                        // 파일 삭제
+                        Files.deleteIfExists(filePath);
+                    } catch (IOException e) {
+                        // 파일 삭제 실패 시 로그 기록
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            // 3. DB에서 이미지 정보 삭제
             productImageRepository.deleteByProductId(id);
+
+            // 4. DB에서 상품 정보 삭제
             productRepository.deleteById(id);
             return true;
         }
         return false;
-    }
-
-    public List<Product> findByUserId(Long userId) {
-        return productRepository.findByUserId(userId);
     }
 
     //사용자id로 작성한 게시글을 조회
@@ -217,3 +237,4 @@ public class ProductService {
        return productRepository.findByUserId(userId);
     }
 }
+

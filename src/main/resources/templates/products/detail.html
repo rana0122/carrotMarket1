@@ -195,6 +195,11 @@
                     <div class="edit-button-container" th:if="${loggedInUser != null and loggedInUser.id == product.userId}">
                         <a class="btn btn-orange" th:href="@{/products/edit/{id}(id=${product.id})}">수정하기</a>
                     </div>
+                    <th:block th:if="${loggedInUser != null && loggedInUser.id == product.userId}">
+                        <form th:action="@{/products/delete/{id}(id=${product.id})}" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                            <button type="submit" class="btn btn-orange">삭제</button>
+                        </form>
+                    </th:block>
 
                     <div class="mt-3" th:if="${loggedInUser != null && loggedInUser.id != user.id}">
                         <form th:action="@{/chatroom/create}" method="post">
