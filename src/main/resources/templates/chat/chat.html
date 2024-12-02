@@ -177,8 +177,14 @@
       <h3 th:text="${loggedInUser.id == chatRoom.buyer.id ? chatRoom.seller.username + '님과 채팅방' : chatRoom.buyer.username + '님과 채팅방'}">채팅방</h3>
       <a th:href="@{'/products/detail/' + ${chatRoom.product.id}}" class="product-link">상품 게시글 확인</a>
 
-      <!-- 예약 상태 변경 드롭다운 -->
-      <select id="reservation-status" class="form-select" style="width: 150px; font-size: 0.9rem;" onchange="updateReservationStatus()">
+
+      <!-- 예약 상태 변경 드롭다운 - 판매자만 볼 수 있음 -->
+      <select
+              id="reservation-status"
+              class="form-select"
+              style="width: 150px; font-size: 0.9rem;"
+              onchange="updateReservationStatus()"
+              th:if="${loggedInUser.id == chatRoom.seller.id}">  <!-- 판매자 체크 추가 -->
         <option value="AVAILABLE" th:selected="${chatRoom.product.status == 'SALE'}">예약 가능</option>
         <option value="RESERVED" th:selected="${chatRoom.product.status == 'RESERVED'}">예약됨</option>
         <option value="SOLD" th:selected="${chatRoom.product.status == 'SOLD'}">판매 완료</option>
