@@ -252,9 +252,9 @@
                 <th:block th:if="${session.loggedInUser!=null}">
                     <a th:href="@{/products/write}" class="btn btn-orange w-100">게시글 작성하기</a>
                     <br><br>
-                    <th:block th:if="${session.loggedInUser!=null}">
-                        <a th:href="@{/myproduct/sell/{userId}(userId=${session.loggedInUser.id})}" class="btn btn-orange w-100">내 거래내역</a>
-                    </th:block>
+                </th:block>
+                <th:block th:if="${session.loggedInUser!=null}">
+                    <a th:href="@{/myproduct/sell/{userId}(userId=${session.loggedInUser.id})}" class="btn btn-orange w-100">내 거래내역</a>
                 </th:block>
             </div>
 
