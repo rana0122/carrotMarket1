@@ -123,15 +123,17 @@ public class LocationController {
 
     @GetMapping("/navigate")
     public void navigate(
+            @RequestParam String  userLocation,
             @RequestParam double userLat,
             @RequestParam double userLng,
+            @RequestParam String  destLocation,
             @RequestParam double destLat,
             @RequestParam double destLng,
             HttpServletResponse response) throws IOException {
 
         // 한글 문자열을 URL 인코딩
-        String from = URLEncoder.encode("내위치", StandardCharsets.UTF_8);
-        String to = URLEncoder.encode("목적지", StandardCharsets.UTF_8);
+        String from = URLEncoder.encode(userLocation, StandardCharsets.UTF_8);
+        String to = URLEncoder.encode(destLocation, StandardCharsets.UTF_8);
 
         // 카카오 네비게이션 URL 생성
         String naviUrl = String.format(
@@ -142,5 +144,6 @@ public class LocationController {
         // 리다이렉트
         response.sendRedirect(naviUrl);
     }
+
 
 }

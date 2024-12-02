@@ -286,7 +286,12 @@
                                 <th:block th:if="${session.loggedInUser!=null}">
                                     <p class="card-text small text-drivingTime">
                                         <i class="fas fa-car text-carrot-orange mr-1"></i>
-                                        <a th:href="@{'/navigate?userLat=' + ${session.loggedInUser.latitude} + '&userLng=' + ${session.loggedInUser.longitude} + '&destLat=' + ${item.latitude} + '&destLng=' + ${item.longitude}}"
+                                        <a th:href="@{'/navigate?userLocation=' + ${session.loggedInUser.location}
+                + '&userLat=' + ${session.loggedInUser.latitude}
+                + '&userLng=' + ${session.loggedInUser.longitude}
+                + '&destLocation=' + ${item.location}
+                + '&destLat=' + ${item.latitude}
+                + '&destLng=' + ${item.longitude}}"
                                            target="_blank">
                                         자동차로 <span th:text="${item.drivingTime}+' 예상'">0분</span>
                                         </a>
