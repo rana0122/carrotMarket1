@@ -20,7 +20,9 @@ public interface ReportDAO {
     //신고 목록 조회(필터 기능)-- xml의 동적 쿼리로 구현
     long countFilterReports(@Param("startDate") String startDate,
                             @Param("endDate") String endDate,
-                            @Param("status") String status);
+                            @Param("status") String status,
+                            @Param("tag") String tag,
+                            @Param("search") String search);
 
     //property = "reporter" -> Report엔티티에 있는 User reporter 가져온것
     //column = "reporter_id" -> MySQL root계정 report테이블에 있는 컬럼을 가져온것

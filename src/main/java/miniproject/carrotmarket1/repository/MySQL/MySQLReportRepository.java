@@ -21,8 +21,8 @@ public class MySQLReportRepository implements ReportRepository {
     }
     //신고 목록 조회(필터 기능)
     @Override
-    public long countFilterReports(String startDate, String endDate, String status) {
-        return reportDAO.countFilterReports(startDate,endDate,status);
+    public long countFilterReports(String startDate, String endDate, String status, String tag, String search) {
+        return reportDAO.countFilterReports(startDate,endDate,status,tag,search);
     }
 
     //신고 상세 조회

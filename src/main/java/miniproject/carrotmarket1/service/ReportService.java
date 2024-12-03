@@ -36,7 +36,7 @@ public class ReportService {
         //데이터의 시작 위치를 지정
         int offset = page * size;
         List<Report> report = reportRepository.getReportListPagination(startDate,endDate,status,size,offset,tag,search);
-        long total = reportRepository.countFilterReports(startDate,endDate,status);
+        long total = reportRepository.countFilterReports(startDate,endDate,status,tag,search);
 
         // new PageImpl<>(...)의 매개변수 순서는 중요
         // 순서 : 리스트 데이터, 페이지 정보, 전체 데이터 수
