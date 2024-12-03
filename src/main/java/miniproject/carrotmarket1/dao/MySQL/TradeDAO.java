@@ -1,7 +1,9 @@
 package miniproject.carrotmarket1.dao.MySQL;
 
+import miniproject.carrotmarket1.entity.Category;
 import miniproject.carrotmarket1.entity.Product;
 import miniproject.carrotmarket1.entity.Trade;
+import miniproject.carrotmarket1.entity.User;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -14,6 +16,17 @@ public interface TradeDAO {
             "JOIN trade t ON p.id = t.product_id " +
             "WHERE t.status = 'SOLD' " +
             "AND t.buyer_id = #{buyerId}")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "userId", column = "user_id"),
+            @Result(property = "categoryId", column = "category_id"),
+            @Result(property = "user", column = "user_id", javaType = User.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+            @Result(property = "category", column = "category_id", javaType = Category.class,
+                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")), // 경로 수정
+            @Result(property = "images", column = "id", javaType = List.class,
+                    many = @Many(select = "miniproject.carrotmarket1.dao.MySQL.ProductDAO.selectProductImagesByProductId"))
+    })
     List<Product> findByBuyerId(Long buyerId);
 
     // 새로운 메서드 추가
