@@ -291,7 +291,11 @@
                                     <span class="sr-only">다음</span>
                                 </a>
                             </div>
-                            <div class="card-body">
+                            <div class="card">
+                                <div class="card-body" th:if="${item.usedYn == 'N'}">
+                                    <p class="card-text text-danger">숨겨진 게시글입니다</p>
+                                </div>
+                            <div class="card-body" th:if="${item.usedYn != 'N'}">
                                 <h6 class="card-title" th:text="${item.title}">상품명</h6>
                                 <p class="card-text text-muted" th:text="'₩ ' + ${item.price}">가격</p>
                                 <th:block th:if="${session.loggedInUser!=null}">
@@ -312,6 +316,7 @@
                                 <a th:href="@{'/products/detail/' + ${item.id}}" class="btn btn-orange btn-block">자세히 보기</a>
 
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>
