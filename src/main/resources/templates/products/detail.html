@@ -313,6 +313,9 @@
                                 <button type="submit" class="btn-chat">채팅하러 가기</button>
                             </form>
                         </div>
+                        <div th:if="${loggedInUser != null and loggedInUser.id != user.id}">
+                            <a class="btn btn-orange" th:href="@{/admin/report/{id}(id=${product.id})}">신고하기</a>
+                        </div>
                     </div>
 
                 </div>

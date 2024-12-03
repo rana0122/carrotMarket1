@@ -25,6 +25,7 @@ public class Product {
     private Timestamp createdAt;
     private Long userId;
     private String status;
+    private String usedYn;
     private int totalCount;
 
     // Google Maps API를 통해 계산된 이동 시간 정보

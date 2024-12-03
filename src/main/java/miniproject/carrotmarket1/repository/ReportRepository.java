@@ -1,5 +1,6 @@
 package miniproject.carrotmarket1.repository;
 
+import miniproject.carrotmarket1.entity.Category;
 import miniproject.carrotmarket1.entity.Report;
 
 import java.util.List;
@@ -15,4 +16,13 @@ public interface ReportRepository {
     Report getReportById(Long id);
     //신고 처리 상태 변경
     void updateReportStatus(Report report);
+    //게시글 숨김 관리
+    void updateProductLock(Long productId, String lockYn);
+    //계정 잠금 기능
+    void updateUserLock(Long userId, String lockYn);
+    //신고 페이지 카테고리
+    List<Category> getCategoriesByRange();
+    //신고 내용 insert 기능
+    void insertReport(Report report);
+
 }

@@ -19,8 +19,8 @@
     <select id="getReportListPagination" resultMap="ReportResultMap">
         select report.*
         from report inner join user on report.reporter_id = user.id
-                    inner join product on report.product_id = product.id
-                    inner join category on report.category_id = category.id
+        inner join product on report.product_id = product.id
+        inner join category on report.category_id = category.id
         <where>
             <if test="startDate != null and startDate != ''">
                 and report.created_at &gt; #{startDate}
@@ -57,5 +57,10 @@
                 and status = #{status}
             </if>
         </where>
+    </select>
+    <select id="getCategoriesByRange" resultType="miniproject.carrotmarket1.entity.Category">
+        SELECT id, name, description, type
+        FROM category
+        WHERE type = "REPORT"
     </select>
 </mapper>

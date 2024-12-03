@@ -1,8 +1,11 @@
 package miniproject.carrotmarket1.service;
 
 import lombok.RequiredArgsConstructor;
+import miniproject.carrotmarket1.entity.Category;
+import miniproject.carrotmarket1.entity.Product;
 import miniproject.carrotmarket1.entity.Report;
 import miniproject.carrotmarket1.entity.ReportStatus;
+import miniproject.carrotmarket1.repository.MySQL.MySQLProductRepository;
 import miniproject.carrotmarket1.repository.ReportRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -18,6 +21,7 @@ import java.util.List;
 public class ReportService {
 
     private final ReportRepository reportRepository;
+    private final MySQLProductRepository mySQLProductRepository;
 
     //신고 목록 조회(필터 기능, 페이징 기능)
     public Page<Report> getReportListPagination(String startDate,
@@ -61,6 +65,25 @@ public class ReportService {
         else{
             throw new IllegalArgumentException("신고 ID가 존재하지 않습니다: " + id);
         }
+    }
+    //신고글 숨김 처리 기능
+    public void updateProductLock(Long productId, String lockYn) {
+        reportRepository.updateProductLock(productId,lockYn);
+    }
+
+    //계정잠금 기능
+    public void updateUserLock(Long userId, String lockYn) {
+        reportRepository.updateUserLock(userId,lockYn);
+    }
+
+    //신고 페이지 카테고리
+    public List<Category> getCategoriesByRange() {
+        return reportRepository.getCategoriesByRange();
+    }
+
+    //신고 내용 insert 기능
+    public void insertReport(Report report) {
+        reportRepository.insertReport(report);
     }
 
 }
