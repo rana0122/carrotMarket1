@@ -11,7 +11,7 @@ public interface CategoryDAO {
     @Select("SELECT * FROM category WHERE id = #{id}")
     Category selectById(Long id);
 
-    @Select("SELECT * FROM category")
+    @Select("SELECT * FROM category WHERE type = \"PRODUCT\" ")
     List<Category> findAll();
 
     @Select("select * from product where category.id = #{id}")
