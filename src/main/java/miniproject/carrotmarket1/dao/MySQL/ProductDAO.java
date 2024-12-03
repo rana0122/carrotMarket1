@@ -32,6 +32,7 @@ public interface ProductDAO {
     @Results({
             @Result(property = "id", column = "id"),
             @Result(property = "userId", column = "user_id"),
+            @Result(property = "categoryId", column = "category_id"),
             @Result(property = "user", column = "user_id", javaType = User.class,
                     one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
             @Result(property = "category", column = "category_id", javaType = Category.class,
