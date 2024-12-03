@@ -179,14 +179,6 @@
                     <div class="price" th:text="'₩ ' + ${product.price}">
                         가격
                     </div>
-<!--                    <div class="status mt-3 mb-3">-->
-<!--                        <span>상태: </span>-->
-<!--                        <span th:switch="${product.status}">-->
-<!--            <span th:case="'SALE'" class="badge bg-success">판매중</span>-->
-<!--            <span th:case="'RESERVED'" class="badge bg-warning text-dark">예약중</span>-->
-<!--            <span th:case="'SOLD'" class="badge bg-secondary">판매완료</span>-->
-<!--        </span>-->
-<!--                    </div>-->
                     <div class="status mt-3 mb-3">
                         <span class="fs-5">상태: </span>
                         <span th:switch="${product.status}">
@@ -209,24 +201,30 @@
                         </div>
                     </div>
 
-                    <div class="edit-button-container"
-                         th:if="${loggedInUser != null and loggedInUser.id == product.userId}">
-                        <a class="btn btn-orange" th:href="@{/products/edit/{id}(id=${product.id})}">수정하기</a>
-                    </div>
-                    <th:block th:if="${loggedInUser != null && loggedInUser.id == product.userId}">
-                        <form th:action="@{/products/delete/{id}(id=${product.id})}" method="post"
-                              onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                            <button type="submit" class="btn btn-orange">삭제</button>
-                        </form>
-                    </th:block>
+                    <div class="d-flex gap-2 mt-3">
+                        <!-- 수정 버튼 -->
+                        <div th:if="${loggedInUser != null and loggedInUser.id == product.userId}">
+                            <a class="btn btn-orange" th:href="@{/products/edit/{id}(id=${product.id})}">수정하기</a>
+                        </div>
 
-                    <div class="mt-3" th:if="${loggedInUser != null && loggedInUser.id != user.id}">
-                        <form th:action="@{/chatroom/create}" method="post">
-                            <input type="hidden" name="productId" th:value="${product.id}"/>
-                            <input type="hidden" name="sellerId" th:value="${user.id}"/>
-                            <button type="submit" class="btn-chat">채팅하러 가기</button>
-                        </form>
+                        <!-- 삭제 버튼 -->
+                        <div th:if="${loggedInUser != null and loggedInUser.id == product.userId}">
+                            <form th:action="@{/products/delete/{id}(id=${product.id})}" method="post"
+                                  onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                <button type="submit" class="btn btn-orange">삭제</button>
+                            </form>
+                        </div>
+
+                        <!-- 채팅 버튼 -->
+                        <div th:if="${loggedInUser != null and loggedInUser.id != user.id}">
+                            <form th:action="@{/chatroom/create}" method="post">
+                                <input type="hidden" name="productId" th:value="${product.id}"/>
+                                <input type="hidden" name="sellerId" th:value="${user.id}"/>
+                                <button type="submit" class="btn-chat">채팅하러 가기</button>
+                            </form>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>
