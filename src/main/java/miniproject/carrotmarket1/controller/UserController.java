@@ -45,13 +45,13 @@ public class UserController {
         if (user != null) {
             if ("N".equals(user.getLockedYn())) {
                 // 위치 정보 업데이트
-//                if (latitude != null && longitude != null && location != null) {
-//                    userService.updateUserLocation(user.getId(), latitude, longitude, location);
-//                    // 로그인 시 변경된 주소로 세션에 전달
-//                    user.setLocation(location);
-//                    user.setLatitude(latitude);
-//                    user.setLongitude(longitude);
-//                }
+                if (latitude != null && longitude != null && location != null) {
+                    userService.updateUserLocation(user.getId(), latitude, longitude, location);
+                    // 로그인 시 변경된 주소로 세션에 전달
+                    user.setLocation(location);
+                    user.setLatitude(latitude);
+                    user.setLongitude(longitude);
+                }
                 session.setAttribute("loggedInUser", user); // 세션에 사용자 정보 저장
                 return "redirect:/products";
             } else if ("Y".equals(user.getLockedYn())) {
