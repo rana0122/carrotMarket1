@@ -150,8 +150,9 @@
             <label for="product">상품</label>
             <input type="text" id="product" name="productId" th:value="${report.product.title}" readonly>
 
-            <label for="reporter">신고자</label>
-            <input type="text" id="reporter" name="reporterId" th:value="${report.reporter.email}" readonly>
+            <label for="reporter">신고된 사용자</label>
+<!--            <input type="text" id="reporter" name="reporterId" th:value="${report.reporter.email}" readonly>-->
+            <input type="text" id="reporter" name="reporterId" th:value="${report.product.user.email}" readonly>
 
             <label for="category">카테고리</label>
             <input type="text" id="category" name="categoryName" th:value="${report.category.description}" readonly>
@@ -189,8 +190,8 @@
         </form>
 
         <!--사용자 계정 잠금 조치-->
-        <form th:action="@{'/admin/reports/lock-user/' + ${report.reporter.id}}" th:method="post" style="margin-top: 15px;">
-            <input type="hidden" id="userId" name="userId" th:value="${report.reporter.id}">
+        <form th:action="@{'/admin/reports/lock-user/' + ${report.product.userId}}" th:method="post" style="margin-top: 15px;">
+            <input type="hidden" id="userId" name="userId" th:value="${report.product.userId}">
             <label for="lockUser">사용자 계정 잠금 조치</label>
             <div style="display: flex; align-items: center;">
                 <select id="lockUser" name="lockUser">

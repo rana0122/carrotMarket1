@@ -147,7 +147,7 @@
         <table>
             <thead>
             <tr>
-                <th>신고자</th>
+                <th>신고된 사용자</th>
                 <th>상품명</th>
                 <th>카테고리</th>
                 <th>상태</th>
@@ -159,7 +159,7 @@
             <tbody>
             <tr th:each="report : ${reports}">
                 <input type="hidden" id="id" name="id">
-                <td th:text="${report.reporter.email}"></td>
+                <td th:text="${report.product.user.email}"></td>
                 <td th:text="${report.product.title}"></td>
                 <td th:text="${report.category.name}"></td>
                 <td>
