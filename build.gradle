@@ -32,7 +32,8 @@ dependencies {
     implementation 'mysql:mysql-connector-java:8.0.33'  // 명시적으로 버전 추가
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1'
     implementation 'org.springframework.data:spring-data-commons:3.0.0' // 3.x 라인에 호환
-    runtimeOnly 'com.mysql:mysql-connector-j'
+//    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'mysql:mysql-connector-java:8.0.33'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -41,4 +42,11 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+tasks.named('bootJar') {
+    enabled = true
+}
+
+tasks.named('jar') {
+    enabled = false
 }
