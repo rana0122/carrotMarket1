@@ -144,7 +144,12 @@
     <div class="chatroom-list" th:if="${not #lists.isEmpty(chatRooms)}">
       <div class="chatroom-item" th:each="chatRoom : ${chatRooms}">
         <div class="no-image">
-          <img th:src="${chatRoom.product.images[0]?.imageUrl}" alt="상품 이미지" />
+          <div th:if="${not #lists.isEmpty(chatRoom.product.images)}">
+            <img th:src="${chatRoom.product.images[0]?.imageUrl}" alt="상품 이미지" />
+          </div>
+          <div th:if="${#lists.isEmpty(chatRoom.product.images)}">
+            <span>이미지가 없습니다</span>
+          </div>
         </div>
         <div class="chatroom-info">
           <div class="product-title" th:text="${chatRoom.product?.title ?: '삭제된 상품'}">
@@ -172,8 +177,12 @@
       <div class="chatroom-item" th:each="chatRoom : ${chatRooms}"
            th:if="${chatRoom.buyerId == session.loggedInUser.id}">
         <div class="no-image">
-          <img th:src="${chatRoom.product.images[0]?.imageUrl}" alt="상품 이미지" />
-        </div>
+          <div th:if="${not #lists.isEmpty(chatRoom.product.images)}">
+            <img th:src="${chatRoom.product.images[0]?.imageUrl}" alt="상품 이미지" />
+          </div>
+          <div th:if="${#lists.isEmpty(chatRoom.product.images)}">
+            <span>이미지가 없습니다</span>
+          </div>        </div>
         <div class="chatroom-info">
           <div class="product-title" th:text="${chatRoom.product?.title ?: '삭제된 상품'}">
             상품명
@@ -200,8 +209,12 @@
       <div class="chatroom-item" th:each="chatRoom : ${chatRooms}"
            th:if="${chatRoom.sellerId == session.loggedInUser.id}">
         <div class="no-image">
-          <img th:src="${chatRoom.product.images[0]?.imageUrl}" alt="상품 이미지" />
-        </div>
+          <div th:if="${not #lists.isEmpty(chatRoom.product.images)}">
+            <img th:src="${chatRoom.product.images[0]?.imageUrl}" alt="상품 이미지" />
+          </div>
+          <div th:if="${#lists.isEmpty(chatRoom.product.images)}">
+            <span>이미지가 없습니다</span>
+          </div>        </div>
         <div class="chatroom-info">
           <div class="product-title" th:text="${chatRoom.product?.title ?: '삭제된 상품'}">
             상품명

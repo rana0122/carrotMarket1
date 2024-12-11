@@ -20,7 +20,9 @@ public interface ReportDAO {
     //신고 목록 조회(필터 기능)-- xml의 동적 쿼리로 구현
     long countFilterReports(@Param("startDate") String startDate,
                             @Param("endDate") String endDate,
-                            @Param("status") String status);
+                            @Param("status") String status,
+                            @Param("tag") String tag,
+                            @Param("search") String search);
 
     //property = "reporter" -> Report엔티티에 있는 User reporter 가져온것
     //column = "reporter_id" -> MySQL root계정 report테이블에 있는 컬럼을 가져온것
@@ -39,10 +41,25 @@ public interface ReportDAO {
             @Result(property = "product", column = "product_id", javaType = Product.class,
                     one = @One(select = "miniproject.carrotmarket1.dao.MySQL.ProductDAO.findById")),
     })
-    Report getReportById(Long id);
+    Report getReportById(@Param("id") Long id);
 
     //신고 처리 상태 변경
     @Update("update report set status=#{status}, resolved_at=#{resolvedAt} where id=#{id}")
     void updateReportStatus(Report report);
 
+    //게시글 숨김 관리
+    @Update("update product set used_yn = #{lockYn} where id=#{productId}")
+    void updateProductLock(@Param("productId") Long productId,@Param("lockYn") String lockYn);
+
+    //계정 잠금 기능
+    @Update("update user set locked_yn=#{lockYn} where id=#{userId}")
+    void updateUserLock(@Param("userId") Long userId,@Param("lockYn") String lockYn);
+
+    //신고 페이지 카테고리
+    List<Category> getCategoriesByRange();
+
+    //신고 내용 insert 기능
+    @Insert("insert into report (product_id, reporter_id,category_id,details,status,created_at) " +
+            "values (#{productId},#{reporterId},#{categoryId},#{details},#{status},NOW())")
+    void insertReport(Report report);
 }

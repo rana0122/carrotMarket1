@@ -2,6 +2,7 @@ package miniproject.carrotmarket1.repository.MySQL;
 
 import lombok.RequiredArgsConstructor;
 import miniproject.carrotmarket1.dao.MySQL.ReportDAO;
+import miniproject.carrotmarket1.entity.Category;
 import miniproject.carrotmarket1.entity.Report;
 import miniproject.carrotmarket1.repository.ReportRepository;
 import org.springframework.stereotype.Repository;
@@ -20,8 +21,8 @@ public class MySQLReportRepository implements ReportRepository {
     }
     //신고 목록 조회(필터 기능)
     @Override
-    public long countFilterReports(String startDate, String endDate, String status) {
-        return reportDAO.countFilterReports(startDate,endDate,status);
+    public long countFilterReports(String startDate, String endDate, String status, String tag, String search) {
+        return reportDAO.countFilterReports(startDate,endDate,status,tag,search);
     }
 
     //신고 상세 조회
@@ -33,6 +34,30 @@ public class MySQLReportRepository implements ReportRepository {
     @Override
     public void updateReportStatus(Report report){
         reportDAO.updateReportStatus(report);
+    }
+
+
+    //게시글 숨김 관리
+    @Override
+    public void updateProductLock(Long productId, String lock) {
+        reportDAO.updateProductLock(productId,lock);
+    }
+
+    //계정 잠금 기능
+    @Override
+    public void updateUserLock(Long userId, String lockYn) {
+        reportDAO.updateUserLock(userId,lockYn);
+    }
+    //신고 페이지 카테고리
+    @Override
+    public List<Category> getCategoriesByRange() {
+        return reportDAO.getCategoriesByRange();
+    }
+
+    //신고 내용 insert 기능
+    @Override
+    public void insertReport(Report report) {
+        reportDAO.insertReport(report);
     }
 
 }

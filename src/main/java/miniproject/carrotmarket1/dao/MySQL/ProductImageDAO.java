@@ -3,6 +3,8 @@ package miniproject.carrotmarket1.dao.MySQL;
 import miniproject.carrotmarket1.entity.ProductImage;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 @Mapper
 public interface ProductImageDAO {
 
@@ -23,4 +25,12 @@ public interface ProductImageDAO {
     //게시글 이미지 삭제
     @Delete("DELETE FROM product_image WHERE id = #{id}")
     void deleteById(Long id);
+
+    // 상품의 id를 기준으로 이미지 삭제
+    @Delete("DELETE FROM product_image WHERE product_id = #{productId}")
+    void deleteByProductId(Long productId);
+
+    // 상품 id의 모든 이미지 리스트 조회
+    @Select("SELECT * FROM product_image WHERE product_id = #{productId}")
+    List<ProductImage> findByProductId(Long productId);
 }

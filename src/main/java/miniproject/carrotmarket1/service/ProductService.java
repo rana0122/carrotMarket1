@@ -35,16 +35,11 @@ public class ProductService {
     public ProductService(ProductRepository productRepository,
                           ProductImageRepository productImageRepository,
                           CategoryRepository categoryRepository) {
-        this.productRepository = productRepository;
+       this.productRepository = productRepository;
        this.productImageRepository = productImageRepository;
        this.categoryRepository = categoryRepository;
    }
 
-
-    //xml 연동 테스트
-    public  List<Product> findAvailableItemsByCategory(Long category) {
-       return  productRepository.findProductsByConditions(category);
-    }
 
     //ID로 상품 상세 조회
     public Product findItemById(Long id){
@@ -186,65 +181,60 @@ public class ProductService {
             }
         }
     }
-    //게시글 전체 목록 조회
-    public Page<Product> findAll(Pageable pageable) {
-        return productRepository.findAll(pageable);
+
+    //반경내 게시글 조회
+    public Page<Product> findProductsWithinRadius(Double latitude, Double longitude, Double radiusKm, Long categoryId,
+                                                  String status, String keyword, Pageable pageable) {
+       return productRepository.findProductsWithinRadius(latitude, longitude, radiusKm, categoryId, status, keyword, pageable);
     }
 
-    //판매중인 상품에 대한 게시글 목록 조회
-    public Page<Product> findAvailableItems(Pageable pageable) {
-        return productRepository.findAvailableItems(pageable);
-    }
-    //기존 카테고리 검색시 사용
-    public Page<Product> findByCategoryId(Long categoryId, Pageable pageable) {
-        return productRepository.findByCategoryId(categoryId, pageable);
+    //게시글 조회(로그인 안한 경우)
+    public Page<Product> findProductsByConditions(Long categoryId, String status, String keyword, Pageable pageable) {
+       return  productRepository.findProductsByConditions(categoryId, status, keyword, pageable);
     }
 
-    //기존 카테고리 검색시 사용
-    public Page<Product> findAvailableByCategoryId(Long categoryId, Pageable pageable) {
-        return productRepository.findAvailableByCategoryId(categoryId, pageable);
+    public void updateReservationStatus(Long productId, String status) {
+       productRepository.updateReservationStatus(productId, status);
     }
 
-    // 카테고리 및 검색어로 상품 조회
-    public Page<Product> findByCategoryAndKeyword(Long categoryId, String keyword, Pageable pageable) {
-        return productRepository.findByCategoryAndTitleContainingIgnoreCase(categoryId, keyword, pageable);
+    //게시글 삭제
+    @Transactional
+    public boolean deleteProductById(Long id, Long userId) {
+        Product product = productRepository.findById(id);
+        if (product != null && product.getUserId().equals(userId)) {
+            // 1. 상품의 모든 이미지 정보 조회
+            List<ProductImage> images = productImageRepository.findByProductId(id);
+
+            // 2. 각 이미지 파일 삭제
+            for (ProductImage image : images) {
+                if (image.getImageUrl() != null) {
+                    try {
+                        // 이미지 URL에서 파일명 추출
+                        String fileName = image.getImageUrl().substring(image.getImageUrl().lastIndexOf("/") + 1);
+                        // 전체 파일 경로 생성
+                        Path filePath = Paths.get(uploadDir).resolve(fileName);
+                        // 파일 삭제
+                        Files.deleteIfExists(filePath);
+                    } catch (IOException e) {
+                        // 파일 삭제 실패 시 로그 기록
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            // 3. DB에서 이미지 정보 삭제
+            productImageRepository.deleteByProductId(id);
+
+            // 4. DB에서 상품 정보 삭제
+            productRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
-    // 검색어로 판매 중인 상품 조회
-    public Page<Product> findAvailableByKeyword(String keyword, Pageable pageable) {
-        return productRepository.findAvailableByTitleContainingIgnoreCase(keyword, pageable);
+    //사용자id로 작성한 게시글을 조회
+    public List<Product> findByUserId(Long userId) {
+       return productRepository.findByUserId(userId);
     }
-
-    // 검색어로 모든 상품 조회
-    public Page<Product> findAllByKeyword(String keyword, Pageable pageable) {
-        return productRepository.findAllByTitleContainingIgnoreCase(keyword, pageable);
-    }
-    public Page<Product> findProductsWithinRadiusByCategoryAndKeyword(double latitude, double longitude, double radiusKm, Long categoryId, String keyword, Pageable pageable) {
-        return productRepository.findProductsWithinRadiusByCategoryAndKeyword(latitude, longitude, radiusKm, categoryId, keyword, pageable);
-    }
-
-    public Page<Product> findAvailableProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId, Pageable pageable) {
-        return productRepository.findAvailableProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId, pageable);
-    }
-
-    public Page<Product> findAvailableProductsWithinRadius(double latitude, double longitude, double radiusKm, Pageable pageable) {
-        return productRepository.findAvailableProductsWithinRadius(latitude, longitude, radiusKm, pageable);
-    }
-
-    public Page<Product> findProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword, Pageable pageable) {
-        return productRepository.findProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword, pageable);
-    }
-    public Page<Product> findProductsWithinRadiusByCategory(double latitude, double longitude, double radiusKm, Long categoryId, Pageable pageable) {
-        return productRepository.findProductsWithinRadiusByCategory(latitude, longitude, radiusKm, categoryId, pageable);
-    }
-
-    public Page<Product> findAvailableProductsWithinRadiusByKeyword(double latitude, double longitude, double radiusKm, String keyword, Pageable pageable) {
-        return productRepository.findAvailableProductsWithinRadiusByKeyword(latitude, longitude, radiusKm, keyword,pageable);
-    }
-
-    public Page<Product> findProductsWithinRadius(double latitude, double longitude, double radiusKm, Pageable pageable) {
-        return productRepository.findProductsWithinRadius(latitude, longitude, radiusKm, pageable);
-    }
-
-
 }
+

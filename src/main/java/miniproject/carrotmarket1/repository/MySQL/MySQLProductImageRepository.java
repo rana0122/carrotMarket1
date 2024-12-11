@@ -7,6 +7,8 @@ import miniproject.carrotmarket1.repository.ProductImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 
 public class MySQLProductImageRepository implements ProductImageRepository {
@@ -37,6 +39,16 @@ public class MySQLProductImageRepository implements ProductImageRepository {
     @Override
     public void deleteById(Long id) {
         productImageDAO.deleteById(id);
+    }
+
+    @Override
+    public void deleteByProductId(Long productId) {
+        productImageDAO.deleteByProductId(productId);
+    }
+
+    @Override
+    public List<ProductImage> findByProductId(Long productId) {
+        return productImageDAO.findByProductId(productId);
     }
 
 }

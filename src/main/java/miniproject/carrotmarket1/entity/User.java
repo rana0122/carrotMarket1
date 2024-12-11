@@ -20,6 +20,6 @@ public class User {
     private String profileImage;
     private Timestamp createdAt;
     private String userGroup;
-    private String locked_yn;
+    private String lockedYn;
     private Double radiusKm;
 }

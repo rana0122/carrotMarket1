@@ -192,7 +192,7 @@
               <option th:each="cat : ${category}"
                       th:value="${cat.id}"
                       th:text="${cat.name}"
-                      th:selected="${product.categoryId==cat.id}">
+                      th:selected="${product.category.id==cat.id}">
               </option>
             </select>
           </div>
@@ -242,8 +242,9 @@
           </div>
 
           <!-- 숨겨진 위도와 경도 필드 -->
-          <input type="hidden" id="latitude" name="latitude">
-          <input type="hidden" id="longitude" name="longitude">
+          <input type="hidden" id="latitude" name="latitude" th:value="${product.latitude}">
+          <input type="hidden" id="longitude" name="longitude" th:value="${product.longitude}">
+
 
           <input type="hidden" name="deleteImageIds" id="deleteImageIds">
           <button type="submit" class="submit-btn">수정완료</button>

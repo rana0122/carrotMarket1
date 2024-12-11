@@ -26,6 +26,12 @@
                             <span class="ml-1 font-weight-bold"
                                   th:text="${session.loggedInUser.username + ' 님 마이페이지'}"></span>
                         </a>
+                        <!-- 위치 정보 표시 -->
+                        <!-- 위치 정보 표시 -->
+                        <div class="d-flex align-items-center ml-2">
+                            <i class="fas fa-map-marker-alt text-danger mr-1"></i> <!-- 위치 아이콘 -->
+                            <span class="text-muted" th:text="${session.loggedInUser.location}"></span>
+                        </div>
 
                         <a th:href="@{/logout}" class="btn btn-orange ml-3">로그아웃</a>
 
@@ -150,8 +156,16 @@
 
         function checkLoginError() {
             const urlParams = new URLSearchParams(window.location.search);
+            // 로그인 실패 처리
             if (urlParams.has('loginError')) {
                 alert('이메일 또는 비밀번호가 잘못되었습니다.');
+                $('#loginModal').modal('show'); // 로그인 모달 다시 표시
+                document.getElementById('password').value = ''; // 비밀번호 필드 지우기
+            }
+
+            // 정지된 계정 처리
+            if (urlParams.has('accountLocked')) {
+                alert('정지된 계정입니다. 관리자에게 문의하세요.');
                 $('#loginModal').modal('show'); // 로그인 모달 다시 표시
                 document.getElementById('password').value = ''; // 비밀번호 필드 지우기
             }

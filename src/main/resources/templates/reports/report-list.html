@@ -118,7 +118,7 @@
                 <select id="tag" name="tag" class="input-select">
                     <option th:value="email">이메일</option>
                     <option th:value="title">상품명</option>
-                    <option th:value="name">이름</option>
+                    <option th:value="name">카테고리</option>
                 </select>
                 <input type="text" name="search" />
 
@@ -144,70 +144,89 @@
 
 
         <!-- 신고 목록 테이블 -->
-    <table>
-        <thead>
-        <tr>
-            <th>신고자</th>
-            <th>상품명</th>
-            <th>카테고리</th>
-            <th>상태</th>
-            <th>신고일</th>
+        <table>
+            <thead>
+            <tr>
+                <th>신고된 사용자</th>
+                <th>상품명</th>
+                <th>카테고리</th>
+                <th>상태</th>
+                <th>신고일</th>
 
-            <th>수정</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="report : ${reports}">
-            <input type="hidden" id="id" name="id">
-            <td th:text="${report.reporter.email}"></td>
-            <td th:text="${report.product.title}"></td>
-            <td th:text="${report.category.name}"></td>
-            <td>
+                <th>수정</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="report : ${reports}">
+                <input type="hidden" id="id" name="id">
+                <td th:text="${report.product.user.email}"></td>
+                <td th:text="${report.product.title}"></td>
+                <td th:text="${report.category.name}"></td>
+                <td>
                         <span th:text="${report.status}"
                               th:classappend="${report.status.name() == 'PENDING' ? 'status-pending' : 'status-resolved'}">
                         </span>
-            </td>
-            <td th:text="${#dates.format(report.createdAt, 'yyyy-MM-dd')}"></td>
-
-            <td>
-                <a th:href="@{'/admin/reports/' + ${report.id}}" class="btn">수정</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-
-        <!--검색 기능-->
-        <!--<form th:action="@{/admin/reports}" th:method="get" class="search">
-            <div>
-                <select id="tag" name="tag" class="input-select">
-                    <option th:value="email">이메일</option>
-                    <option th:value="title">상품명</option>
-                    <option th:value="name">이름</option>
-                </select>
-                <input type="text" name="search" /> <input type="submit" value="검색">
-
-            </div>
-        </form>-->
+                </td>
+                <td th:text="${#dates.format(report.createdAt, 'yyyy-MM-dd')}"></td>
 
 
+                <td>
+                    <a th:href="@{'/admin/reports/' + ${report.id}}" class="btn">수정</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
 
         <div class="pagination" style="display: flex; justify-content: center; margin-top: 20px;">
+            <!--Previous 버튼-->
             <ul class="pagination" style="list-style: none; display: flex; gap: 10px;">
                 <li th:if="${page.hasPrevious()}" style="display: inline-block;">
-                    <a th:href="@{/admin/reports(page=${page.number - 1}, size=${page.size}, startDate=${currentFilters['startDate']}, endDate=${currentFilters['endDate']}, status=${currentFilters['status']})}"
+                    <a th:href="@{/admin/reports(
+                    page=${page.number - 1},
+                    size=${page.size},
+                    startDate=${currentFilters['startDate']},
+                    endDate=${currentFilters['endDate']},
+                    status=${currentFilters['status']},
+                    search=${currentFilters['search']},
+                    tag=${currentFilters['tag']})}"
                        style="padding: 10px 15px; background-color: #FF7E36; color: white; text-decoration: none; border-radius: 5px; transition: background-color 0.3s;">
                         Previous
                     </a>
                 </li>
+
+                <!-- 숫자 페이지 -->
+                <li th:each="pageNum : ${pageNumbers}" style="display: inline-block;">
+                    <a th:href="@{/admin/reports(
+                    page=${pageNum},
+                    size=${page.size},
+                    startDate=${currentFilters['startDate']},
+                    endDate=${currentFilters['endDate']},
+                    status=${currentFilters['status']},
+                    search=${currentFilters['search']},
+                    tag=${currentFilters['tag']})}"
+                       th:text="${pageNum + 1}"
+                       th:classappend="${page.number == pageNum} ? 'active' : ''"
+                       style="padding: 10px 15px; background-color: #FF7E36; color: white; text-decoration: none; border-radius: 5px; transition: background-color 0.3s;">
+                    </a>
+                </li>
+
+                <!--Next 버튼-->
                 <li th:if="${page.hasNext()}" style="display: inline-block;">
-                    <a th:href="@{/admin/reports(page=${page.number + 1}, size=${page.size}, startDate=${currentFilters['startDate']}, endDate=${currentFilters['endDate']}, status=${currentFilters['status']})}"
+                    <a th:href="@{/admin/reports(
+                    page=${page.number + 1},
+                    size=${page.size},
+                    startDate=${currentFilters['startDate']},
+                    endDate=${currentFilters['endDate']},
+                    status=${currentFilters['status']},
+                    search=${currentFilters['search']},
+                    tag=${currentFilters['tag']})}"
                        style="padding: 10px 15px; background-color: #FF7E36; color: white; text-decoration: none; border-radius: 5px; transition: background-color 0.3s;">
                         Next
                     </a>
                 </li>
             </ul>
         </div>
-</div>
+    </div>
 </th:block>
 </body>
 </html>
