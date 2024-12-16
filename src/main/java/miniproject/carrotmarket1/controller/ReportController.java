@@ -88,10 +88,7 @@ public class ReportController {
     @PostMapping("/reports/hide-product/{productId}")
     public String updateProductLock(@PathVariable Long productId, @RequestParam String usedYn) {
         String lockYn = "HIDE".equals(usedYn) ? "N" : "Y";
-
         reportService.updateProductLock(productId, lockYn);
-        //System.out.println(productId);
-
         return "redirect:/admin/reports";
     }
 
@@ -100,7 +97,6 @@ public class ReportController {
     public String UpdateUserLock(@PathVariable Long userId, @RequestParam String lockUser) {
         String lockYn = "LOCK_ACCOUNT".equals(lockUser) ? "Y" : "N";
         reportService.updateUserLock(userId, lockYn);
-
         return "redirect:/admin/reports";
     }
 
