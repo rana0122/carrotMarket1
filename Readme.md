@@ -92,7 +92,7 @@ src/
 ---
 ## 📊 산출물
 - [요구사항 명세서](src/main/resources/docs/요구사항명세서.xlsx)
-- [화면 및 기능 설계서](src/main/resources/docs/화면 및 기능 설계서(발표).pptx)
+- [화면 및 기능 설계서](src/main/resources/docs/화면및기능설계서(발표).pptx)
 
 ---
 
