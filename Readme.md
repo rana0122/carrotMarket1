@@ -92,11 +92,11 @@ src/
 ---
 ## 📊 산출물
 - [요구사항 명세서](src/main/resources/docs/요구사항명세서.xlsx)
-- [화면 및 기능 설계서](src/main/resources/docs/화면 및 기능 설계서(발표).pptx)
+- [화면 및 기능 설계서](src/main/resources/docs/화면및기능설계서(발표).pptx)
 
 ---
 
 ## 💡 향후 개선 사항
 - 실시간 알림 기능 추가
 - 결제 시스템 연동
-- 리뷰 및 평점 시스템 구현방정이 되는 파일
+- 리뷰 및 평점 시스템 구현 
