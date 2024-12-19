@@ -29,7 +29,7 @@
 ### **Back-End**
 - **Spring Boot**: 서버 사이드 앱 구현
 - **MyBatis**: 데이터 접근 및 코드 관리
-- **Gradle**: 프로젝트 빌드 및 의염성 관리
+- **Gradle**: 프로젝트 빌드 및 의존성 관리
 - **MySQL**: 데이터베이스 관리
 - **Firebase (NoSQL)**: 실시간 채팅 기능 구현
 
