@@ -40,7 +40,7 @@
 - **Bootstrap**: 반응형 UI 구현
 
 ### **API**
-- **Kakao Map리 및 시간 계산**: Kakao Map 및 Google API를 통해 사용자 간 거로 및 시간 계산
+- **Kakao Map리 및 시간 계산**: Kakao Map 및 Google API를 통해 사용자 간 거리 및 시간 계산
 
 ### 4. **관리자 기능**
 - **신고 관리**: 부적절한 게시글 및 사용자를 신고하고 관리
