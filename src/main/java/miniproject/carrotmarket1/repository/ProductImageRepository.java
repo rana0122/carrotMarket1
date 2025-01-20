@@ -1,6 +1,6 @@
 package miniproject.carrotmarket1.repository;
 
-import miniproject.carrotmarket1.entity.ProductImage;
+import miniproject.carrotmarket1.dto.ProductImage;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="miniproject.carrotmarket1.dao.MySQL.ReportDAO">
+<mapper namespace="miniproject.carrotmarket1.mapper.ReportDAO">
 
     <resultMap id="ReportResultMap" type="Report">
         <id property="id" column="id"/>
@@ -9,11 +9,11 @@
         <result property="status" column="status"/>
 
         <association property="reporter" column="reporter_id" javaType="User"
-                     select="miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById"/>
+                     select="miniproject.carrotmarket1.mapper.UserDAO.selectById"/>
         <association property="category" column="category_id" javaType="Category"
-                     select="miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById"/>
+                     select="miniproject.carrotmarket1.mapper.CategoryDAO.selectById"/>
         <association property="product" column="product_id" javaType="Product"
-                     select="miniproject.carrotmarket1.dao.MySQL.ProductDAO.findById"/>
+                     select="miniproject.carrotmarket1.mapper.ProductDAO.findById"/>
     </resultMap>
 
     <select id="getReportListPagination" resultMap="ReportResultMap">
@@ -70,7 +70,7 @@
             </if>
         </where>
     </select>
-    <select id="getCategoriesByRange" resultType="miniproject.carrotmarket1.entity.Category">
+    <select id="getCategoriesByRange" resultType="miniproject.carrotmarket1.dto.Category">
         SELECT id, name, description, type
         FROM category
         WHERE type = "REPORT"

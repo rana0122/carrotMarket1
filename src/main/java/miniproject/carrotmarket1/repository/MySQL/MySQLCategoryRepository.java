@@ -1,7 +1,7 @@
 package miniproject.carrotmarket1.repository.MySQL;
 
-import miniproject.carrotmarket1.dao.MySQL.CategoryDAO;
-import miniproject.carrotmarket1.entity.Category;
+import miniproject.carrotmarket1.mapper.CategoryDAO;
+import miniproject.carrotmarket1.dto.Category;
 import miniproject.carrotmarket1.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

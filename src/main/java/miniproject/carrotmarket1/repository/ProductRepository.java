@@ -1,6 +1,6 @@
 package miniproject.carrotmarket1.repository;
 
-import miniproject.carrotmarket1.entity.Product;
+import miniproject.carrotmarket1.dto.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

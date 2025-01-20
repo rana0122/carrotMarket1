@@ -1,8 +1,8 @@
 package miniproject.carrotmarket1.repository.MySQL;
 
-import miniproject.carrotmarket1.dao.MySQL.TradeDAO;
-import miniproject.carrotmarket1.entity.Product;
-import miniproject.carrotmarket1.entity.Trade;
+import miniproject.carrotmarket1.mapper.TradeDAO;
+import miniproject.carrotmarket1.dto.Product;
+import miniproject.carrotmarket1.dto.Trade;
 import miniproject.carrotmarket1.repository.TradeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

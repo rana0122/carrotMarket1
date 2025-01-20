@@ -1,6 +1,6 @@
-package miniproject.carrotmarket1.dao.MySQL;
+package miniproject.carrotmarket1.mapper;
 
-import miniproject.carrotmarket1.entity.ProductImage;
+import miniproject.carrotmarket1.dto.ProductImage;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

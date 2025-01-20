@@ -1,18 +1,11 @@
 package miniproject.carrotmarket1.repository.MySQL;
 
-import jakarta.servlet.http.HttpSession;
-import miniproject.carrotmarket1.dao.MySQL.UserDAO;
-import miniproject.carrotmarket1.entity.User;
+import miniproject.carrotmarket1.mapper.UserDAO;
+import miniproject.carrotmarket1.dto.User;
 import miniproject.carrotmarket1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 @Repository

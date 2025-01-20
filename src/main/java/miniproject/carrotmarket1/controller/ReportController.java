@@ -1,10 +1,9 @@
 package miniproject.carrotmarket1.controller;
 
 import lombok.RequiredArgsConstructor;
-import miniproject.carrotmarket1.entity.*;
+import miniproject.carrotmarket1.dto.*;
 import miniproject.carrotmarket1.service.ProductService;
 import miniproject.carrotmarket1.service.ReportService;
-import miniproject.carrotmarket1.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

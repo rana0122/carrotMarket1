@@ -1,6 +1,6 @@
 package miniproject.carrotmarket1.repository;
 
-import miniproject.carrotmarket1.entity.ChatRoom;
+import miniproject.carrotmarket1.dto.ChatRoom;
 
 import java.util.List;
 import java.util.Optional;

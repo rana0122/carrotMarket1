@@ -1,11 +1,9 @@
 package miniproject.carrotmarket1.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
-import miniproject.carrotmarket1.entity.Category;
-import miniproject.carrotmarket1.entity.Product;
-import miniproject.carrotmarket1.entity.User;
+import miniproject.carrotmarket1.dto.Category;
+import miniproject.carrotmarket1.dto.Product;
+import miniproject.carrotmarket1.dto.User;
 import miniproject.carrotmarket1.service.CategoryService;
 import miniproject.carrotmarket1.service.ProductService;
 import miniproject.carrotmarket1.service.UserService;

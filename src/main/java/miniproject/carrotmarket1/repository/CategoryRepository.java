@@ -1,6 +1,6 @@
 package miniproject.carrotmarket1.repository;
 
-import miniproject.carrotmarket1.entity.Category;
+import miniproject.carrotmarket1.dto.Category;
 
 import java.util.List;
 

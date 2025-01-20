@@ -1,8 +1,8 @@
 package miniproject.carrotmarket1.repository.MySQL;
 
 
-import miniproject.carrotmarket1.dao.MySQL.ProductImageDAO;
-import miniproject.carrotmarket1.entity.ProductImage;
+import miniproject.carrotmarket1.mapper.ProductImageDAO;
+import miniproject.carrotmarket1.dto.ProductImage;
 import miniproject.carrotmarket1.repository.ProductImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

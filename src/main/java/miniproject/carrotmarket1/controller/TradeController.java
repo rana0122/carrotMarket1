@@ -1,8 +1,8 @@
 package miniproject.carrotmarket1.controller;
 
 import jakarta.servlet.http.HttpSession;
-import miniproject.carrotmarket1.entity.Product;
-import miniproject.carrotmarket1.entity.User;
+import miniproject.carrotmarket1.dto.Product;
+import miniproject.carrotmarket1.dto.User;
 import miniproject.carrotmarket1.service.ProductService;
 import miniproject.carrotmarket1.service.TradeService;
 import org.springframework.beans.factory.annotation.Autowired;

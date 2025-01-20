@@ -1,10 +1,7 @@
 package miniproject.carrotmarket1.repository;
 
-import jakarta.servlet.http.HttpSession;
-import miniproject.carrotmarket1.entity.User;
-import org.springframework.web.multipart.MultipartFile;
+import miniproject.carrotmarket1.dto.User;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface UserRepository {

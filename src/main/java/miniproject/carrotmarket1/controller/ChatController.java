@@ -1,9 +1,9 @@
 package miniproject.carrotmarket1.controller;
 
 import jakarta.servlet.http.HttpSession;
-import miniproject.carrotmarket1.entity.ChatRoom;
-import miniproject.carrotmarket1.entity.Trade;
-import miniproject.carrotmarket1.entity.User;
+import miniproject.carrotmarket1.dto.ChatRoom;
+import miniproject.carrotmarket1.dto.Trade;
+import miniproject.carrotmarket1.dto.User;
 import miniproject.carrotmarket1.service.ChatRoomService;
 import miniproject.carrotmarket1.service.ProductService;
 import miniproject.carrotmarket1.service.TradeService;

@@ -1,8 +1,7 @@
 package miniproject.carrotmarket1.service;
 
-import miniproject.carrotmarket1.entity.Category;
+import miniproject.carrotmarket1.dto.Category;
 import miniproject.carrotmarket1.repository.CategoryRepository;
-import miniproject.carrotmarket1.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

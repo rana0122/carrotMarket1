@@ -1,7 +1,7 @@
 package miniproject.carrotmarket1.repository.MySQL;
 
-import miniproject.carrotmarket1.dao.MySQL.ChatRoomDAO;
-import miniproject.carrotmarket1.entity.ChatRoom;
+import miniproject.carrotmarket1.mapper.ChatRoomDAO;
+import miniproject.carrotmarket1.dto.ChatRoom;
 import miniproject.carrotmarket1.repository.ChatRoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

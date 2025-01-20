@@ -1,9 +1,9 @@
-package miniproject.carrotmarket1.dao.MySQL;
+package miniproject.carrotmarket1.mapper;
 
-import miniproject.carrotmarket1.entity.Category;
-import miniproject.carrotmarket1.entity.Product;
-import miniproject.carrotmarket1.entity.Trade;
-import miniproject.carrotmarket1.entity.User;
+import miniproject.carrotmarket1.dto.Category;
+import miniproject.carrotmarket1.dto.Product;
+import miniproject.carrotmarket1.dto.Trade;
+import miniproject.carrotmarket1.dto.User;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

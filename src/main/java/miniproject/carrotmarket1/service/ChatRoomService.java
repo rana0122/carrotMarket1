@@ -1,11 +1,7 @@
 package miniproject.carrotmarket1.service;
 
-import miniproject.carrotmarket1.entity.ChatRoom;
-import miniproject.carrotmarket1.entity.Product;
-import miniproject.carrotmarket1.entity.User;
+import miniproject.carrotmarket1.dto.ChatRoom;
 import miniproject.carrotmarket1.repository.ChatRoomRepository;
-import miniproject.carrotmarket1.repository.ProductRepository;
-import miniproject.carrotmarket1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

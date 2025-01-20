@@ -1,11 +1,10 @@
-package miniproject.carrotmarket1.dao.MySQL;
+package miniproject.carrotmarket1.mapper;
 
-import miniproject.carrotmarket1.entity.Category;
-import miniproject.carrotmarket1.entity.Product;
-import miniproject.carrotmarket1.entity.ProductImage;
-import miniproject.carrotmarket1.entity.User;
+import miniproject.carrotmarket1.dto.Category;
+import miniproject.carrotmarket1.dto.Product;
+import miniproject.carrotmarket1.dto.ProductImage;
+import miniproject.carrotmarket1.dto.User;
 import org.apache.ibatis.annotations.*;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 

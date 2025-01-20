@@ -1,4 +1,4 @@
-package miniproject.carrotmarket1.entity;
+package miniproject.carrotmarket1.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

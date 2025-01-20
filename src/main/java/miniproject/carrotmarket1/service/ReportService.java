@@ -1,10 +1,9 @@
 package miniproject.carrotmarket1.service;
 
 import lombok.RequiredArgsConstructor;
-import miniproject.carrotmarket1.entity.Category;
-import miniproject.carrotmarket1.entity.Product;
-import miniproject.carrotmarket1.entity.Report;
-import miniproject.carrotmarket1.entity.ReportStatus;
+import miniproject.carrotmarket1.dto.Category;
+import miniproject.carrotmarket1.dto.Report;
+import miniproject.carrotmarket1.dto.ReportStatus;
 import miniproject.carrotmarket1.repository.MySQL.MySQLProductRepository;
 import miniproject.carrotmarket1.repository.ReportRepository;
 import org.springframework.data.domain.Page;

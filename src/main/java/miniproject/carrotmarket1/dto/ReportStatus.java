@@ -1,4 +1,4 @@
-package miniproject.carrotmarket1.entity;
+package miniproject.carrotmarket1.dto;
 
 public enum ReportStatus {
     RESOLVED("Resolved"),

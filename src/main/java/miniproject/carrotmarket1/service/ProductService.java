@@ -1,8 +1,8 @@
 package miniproject.carrotmarket1.service;
 
-import miniproject.carrotmarket1.entity.Category;
-import miniproject.carrotmarket1.entity.Product;
-import miniproject.carrotmarket1.entity.ProductImage;
+import miniproject.carrotmarket1.dto.Category;
+import miniproject.carrotmarket1.dto.Product;
+import miniproject.carrotmarket1.dto.ProductImage;
 import miniproject.carrotmarket1.repository.CategoryRepository;
 import miniproject.carrotmarket1.repository.ProductImageRepository;
 import miniproject.carrotmarket1.repository.ProductRepository;

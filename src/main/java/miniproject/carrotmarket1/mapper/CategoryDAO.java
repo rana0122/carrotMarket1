@@ -1,6 +1,6 @@
-package miniproject.carrotmarket1.dao.MySQL;
+package miniproject.carrotmarket1.mapper;
 
-import miniproject.carrotmarket1.entity.Category;
+import miniproject.carrotmarket1.dto.Category;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 

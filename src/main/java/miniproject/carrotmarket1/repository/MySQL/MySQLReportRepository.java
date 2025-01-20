@@ -1,9 +1,9 @@
 package miniproject.carrotmarket1.repository.MySQL;
 
 import lombok.RequiredArgsConstructor;
-import miniproject.carrotmarket1.dao.MySQL.ReportDAO;
-import miniproject.carrotmarket1.entity.Category;
-import miniproject.carrotmarket1.entity.Report;
+import miniproject.carrotmarket1.mapper.ReportDAO;
+import miniproject.carrotmarket1.dto.Category;
+import miniproject.carrotmarket1.dto.Report;
 import miniproject.carrotmarket1.repository.ReportRepository;
 import org.springframework.stereotype.Repository;
 
