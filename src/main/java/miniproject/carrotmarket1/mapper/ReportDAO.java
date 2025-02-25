@@ -35,11 +35,11 @@ public interface ReportDAO {
     @Select("select * from report where id=#{id}")
     @Results({
             @Result(property = "reporter", column = "reporter_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.mapper.UserDAO.selectById")),
             @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.mapper.CategoryDAO.selectById")),
             @Result(property = "product", column = "product_id", javaType = Product.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.ProductDAO.findById")),
+                    one = @One(select = "miniproject.carrotmarket1.mapper.ProductDAO.findById")),
     })
     Report getReportById(@Param("id") Long id);
 

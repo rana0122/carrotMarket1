@@ -21,11 +21,11 @@ public interface TradeDAO {
             @Result(property = "userId", column = "user_id"),
             @Result(property = "categoryId", column = "category_id"),
             @Result(property = "user", column = "user_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.mapper.UserDAO.selectById")),
             @Result(property = "category", column = "category_id", javaType = Category.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.CategoryDAO.selectById")), // 경로 수정
+                    one = @One(select = "miniproject.carrotmarket1.mapper.CategoryDAO.selectById")), // 경로 수정
             @Result(property = "images", column = "id", javaType = List.class,
-                    many = @Many(select = "miniproject.carrotmarket1.dao.MySQL.ProductDAO.selectProductImagesByProductId"))
+                    many = @Many(select = "miniproject.carrotmarket1.mapper.ProductDAO.selectProductImagesByProductId"))
     })
     List<Product> findByBuyerId(Long buyerId);
 

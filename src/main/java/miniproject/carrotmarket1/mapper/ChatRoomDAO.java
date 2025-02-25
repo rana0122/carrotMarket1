@@ -22,11 +22,11 @@ public interface ChatRoomDAO {
             @Result(property = "sellerId", column = "seller_id"),
             @Result(property = "productId", column = "product_id"),
             @Result(property = "buyer", column = "buyer_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.mapper.UserDAO.selectById")),
             @Result(property = "seller", column = "seller_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.mapper.UserDAO.selectById")),
             @Result(property = "product", column = "product_id", javaType = Product.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.ProductDAO.findById"))
+                    one = @One(select = "miniproject.carrotmarket1.mapper.ProductDAO.findById"))
     })
     Optional<ChatRoom> findByProductAndUsers(@Param("productId") Long productId,
                                              @Param("buyerId") Long buyerId);
@@ -38,11 +38,11 @@ public interface ChatRoomDAO {
             @Result(property = "sellerId", column = "seller_id"),
             @Result(property = "productId", column = "product_id"),
             @Result(property = "buyer", column = "buyer_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.mapper.UserDAO.selectById")),
             @Result(property = "seller", column = "seller_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.mapper.UserDAO.selectById")),
             @Result(property = "product", column = "product_id", javaType = Product.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.ProductDAO.findById"))
+                    one = @One(select = "miniproject.carrotmarket1.mapper.ProductDAO.findById"))
     })
     Optional<ChatRoom> findById(@Param("id") Long id);
 
@@ -53,11 +53,11 @@ public interface ChatRoomDAO {
             @Result(property = "sellerId", column = "seller_id"),
             @Result(property = "productId", column = "product_id"),
             @Result(property = "buyer", column = "buyer_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.mapper.UserDAO.selectById")),
             @Result(property = "seller", column = "seller_id", javaType = User.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.UserDAO.selectById")),
+                    one = @One(select = "miniproject.carrotmarket1.mapper.UserDAO.selectById")),
             @Result(property = "product", column = "product_id", javaType = Product.class,
-                    one = @One(select = "miniproject.carrotmarket1.dao.MySQL.ProductDAO.findById"))
+                    one = @One(select = "miniproject.carrotmarket1.mapper.ProductDAO.findById"))
     })
     List<ChatRoom> findAllByUser(@Param("userId")Long id);
 
