@@ -1,10 +1,20 @@
 package miniproject.carrotmarket1.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import miniproject.carrotmarket1.dto.User;
 import miniproject.carrotmarket1.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,18 +25,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
+@Slf4j
 public class UserController {
 
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
 
     //profile upload folder
     @Value("${file.upload-dir}")
     private String uploadDir;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, AuthenticationManager authenticationManager,
+                          PasswordEncoder passwordEncoder) {
         this.userService = userService;
-
+        this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
     }
 
     //========================로그인(위치정보 수집)===============================//
@@ -38,35 +53,53 @@ public class UserController {
             @RequestParam(required = false) Double longitude,
             @RequestParam(required = false) String location,
             HttpSession session) {
-        // 회원 인증
-        User user = userService.authenticate(email, password);
-        if (user != null) {
-            if ("N".equals(user.getLockedYn())) {
-                // 위치 정보 업데이트
-                if (latitude != null && longitude != null && location != null) {
-                    userService.updateUserLocation(user.getId(), latitude, longitude, location);
-                    // 로그인 시 변경된 주소로 세션에 전달
-                    user.setLocation(location);
-                    user.setLatitude(latitude);
-                    user.setLongitude(longitude);
+        try {
+            //  Spring Security를 사용하여 사용자 인증
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password)
+            );
+            // 인증 성공 시 SecurityContext에 저장 (세션 유지)
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            //  사용자 정보 가져오기
+            User user = userService.findByEmail(email);
+            //  위치 정보 업데이트
+            if (user != null) {
+                if ("N".equals(user.getLockedYn())) {
+                    if (latitude != null && longitude != null && location != null) {
+                        userService.updateUserLocation(user.getId(), latitude, longitude, location);
+                        user.setLocation(location);
+                        user.setLatitude(latitude);
+                        user.setLongitude(longitude);
+                    }
+
+                    //  세션에 사용자 정보 저장
+                    session.setAttribute("loggedInUser", user);
+                    return "redirect:/products";
+                } else if ("Y".equals(user.getLockedYn())) {
+                    return "redirect:/products?accountLocked=true";
                 }
-                session.setAttribute("loggedInUser", user); // 세션에 사용자 정보 저장
-                return "redirect:/products";
-            } else if ("Y".equals(user.getLockedYn())) {
-                return "redirect:/products?accountLocked=true"; // 정지된 계정 상태 전달
             }
+            return "redirect:/products?loginError=true";
+        } catch (AuthenticationException e) {
+            return "redirect:/products?loginError=true";
         }
-        // 로그인 실패 시
-        return "redirect:/products?loginError=true";
     }
 
 
-    //로그아웃
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/products";
-    }
+//    //로그아웃
+//    @GetMapping("/logout")
+//    public String logout(HttpServletRequest request) {
+//        // 세션 무효화
+//        HttpSession session = request.getSession(false);
+//        if (session != null) {
+//            session.invalidate();
+//        }
+//
+//        // SecurityContext 초기화
+//        SecurityContextHolder.clearContext();
+//
+//        return "redirect:/login?logout"; // ✅ 로그아웃 후 로그인 페이지로 이동
+//    }
 
 
     //=================회원가입==========================//
@@ -94,7 +127,7 @@ public class UserController {
     @PostMapping("/check-email")
     @ResponseBody
     public Map<String, Boolean> checkEmail(@RequestParam("email") String email) {
-        boolean exists = userService.emailExists(email);
+        boolean exists = userService.findByEmail(email) != null;
         Map<String, Boolean> response = new HashMap<>();
         response.put("exists", exists);
         return response;
@@ -142,7 +175,9 @@ public class UserController {
     @ResponseBody
     public boolean checkPassword(@RequestParam("currentPassword") String currentPassword, HttpSession session) {
         User loggedInUser = userService.getLoggedInUser(session);
-        return loggedInUser != null && loggedInUser.getPassword().equals(currentPassword);
+        // 사용자가 입력한 평문 비밀번호(currentPassword)와 DB에 저장된 암호화된 비밀번호 비교
+        return loggedInUser != null && passwordEncoder.matches(currentPassword, loggedInUser.getPassword());
     }
+
 
 }

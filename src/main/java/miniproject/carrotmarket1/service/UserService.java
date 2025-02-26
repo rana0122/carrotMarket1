@@ -5,6 +5,10 @@ import miniproject.carrotmarket1.dto.User;
 import miniproject.carrotmarket1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,24 +16,28 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService{
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${file.upload-dir}") // application.properties의 값을 주입
     private String uploadDir;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     //로그인 시 패스워드 확인
     public User authenticate(String email, String password) {
         User user = userRepository.findByEmail(email);
-        if (user != null && user.getPassword().equals(password)) {
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
             return user;
         }
         return null;
@@ -50,7 +58,7 @@ public class UserService {
     public void saveOrUpdateUser(User user, MultipartFile profileImageFile) throws IOException {
         // 비밀번호 설정은 필요 시에만 수행
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            // 필요에 따라 비밀번호 암호화 추가 가능
+            user.setPassword(passwordEncoder.encode(user.getPassword())); // 비밀번호 암호화 적용
         }
 
         // 사용자 조회
@@ -108,9 +116,8 @@ public class UserService {
         return "/profileImages/" + fileName; // 저장된 파일 경로 반환
     }
 
-    public boolean emailExists(String email) {
-
-        return userRepository.findByEmail(email) != null;
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     // USER 조회 By Id
