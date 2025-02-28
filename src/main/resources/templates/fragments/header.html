@@ -243,8 +243,12 @@
                     getLocation();
                     sessionStorage.setItem("firstLogin", "done"); // 중복 실행 방지
                 }
+            } else {
+                // 로그아웃 시 sessionStorage 초기화
+                sessionStorage.removeItem("firstLogin");
             }
         });
+
     </script>
 
 </div>
