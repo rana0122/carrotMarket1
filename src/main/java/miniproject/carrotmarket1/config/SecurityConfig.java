@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/register", "/kakaoLogin/**").permitAll()
                         .requestMatchers( "/check-email", "/get-address").permitAll()
                         .requestMatchers("/", "/products").permitAll()
+                        .requestMatchers("/profileImages/**", "/itemimages/**").permitAll()
                         .requestMatchers("/update-location").authenticated() // 인증된 사용자만 가능
                         .anyRequest().authenticated()
                 )
@@ -48,6 +50,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
 
     @PostConstruct

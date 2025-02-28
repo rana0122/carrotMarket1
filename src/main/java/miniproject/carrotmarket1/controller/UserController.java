@@ -43,6 +43,8 @@ public class UserController {
     //profile upload folder
     @Value("${file.upload-dir}")
     private String uploadDir;
+    private static final long MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB (바이트 단위)
+
 
     @Autowired
     public UserController(UserService userService, AuthenticationManager authenticationManager,
@@ -145,6 +147,11 @@ public class UserController {
                                HttpSession session) throws IOException {
 
         try {
+            //  파일 크기 확인
+            if (!profileImageFile.isEmpty() && profileImageFile.getSize() > MAX_FILE_SIZE) {
+                return "redirect:/register?error=fileTooLarge"; // 파일 크기 초과 시 리디렉션
+            }
+
             userService.saveOrUpdateUser(user, profileImageFile);
             session.setAttribute("loggedInUser", user);
             return "redirect:/"; // 회원가입 완료 후 로그인 페이지로 리디렉션
@@ -177,6 +184,12 @@ public class UserController {
                                 @RequestParam(required = false) MultipartFile profileImageFile,
                                 HttpSession session) {
         try {
+
+            //  파일 크기 확인
+            if (!profileImageFile.isEmpty() && profileImageFile.getSize() > MAX_FILE_SIZE) {
+                return "redirect:/register?error=fileTooLarge"; // 파일 크기 초과 시 리디렉션
+            }
+
             // 기존 사용자의 ID, group 설정
             user.setId(userService.getLoggedInUser(session).getId());
             user.setUserGroup(userService.getLoggedInUser(session).getUserGroup());

@@ -27,6 +27,8 @@ public class UserService{
 
     @Value("${file.upload-dir}") // application.properties의 값을 주입
     private String uploadDir;
+    private static final long MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB (바이트 단위)
+
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -91,8 +93,8 @@ public class UserService{
                 //  일반 회원가입 시 새 이미지 저장
                 String fileName = saveProfileImage(profileImageFile, user);
                 user.setProfileImage(fileName);
-            } else if (user.getProfileImage() != null && !user.getProfileImage().isEmpty()
-                    && "KAKAO".equals(user.getUserGroup())) {
+            } else if (user.getProfileImage() != null && !user.getProfileImage().isEmpty())
+            {
                 //  카카오 로그인 시 프로필 이미지 URL 유지 (기존 이미지 덮어쓰지 않음)
                 existingUser.setProfileImage(user.getProfileImage());
             } else {
@@ -108,6 +110,9 @@ public class UserService{
     // 프로필 이미지 저장 메소드
     private String saveProfileImage(MultipartFile profileImageFile, User user) throws IOException {
 
+        if (profileImageFile.getSize() > MAX_FILE_SIZE) {
+            throw new IllegalArgumentException("파일 크기가 20MB를 초과합니다. 더 작은 이미지를 업로드해주세요.");
+        }
         Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
 
         if (!Files.exists(uploadPath)) {
