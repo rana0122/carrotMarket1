@@ -14,9 +14,11 @@
                                 data-target="#loginModal">로그인
                         </button>
                     </li>
+
                     <!-- 로그인된 사용자 정보 -->
                     <li class="nav-item d-flex align-items-center" th:if="${session.loggedInUser != null}">
-                        <a th:href="@{/edit-profile}"
+<!--                    <li class="nav-item d-flex align-items-center" th:if="${#authorization.expression('isAuthenticated()')}">-->
+                    <a th:href="@{/edit-profile}"
                            class="nav-link d-flex align-items-center text-decoration-none mr-3" data-bs-toggle="tooltip"
                            title="마이페이지">
                             <img th:if="${session.loggedInUser.profileImage != null}"
@@ -32,15 +34,15 @@
                             <span class="text-muted" th:text="${session.loggedInUser.location}"></span>
                         </div>
 
-<!--                        <a th:href="@{/logout}" class="btn btn-orange ml-3">로그아웃</a>-->
+                        <a th:href="@{/logout}" class="btn btn-orange ml-3">로그아웃</a>
                         <!-- 로그아웃 버튼 -->
-                        <form id="logoutForm" action="/logout" method="post" class="ml-3">
-                            <button type="submit" class="btn btn-orange ml-3" style="padding: 5px 15px; font-size: 14px;">
-                                로그아웃
-                            </button>
-                        </form>
+<!--                        <form id="logoutForm" action="/logout" method="post" class="ml-3">-->
+<!--                            <button type="submit" class="btn btn-orange ml-3" style="padding: 5px 15px; font-size: 14px;">-->
+<!--                                로그아웃-->
+<!--                            </button>-->
+<!--                        </form>-->
 
-                        <th:block th:if="${session.loggedInUser.userGroup == 'GENERAL'}">
+                        <th:block th:if="${session.loggedInUser.userGroup != 'ADMIN'}">
                         <a th:href="@{/chatroom}" class="nav-link d-flex align-items-center ml-3">
                             <i class="fas fa-comments chat-icon"></i>
                             <span class="ml-1 font-weight-bold">채팅방</span>
@@ -86,10 +88,33 @@
                         <input type="hidden" id="loginLatitude" name="latitude">
                         <input type="hidden" id="loginLongitude" name="longitude">
                         <input type="hidden" id="loginLocation" name="location">
-                        <button type="submit" class="btn btn-orange btn-block"
-                                onclick="event.preventDefault(); getLocationAndSubmit();">로그인
+                        <button type="submit" class="btn btn-orange btn-block">
+<!--                                onclick="event.preventDefault(); getLocationAndSubmit();">-->
+                            로그인
                         </button>
                     </form>
+                    <div class="text-center mt-3">
+                        <a href="/oauth2/authorization/google" class="btn btn-danger btn-block">
+                        <i class="fab fa-google"></i> Google로 로그인
+                        </a>
+                    </div>
+                    <div class="text-center mt-2">
+                        <a href="/oauth2/authorization/naver" class="btn btn-success btn-block">
+                            <i class="fab fa-naver"></i> Naver로 로그인
+                        </a>
+                    </div>
+                    <div class="text-center mt-2">
+                        <a th:href="'https://kauth.kakao.com/oauth/authorize?client_id='
+                            + @{${@environment.getProperty('kakao.restApi.Key')}} + '&redirect_uri='
+                            + @{${@environment.getProperty('kakao.redirect-uri')}} +
+                                '&response_type=code&prompt=login'"
+                           class="btn btn-warning btn-block">
+                            <i class="fab fa-kakao"></i> Kakao로 로그인
+                        </a>
+                    </div>
+
+
+
                 </div>
                 <div class="modal-footer">
                     <span>아직 회원이 아니신가요?</span>
@@ -101,63 +126,6 @@
 
 
     <script>
-        // 로그인 시 위치 정보 수집
-        function getLocationAndSubmit() {
-            console.log("getLocationAndSubmit 호출됨");
-
-            //navigator.geolocation :브라우저에서 제공하는 내장 API로, 사용자의 현재 위치(위도, 경도)를 가져오는 기능을 함.
-            //단 https에서만 동작함
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((position) => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-
-                    // 위도와 경도를 숨겨진 필드에 설정
-                    document.getElementById('loginLatitude').value = latitude;
-                    document.getElementById('loginLongitude').value = longitude;
-
-                    // 위치 정보를 주소로 변환 후 폼 제출
-                    convertLatLngToAddress(latitude, longitude, (address) => {
-                        document.getElementById('loginLocation').value = address;
-                        document.getElementById('loginForm').submit();
-                    });
-                }, () => {
-                    alert("위치 정보를 가져오는 데 실패했습니다.");
-                });
-            } else {
-                alert("브라우저가 위치 정보를 지원하지 않습니다.");
-            }
-        }
-
-        // 위도와 경도를 주소로 변환하는 함수
-        function convertLatLngToAddress(latitude, longitude, callback) {
-            const url = `/get-address?latitude=${latitude}&longitude=${longitude}`;
-
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Network response was not ok: " + response.statusText);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.status === "OK" && data.results[0]) {
-                        let address = data.results[0].formatted_address;
-                        // "대한민국" 문자열 제거
-                        address = address.replace("대한민국 ", ""); // "대한민국"과 그 뒤 공백을 제거
-                        console.log("Converted Address: ", address);  // 주소 출력
-                        callback(address);  // 콜백으로 주소 전달
-                    } else {
-                        console.error("Geocoding API Error: ", data);
-                        alert("주소 변환에 실패했습니다.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching address: ", error);
-                    alert("주소를 가져오는 중 오류가 발생했습니다.");
-                });
-        }
-
         //로그인 체크(이메일 비번이 다른 경우 다시 로그인창으로 리다이렉트
         document.body.onload = checkLoginError;
 
@@ -178,8 +146,105 @@
             }
         }
 
-        window.getLocationAndSubmit = getLocationAndSubmit;
-        window.convertLatLngToAddress = convertLatLngToAddress;
+        // 사용자가 위치를 허용한 경우
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        // 위치 정보를 가져온 후 호출되는 함수
+        function showPosition(position) {
+            var latitude = position.coords.latitude;  // 위도
+            var longitude = position.coords.longitude;  // 경도
+            // 주소로 변환
+            convertLatLngToAddressKakao(latitude, longitude).then(function(address) {
+                // 서버로 위치 정보 전송 (AJAX 요청 등)
+                fetch('/update-location', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        latitude: latitude,
+                        longitude: longitude,
+                        location: address,  // 변환된 주소를 전송
+                    })
+                }).then(response => response.text())
+                    .then(data => {
+                        console.log("Location updated:", data);
+                        window.location.href = "/products";
+                    }).catch(error => {
+                    console.error("Error:", error);
+                });
+            }).catch(function(error) {
+                console.error("주소 변환 에러:", error);
+            });
+        }
+        // 위도와 경도를 주소로 변환하는 함수
+        function convertLatLngToAddressKakao(latitude, longitude) {
+            return new Promise((resolve, reject) => {
+                const url = `/get-address?latitude=${latitude}&longitude=${longitude}`;
+
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok: " + response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.status === "OK" && data.results[0]) {
+                            let address = data.results[0].formatted_address;
+                            address = address.replace("대한민국 ", ""); // "대한민국"과 그 뒤 공백을 제거
+                            console.log("Converted Address: ", address);  // 주소 출력
+                            resolve(address);  // 콜백 대신 resolve로 주소 전달
+                        } else {
+                            reject("주소 변환 실패");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching address: ", error);
+                        reject("주소를 가져오는 중 오류가 발생했습니다.");
+                    });
+            });
+        }
+
+
+        // 위치 정보를 가져오는 데 오류가 발생한 경우
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("User denied the request for Geolocation.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Location information is unavailable.");
+                    break;
+                case error.TIMEOUT:
+                    alert("The request to get user location timed out.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("An unknown error occurred.");
+                    break;
+            }
+        }
+
+        // 페이지가 로드되면 위치 정보 요청
+        document.addEventListener("DOMContentLoaded", function () {
+            // 세션에서 로그인 여부 확인 (Thymeleaf 활용)
+            let isLoggedIn = [[${session.loggedInUser != null}]]; // true or false
+
+            if (isLoggedIn) {
+                // sessionStorage를 활용하여 최초 로그인 시에만 실행
+                if (!sessionStorage.getItem("firstLogin")) {
+                    console.log("최초 로그인 감지, 위치 업데이트 실행");
+                    getLocation();
+                    sessionStorage.setItem("firstLogin", "done"); // 중복 실행 방지
+                }
+            }
+        });
     </script>
 
 </div>

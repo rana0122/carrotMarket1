@@ -34,7 +34,8 @@
     <div class="card">
         <div class="card-body">
             <h2 class="card-title text-center mb-4">회원 정보 수정</h2>
-            <form id="editProfileForm" th:action="@{/edit-profile}" th:object="${user}" method="post" enctype="multipart/form-data" onsubmit="return validatePassword()">
+            <form id="editProfileForm" th:action="@{/edit-profile}" th:object="${user}" method="post" enctype="multipart/form-data"
+                  onsubmit="return validatePassword()">
 
                 <!-- Username -->
                 <div class="form-group">
@@ -48,22 +49,32 @@
                     <input type="email" class="form-control" id="email" th:field="*{email}" readonly>
                 </div>
                 <!-- Current Password (비밀번호 확인용) -->
-                <div class="form-group">
-                    <label for="currentPassword">현재 비밀번호</label>
-                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="현재 비밀번호를 입력하세요" required>
+                <div class="form-group" >
+                    <label for="currentPassword" >
+                        현재 비밀번호</label>
+                    <input type="password" class="form-control" id="currentPassword" name="currentPassword"
+                           placeholder="현재 비밀번호를 입력하세요"
+                           th:attr="disabled=${session.loggedInUser.getUserGroup() == 'KAKAO' ? 'disabled' : null},
+                           required=${session.loggedInUser.getUserGroup() != 'KAKAO' ? 'required' : null}">
                     <small id="currentPasswordError" class="form-error" style="display: none;">현재 비밀번호가 일치하지 않습니다.</small>
                 </div>
 
                 <!-- Password (비밀번호 변경 시 입력) -->
-                <div class="form-group">
-                    <label for="password">새 비밀번호 (필요 시 변경)</label>
-                    <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="새 비밀번호를 입력하세요">
+                <div class="form-group" >
+                    <label for="password">
+                        새 비밀번호 (필요 시 변경)</label>
+                    <input type="password" class="form-control" id="password" th:field="*{password}"
+                           th:attr="disabled=${session.loggedInUser.getUserGroup() == 'KAKAO' ? 'disabled' : null}"
+                           placeholder="새 비밀번호를 입력하세요">
                 </div>
 
                 <!-- Password Confirmation -->
-                <div class="form-group">
-                    <label for="confirmPassword">새 비밀번호 확인</label>
-                    <input type="password" class="form-control" id="confirmPassword" placeholder="비밀번호를 다시 입력하세요">
+                <div class="form-group" >
+                    <label for="confirmPassword">
+                        새 비밀번호 확인</label>
+                    <input type="password" class="form-control" id="confirmPassword"
+                           th:attr="disabled=${session.loggedInUser.getUserGroup() == 'KAKAO' ? 'disabled' : null}"
+                           placeholder="비밀번호를 다시 입력하세요">
                     <small id="passwordError" class="form-error" style="display: none;">비밀번호가 일치하지 않습니다.</small>
                 </div>
 
@@ -92,7 +103,8 @@
                 <!-- 반경 설정 -->
                 <div class="form-group">
                     <label for="radiusRange">거래 반경 설정 (0km - 100km)</label>
-                    <input type="range" class="slider" id="radiusRange" th:field="*{radiusKm}" min="0" max="100" step="1" oninput="updateRadiusValue(this.value)"
+                    <input type="range" class="slider" id="radiusRange" th:field="*{radiusKm}" min="0" max="100" step="1"
+                           oninput="updateRadiusValue(this.value)"
                            style="accent-color: #fd3b00;">
                     <small id="radiusValue" class="form-text text-muted"
                            th:text="${user.radiusKm != null} ? ${user.radiusKm + ' km'} : '현재 설정: 50 km'">
@@ -104,9 +116,11 @@
                 <div class="form-group">
                     <label for="profileImage">프로필 이미지</label>
                     <div class="mb-3 text-center">
-                        <img id="profileImagePreview" th:src="${user.profileImage}" alt="프로필 이미지 미리 보기" class="img-thumbnail" style="max-width: 150px;">
+                        <img id="profileImagePreview" th:src="${user.profileImage}" alt="프로필 이미지 미리 보기"
+                             class="img-thumbnail" style="max-width: 150px;">
                     </div>
-                    <input type="file" class="form-control-file" id="profileImage" name="profileImageFile" accept="image/*" onchange="previewImage(event)">
+                    <input type="file" class="form-control-file" id="profileImage" name="profileImageFile" accept="image/*"
+                           onchange="previewImage(event)">
                 </div>
 
                 <!-- Submit Button -->

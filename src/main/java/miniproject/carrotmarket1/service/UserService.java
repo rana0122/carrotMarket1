@@ -56,38 +56,54 @@ public class UserService{
 
     //프로필 생성 및 업데이트
     public void saveOrUpdateUser(User user, MultipartFile profileImageFile) throws IOException {
-        // 비밀번호 설정은 필요 시에만 수행
-        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(user.getPassword())); // 비밀번호 암호화 적용
-        }
-
-        // 사용자 조회
+        // 기존 사용자 조회
         User existingUser = userRepository.findByEmail(user.getEmail());
 
         if (existingUser == null) {
-            // 신규 회원인 경우
+            //  신규 회원인 경우
             if (profileImageFile != null && !profileImageFile.isEmpty()) {
+                //  일반 회원가입 시 이미지 저장
                 String fileName = saveProfileImage(profileImageFile, user);
                 user.setProfileImage(fileName);
+            } else if ("KAKAO".equals(user.getUserGroup())
+                    && user.getProfileImage() != null && !user.getProfileImage().isEmpty()) {
+                //  카카오 로그인 시 URL 프로필 이미지 저장
+                user.setProfileImage(user.getProfileImage());
             }
-            user.setUserGroup("GENERAL"); // 기본 사용자 그룹 설정
-            userRepository.insertUser(user); // 새 사용자 추가
+
+            //  사용자 그룹 설정 (카카오 로그인인지 일반 로그인인지)
+            if (user.getUserGroup() == null || user.getUserGroup().isEmpty()) {
+                user.setUserGroup("GENERAL"); // 기본값
+            }
+
+            //  비밀번호 암호화 (카카오 로그인 사용자는 제외) 신규는 평문
+            if (user.getPassword() != null && !user.getPassword().isEmpty()
+                    && !user.getUserGroup().equals("KAKAO")) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+
+            userRepository.insertUser(user); // 신규 사용자 추가
         } else {
-            // 기존 사용자 업데이트
+            //  기존 사용자 업데이트
             user.setId(existingUser.getId()); // 기존 ID 유지
 
             if (profileImageFile != null && !profileImageFile.isEmpty()) {
-                // 새 프로필 이미지가 업로드된 경우만 저장
+                //  일반 회원가입 시 새 이미지 저장
                 String fileName = saveProfileImage(profileImageFile, user);
                 user.setProfileImage(fileName);
+            } else if (user.getProfileImage() != null && !user.getProfileImage().isEmpty()
+                    && "KAKAO".equals(user.getUserGroup())) {
+                //  카카오 로그인 시 프로필 이미지 URL 유지 (기존 이미지 덮어쓰지 않음)
+                existingUser.setProfileImage(user.getProfileImage());
             } else {
-                // 새 이미지가 없으면 기존 이미지 유지
+                //  새 이미지가 없으면 기존 이미지 유지
                 user.setProfileImage(existingUser.getProfileImage());
             }
 
             userRepository.updateUser(user); // 기존 사용자 업데이트
         }
     }
+
 
     // 프로필 이미지 저장 메소드
     private String saveProfileImage(MultipartFile profileImageFile, User user) throws IOException {
